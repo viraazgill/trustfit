@@ -203,6 +203,16 @@ class ViewerCategory(BaseModel):
     score_pct: float | None
 
 
+class ViewerPending(BaseModel):
+    """One line of the SME-facing 'What turns it Green': a category's unchecked points, or a pending gate."""
+    type: Literal["category", "gate"]
+    id: str
+    label: str
+    count: int = Field(description="Unchecked parameters in the category (1 for a gate)")
+    points: float | None = Field(description="Points still unverified in the category; null for a gate")
+    priority: bool = Field(description="In a dimension under the verified minimum: check these first")
+
+
 class ViewerTrustReport(BaseModel):
     company_id: str
     company_name: str
@@ -221,6 +231,122 @@ class ViewerTrustReport(BaseModel):
     categories: dict[str, ViewerCategory] = Field(default_factory=dict)
     dimensions: dict[str, ViewerCategory] = Field(default_factory=dict)
     gates: dict[str, GateStatus] = Field(default_factory=dict)
+    reasons: list[ViewerReason]
+    pending: list[ViewerPending] = Field(default_factory=list,
+                                         description="What turns it Green, by category (no parameter detail)")
+    disclaimer: str = DISCLAIMER_FIELD
+
+
+# ---------------------------------------------------------------- SMEs and Fit (viewer-safe)
+
+Importance = Literal["must", "important", "nice", "irrelevant"]
+RoleSought = Literal["supplier", "distributor", "jv_partner"]
+AfterSalesNeed = Literal["none", "basic", "full"]
+
+
+class TargetStates(_In):
+    primary: list[str] = Field(default_factory=list)
+    secondary: list[str] = Field(default_factory=list)
+
+
+class SmeIn(_In):
+    """An SME brief. Vocabulary values (sector, states, channels) are checked against config/fit_v1.yaml."""
+    name: str = Field(min_length=1, max_length=300)
+    country: str | None = "Japan"
+    city: str | None = None
+    employees: int | None = Field(default=None, ge=1)
+    description: str | None = None
+    sector: str
+    products: list[str] = Field(default_factory=list)
+    role_sought: RoleSought
+    target_states: TargetStates
+    channels_needed: list[str] = Field(default_factory=list)
+    volume_units_per_month: int = Field(ge=1)
+    after_sales_need: AfterSalesNeed = "none"
+    competitors: list[str] = Field(default_factory=list)
+    factor_importance: dict[str, Importance] = Field(default_factory=dict)
+
+
+class SmePatch(_In):
+    name: str | None = Field(default=None, min_length=1, max_length=300)
+    country: str | None = None
+    city: str | None = None
+    employees: int | None = Field(default=None, ge=1)
+    description: str | None = None
+    sector: str | None = None
+    products: list[str] | None = None
+    role_sought: RoleSought | None = None
+    target_states: TargetStates | None = None
+    channels_needed: list[str] | None = None
+    volume_units_per_month: int | None = Field(default=None, ge=1)
+    after_sales_need: AfterSalesNeed | None = None
+    competitors: list[str] | None = None
+    factor_importance: dict[str, Importance] | None = None
+
+
+class SmeOut(BaseModel):
+    id: str
+    name: str
+    fictional: bool
+    country: str | None
+    city: str | None
+    employees: int | None
+    description: str | None
+    sector: str
+    products: list[str]
+    role_sought: str
+    target_states: TargetStates
+    channels_needed: list[str]
+    volume_units_per_month: int | None
+    after_sales_need: str | None
+    competitors: list[str]
+    factor_importance: dict[str, str]
+    readiness_answers: dict[str, int]
+    mine: bool = Field(description="The signed-in user owns this SME and may edit it")
+
+
+class FitFactor(BaseModel):
+    label: str
+    importance: str
+    weight: float
+    level: int | None
+    verified: bool
+
+
+class FitConflict(BaseModel):
+    brand: str
+    relation: str
+
+
+class TrustSummary(BaseModel):
+    role: str
+    eligible: bool
+    status: str
+    score: int | None
+    band: str | None
+    confidence: float | None
+    provisional: bool | None
+    verdict: Verdict
+
+
+class ViewerFit(BaseModel):
+    company_id: str
+    company_name: str
+    fictional: bool
+    sme_id: str
+    role: str
+    score: int | None
+    score_raw: float | None
+    confidence: float
+    category: Literal["strong_fit", "possible_fit", "not_a_fit"]
+    category_label: str
+    action: str
+    factors: dict[str, FitFactor]
+    gaps: list[str]
+    competitor_conflict: bool
+    conflict: FitConflict | None = Field(description="The blocking competitor relation, when there is one")
+    trust: TrustSummary
+    combined_verdict: Verdict = Field(description="Trust verdict after Fit (Fit can lower it, never raise it)")
     reasons: list[ViewerReason]
     disclaimer: str = DISCLAIMER_FIELD
 
@@ -266,3 +392,27 @@ class PublicConfig(BaseModel):
     outlook_signals: dict[str, str]
     confidence: PublicConfidence
     service_provider_trust_role: str
+
+
+class PublicFitFactor(BaseModel):
+    label: str
+    base_weight: float
+
+
+class PublicFitCategory(BaseModel):
+    label: str
+    action: str
+
+
+class PublicFitConfig(BaseModel):
+    version: str
+    factors: dict[str, PublicFitFactor]
+    importance_levels: list[str]
+    role_default_importance: dict[str, dict[str, str]]
+    categories: dict[str, PublicFitCategory]
+    sectors: list[str]
+    product_families: dict[str, list[str]]
+    channels: list[str]
+    states: list[str]
+    after_sales_needs: list[str]
+    relations: list[str]

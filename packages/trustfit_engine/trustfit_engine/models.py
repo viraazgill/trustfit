@@ -50,6 +50,24 @@ class Company(BaseModel):
     capabilities: dict[str, Any] = Field(default_factory=dict)  # Gap Bridge tags (phase 5)
 
 
+class Sme(BaseModel):
+    """One Japanese SME's brief (Fit) and readiness answers (Gap Bridge). Descriptive fields such as
+    name, city and employees are kept as extras."""
+    model_config = ConfigDict(extra="allow")
+
+    id: str
+    sector: str
+    products: list[str] = Field(default_factory=list)
+    role_sought: str
+    target_states: dict[str, list[str]] = Field(default_factory=dict)  # {primary: [...], secondary: [...]}
+    channels_needed: list[str] = Field(default_factory=list)
+    volume_units_per_month: int | None = None
+    after_sales_need: Literal["none", "basic", "full"] = "none"
+    competitors: list[str] = Field(default_factory=list)
+    factor_importance: dict[str, str] = Field(default_factory=dict)
+    readiness_answers: dict[str, int] = Field(default_factory=dict)
+
+
 class WhatIf(BaseModel):
     """Hypothetical evidence (treated as verified, dated as_of) and gate results."""
     model_config = ConfigDict(extra="forbid")

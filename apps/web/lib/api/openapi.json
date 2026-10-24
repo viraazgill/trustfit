@@ -149,6 +149,28 @@
         ]
       }
     },
+    "/api/v1/config/fit": {
+      "get": {
+        "tags": [
+          "config"
+        ],
+        "summary": "Public Fit Config",
+        "description": "Fit factors, role defaults, categories and the brief vocabularies (for the SME wizard).",
+        "operationId": "public_fit_config_api_v1_config_fit_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicFitConfig"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/companies": {
       "get": {
         "tags": [
@@ -958,6 +980,239 @@
           }
         }
       }
+    },
+    "/api/v1/smes": {
+      "get": {
+        "tags": [
+          "smes"
+        ],
+        "summary": "List Smes",
+        "operationId": "list_smes_api_v1_smes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SmeOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Smes Api V1 Smes Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "smes"
+        ],
+        "summary": "New Sme",
+        "operationId": "new_sme_api_v1_smes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/smes/{sme_id}": {
+      "get": {
+        "tags": [
+          "smes"
+        ],
+        "summary": "Read Sme",
+        "operationId": "read_sme_api_v1_smes__sme_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sme_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sme Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "smes"
+        ],
+        "summary": "Edit Sme",
+        "operationId": "edit_sme_api_v1_smes__sme_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sme_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sme Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmePatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/smes/{sme_id}/fit/{company_id}": {
+      "get": {
+        "tags": [
+          "smes"
+        ],
+        "summary": "Fit",
+        "description": "Fit Score for one business partner against this SME's brief, plus the combined verdict.",
+        "operationId": "fit_api_v1_smes__sme_id__fit__company_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sme_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sme Id"
+            }
+          },
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ViewerFit"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1501,6 +1756,64 @@
         ],
         "title": "EvidenceRow"
       },
+      "FitConflict": {
+        "properties": {
+          "brand": {
+            "type": "string",
+            "title": "Brand"
+          },
+          "relation": {
+            "type": "string",
+            "title": "Relation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "brand",
+          "relation"
+        ],
+        "title": "FitConflict"
+      },
+      "FitFactor": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "importance": {
+            "type": "string",
+            "title": "Importance"
+          },
+          "weight": {
+            "type": "number",
+            "title": "Weight"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "importance",
+          "weight",
+          "level",
+          "verified"
+        ],
+        "title": "FitFactor"
+      },
       "FlagIn": {
         "properties": {
           "type": {
@@ -1884,6 +2197,141 @@
         ],
         "title": "PublicDimension"
       },
+      "PublicFitCategory": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "action"
+        ],
+        "title": "PublicFitCategory"
+      },
+      "PublicFitConfig": {
+        "properties": {
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "factors": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PublicFitFactor"
+            },
+            "type": "object",
+            "title": "Factors"
+          },
+          "importance_levels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Importance Levels"
+          },
+          "role_default_importance": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Role Default Importance"
+          },
+          "categories": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PublicFitCategory"
+            },
+            "type": "object",
+            "title": "Categories"
+          },
+          "sectors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sectors"
+          },
+          "product_families": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Product Families"
+          },
+          "channels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Channels"
+          },
+          "states": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "States"
+          },
+          "after_sales_needs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "After Sales Needs"
+          },
+          "relations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Relations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "version",
+          "factors",
+          "importance_levels",
+          "role_default_importance",
+          "categories",
+          "sectors",
+          "product_families",
+          "channels",
+          "states",
+          "after_sales_needs",
+          "relations"
+        ],
+        "title": "PublicFitConfig"
+      },
+      "PublicFitFactor": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "base_weight": {
+            "type": "number",
+            "title": "Base Weight"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "base_weight"
+        ],
+        "title": "PublicFitFactor"
+      },
       "PublicLabel": {
         "properties": {
           "label": {
@@ -1896,6 +2344,506 @@
           "label"
         ],
         "title": "PublicLabel"
+      },
+      "SmeIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country",
+            "default": "Japan"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "employees": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employees"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "sector": {
+            "type": "string",
+            "title": "Sector"
+          },
+          "products": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Products"
+          },
+          "role_sought": {
+            "type": "string",
+            "enum": [
+              "supplier",
+              "distributor",
+              "jv_partner"
+            ],
+            "title": "Role Sought"
+          },
+          "target_states": {
+            "$ref": "#/components/schemas/TargetStates"
+          },
+          "channels_needed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Channels Needed"
+          },
+          "volume_units_per_month": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Volume Units Per Month"
+          },
+          "after_sales_need": {
+            "type": "string",
+            "enum": [
+              "none",
+              "basic",
+              "full"
+            ],
+            "title": "After Sales Need",
+            "default": "none"
+          },
+          "competitors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Competitors"
+          },
+          "factor_importance": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "must",
+                "important",
+                "nice",
+                "irrelevant"
+              ]
+            },
+            "type": "object",
+            "title": "Factor Importance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "sector",
+          "role_sought",
+          "target_states",
+          "volume_units_per_month"
+        ],
+        "title": "SmeIn",
+        "description": "An SME brief. Vocabulary values (sector, states, channels) are checked against config/fit_v1.yaml."
+      },
+      "SmeOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "fictional": {
+            "type": "boolean",
+            "title": "Fictional"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "employees": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employees"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "sector": {
+            "type": "string",
+            "title": "Sector"
+          },
+          "products": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Products"
+          },
+          "role_sought": {
+            "type": "string",
+            "title": "Role Sought"
+          },
+          "target_states": {
+            "$ref": "#/components/schemas/TargetStates"
+          },
+          "channels_needed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Channels Needed"
+          },
+          "volume_units_per_month": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume Units Per Month"
+          },
+          "after_sales_need": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "After Sales Need"
+          },
+          "competitors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Competitors"
+          },
+          "factor_importance": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Factor Importance"
+          },
+          "readiness_answers": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Readiness Answers"
+          },
+          "mine": {
+            "type": "boolean",
+            "title": "Mine",
+            "description": "The signed-in user owns this SME and may edit it"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "fictional",
+          "country",
+          "city",
+          "employees",
+          "description",
+          "sector",
+          "products",
+          "role_sought",
+          "target_states",
+          "channels_needed",
+          "volume_units_per_month",
+          "after_sales_need",
+          "competitors",
+          "factor_importance",
+          "readiness_answers",
+          "mine"
+        ],
+        "title": "SmeOut"
+      },
+      "SmePatch": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "employees": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employees"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector"
+          },
+          "products": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Products"
+          },
+          "role_sought": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "supplier",
+                  "distributor",
+                  "jv_partner"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role Sought"
+          },
+          "target_states": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TargetStates"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "channels_needed": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channels Needed"
+          },
+          "volume_units_per_month": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume Units Per Month"
+          },
+          "after_sales_need": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "basic",
+                  "full"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "After Sales Need"
+          },
+          "competitors": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Competitors"
+          },
+          "factor_importance": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string",
+                  "enum": [
+                    "must",
+                    "important",
+                    "nice",
+                    "irrelevant"
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Factor Importance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "SmePatch"
+      },
+      "TargetStates": {
+        "properties": {
+          "primary": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Primary"
+          },
+          "secondary": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Secondary"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "TargetStates"
       },
       "TokenOut": {
         "properties": {
@@ -1999,6 +2947,87 @@
           "role"
         ],
         "title": "TrustScoreIn"
+      },
+      "TrustSummary": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "eligible": {
+            "type": "boolean",
+            "title": "Eligible"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "band": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "provisional": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provisional"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "Green",
+              "Amber",
+              "Red"
+            ],
+            "title": "Verdict"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "eligible",
+          "status",
+          "score",
+          "band",
+          "confidence",
+          "provisional",
+          "verdict"
+        ],
+        "title": "TrustSummary"
       },
       "ValidationError": {
         "properties": {
@@ -2283,6 +3312,203 @@
         ],
         "title": "ViewerCompanyListItem"
       },
+      "ViewerFit": {
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "title": "Company Id"
+          },
+          "company_name": {
+            "type": "string",
+            "title": "Company Name"
+          },
+          "fictional": {
+            "type": "boolean",
+            "title": "Fictional"
+          },
+          "sme_id": {
+            "type": "string",
+            "title": "Sme Id"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "score_raw": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score Raw"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "strong_fit",
+              "possible_fit",
+              "not_a_fit"
+            ],
+            "title": "Category"
+          },
+          "category_label": {
+            "type": "string",
+            "title": "Category Label"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "factors": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/FitFactor"
+            },
+            "type": "object",
+            "title": "Factors"
+          },
+          "gaps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Gaps"
+          },
+          "competitor_conflict": {
+            "type": "boolean",
+            "title": "Competitor Conflict"
+          },
+          "conflict": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FitConflict"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The blocking competitor relation, when there is one"
+          },
+          "trust": {
+            "$ref": "#/components/schemas/TrustSummary"
+          },
+          "combined_verdict": {
+            "type": "string",
+            "enum": [
+              "Green",
+              "Amber",
+              "Red"
+            ],
+            "title": "Combined Verdict",
+            "description": "Trust verdict after Fit (Fit can lower it, never raise it)"
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/ViewerReason"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer",
+            "description": "TrustFit Score is not a credit rating or investment advice."
+          }
+        },
+        "type": "object",
+        "required": [
+          "company_id",
+          "company_name",
+          "fictional",
+          "sme_id",
+          "role",
+          "score",
+          "score_raw",
+          "confidence",
+          "category",
+          "category_label",
+          "action",
+          "factors",
+          "gaps",
+          "competitor_conflict",
+          "conflict",
+          "trust",
+          "combined_verdict",
+          "reasons",
+          "disclaimer"
+        ],
+        "title": "ViewerFit"
+      },
+      "ViewerPending": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "category",
+              "gate"
+            ],
+            "title": "Type"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count",
+            "description": "Unchecked parameters in the category (1 for a gate)"
+          },
+          "points": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Points",
+            "description": "Points still unverified in the category; null for a gate"
+          },
+          "priority": {
+            "type": "boolean",
+            "title": "Priority",
+            "description": "In a dimension under the verified minimum: check these first"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "id",
+          "label",
+          "count",
+          "points",
+          "priority"
+        ],
+        "title": "ViewerPending",
+        "description": "One line of the SME-facing 'What turns it Green': a category's unchecked points, or a pending gate."
+      },
       "ViewerReason": {
         "properties": {
           "code": {
@@ -2432,6 +3658,14 @@
             },
             "type": "array",
             "title": "Reasons"
+          },
+          "pending": {
+            "items": {
+              "$ref": "#/components/schemas/ViewerPending"
+            },
+            "type": "array",
+            "title": "Pending",
+            "description": "What turns it Green, by category (no parameter detail)"
           },
           "disclaimer": {
             "type": "string",

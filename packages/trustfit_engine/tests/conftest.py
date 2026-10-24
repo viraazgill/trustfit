@@ -6,7 +6,8 @@ from pathlib import Path
 import pytest
 
 from trustfit_engine.config import TrustConfig, load_trust_config
-from trustfit_engine.models import Company
+from trustfit_engine.fit_config import FitConfig, load_fit_config
+from trustfit_engine.models import Company, Sme
 from trustfit_engine.seed_io import load_companies
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -50,3 +51,18 @@ def assert_matches(actual, expected, path: str = "$") -> None:
         assert math.isclose(actual, expected, abs_tol=5e-5), f"{path}: {actual!r} != {expected!r}"
     else:  # pragma: no cover
         raise AssertionError(f"{path}: unexpected type {type(expected)}")
+
+
+@pytest.fixture(scope="session")
+def fit_cfg() -> FitConfig:
+    return load_fit_config(CONFIG_DIR / "fit_v1.yaml")
+
+
+@pytest.fixture(scope="session")
+def demo_companies(cfg) -> list[Company]:
+    return load_companies(SEED_DIR / "demo_companies.json", cfg, AS_OF)
+
+
+@pytest.fixture(scope="session")
+def sorano() -> Sme:
+    return Sme.model_validate(json.loads((SEED_DIR / "demo_sme_sorano.json").read_text(encoding="utf-8")))

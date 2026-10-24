@@ -95,6 +95,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/config/fit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Public Fit Config
+         * @description Fit factors, role defaults, categories and the brief vocabularies (for the SME wizard).
+         */
+        get: operations["public_fit_config_api_v1_config_fit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/companies": {
         parameters: {
             query?: never;
@@ -292,6 +312,62 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/smes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Smes */
+        get: operations["list_smes_api_v1_smes_get"];
+        put?: never;
+        /** New Sme */
+        post: operations["new_sme_api_v1_smes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/smes/{sme_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Sme */
+        get: operations["read_sme_api_v1_smes__sme_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Edit Sme */
+        patch: operations["edit_sme_api_v1_smes__sme_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/smes/{sme_id}/fit/{company_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fit
+         * @description Fit Score for one business partner against this SME's brief, plus the combined verdict.
+         */
+        get: operations["fit_api_v1_smes__sme_id__fit__company_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -434,6 +510,26 @@ export interface components {
             /** Updated At */
             updated_at?: string | null;
         };
+        /** FitConflict */
+        FitConflict: {
+            /** Brand */
+            brand: string;
+            /** Relation */
+            relation: string;
+        };
+        /** FitFactor */
+        FitFactor: {
+            /** Label */
+            label: string;
+            /** Importance */
+            importance: string;
+            /** Weight */
+            weight: number;
+            /** Level */
+            level: number | null;
+            /** Verified */
+            verified: boolean;
+        };
         /** FlagIn */
         FlagIn: {
             /**
@@ -573,10 +669,188 @@ export interface components {
             /** Categories */
             categories: string[];
         };
+        /** PublicFitCategory */
+        PublicFitCategory: {
+            /** Label */
+            label: string;
+            /** Action */
+            action: string;
+        };
+        /** PublicFitConfig */
+        PublicFitConfig: {
+            /** Version */
+            version: string;
+            /** Factors */
+            factors: {
+                [key: string]: components["schemas"]["PublicFitFactor"];
+            };
+            /** Importance Levels */
+            importance_levels: string[];
+            /** Role Default Importance */
+            role_default_importance: {
+                [key: string]: {
+                    [key: string]: string;
+                };
+            };
+            /** Categories */
+            categories: {
+                [key: string]: components["schemas"]["PublicFitCategory"];
+            };
+            /** Sectors */
+            sectors: string[];
+            /** Product Families */
+            product_families: {
+                [key: string]: string[];
+            };
+            /** Channels */
+            channels: string[];
+            /** States */
+            states: string[];
+            /** After Sales Needs */
+            after_sales_needs: string[];
+            /** Relations */
+            relations: string[];
+        };
+        /** PublicFitFactor */
+        PublicFitFactor: {
+            /** Label */
+            label: string;
+            /** Base Weight */
+            base_weight: number;
+        };
         /** PublicLabel */
         PublicLabel: {
             /** Label */
             label: string;
+        };
+        /**
+         * SmeIn
+         * @description An SME brief. Vocabulary values (sector, states, channels) are checked against config/fit_v1.yaml.
+         */
+        SmeIn: {
+            /** Name */
+            name: string;
+            /**
+             * Country
+             * @default Japan
+             */
+            country: string | null;
+            /** City */
+            city?: string | null;
+            /** Employees */
+            employees?: number | null;
+            /** Description */
+            description?: string | null;
+            /** Sector */
+            sector: string;
+            /** Products */
+            products?: string[];
+            /**
+             * Role Sought
+             * @enum {string}
+             */
+            role_sought: "supplier" | "distributor" | "jv_partner";
+            target_states: components["schemas"]["TargetStates"];
+            /** Channels Needed */
+            channels_needed?: string[];
+            /** Volume Units Per Month */
+            volume_units_per_month: number;
+            /**
+             * After Sales Need
+             * @default none
+             * @enum {string}
+             */
+            after_sales_need: "none" | "basic" | "full";
+            /** Competitors */
+            competitors?: string[];
+            /** Factor Importance */
+            factor_importance?: {
+                [key: string]: "must" | "important" | "nice" | "irrelevant";
+            };
+        };
+        /** SmeOut */
+        SmeOut: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Fictional */
+            fictional: boolean;
+            /** Country */
+            country: string | null;
+            /** City */
+            city: string | null;
+            /** Employees */
+            employees: number | null;
+            /** Description */
+            description: string | null;
+            /** Sector */
+            sector: string;
+            /** Products */
+            products: string[];
+            /** Role Sought */
+            role_sought: string;
+            target_states: components["schemas"]["TargetStates"];
+            /** Channels Needed */
+            channels_needed: string[];
+            /** Volume Units Per Month */
+            volume_units_per_month: number | null;
+            /** After Sales Need */
+            after_sales_need: string | null;
+            /** Competitors */
+            competitors: string[];
+            /** Factor Importance */
+            factor_importance: {
+                [key: string]: string;
+            };
+            /** Readiness Answers */
+            readiness_answers: {
+                [key: string]: number;
+            };
+            /**
+             * Mine
+             * @description The signed-in user owns this SME and may edit it
+             */
+            mine: boolean;
+        };
+        /** SmePatch */
+        SmePatch: {
+            /** Name */
+            name?: string | null;
+            /** Country */
+            country?: string | null;
+            /** City */
+            city?: string | null;
+            /** Employees */
+            employees?: number | null;
+            /** Description */
+            description?: string | null;
+            /** Sector */
+            sector?: string | null;
+            /** Products */
+            products?: string[] | null;
+            /** Role Sought */
+            role_sought?: ("supplier" | "distributor" | "jv_partner") | null;
+            target_states?: components["schemas"]["TargetStates"] | null;
+            /** Channels Needed */
+            channels_needed?: string[] | null;
+            /** Volume Units Per Month */
+            volume_units_per_month?: number | null;
+            /** After Sales Need */
+            after_sales_need?: ("none" | "basic" | "full") | null;
+            /** Competitors */
+            competitors?: string[] | null;
+            /** Factor Importance */
+            factor_importance?: {
+                [key: string]: "must" | "important" | "nice" | "irrelevant";
+            } | null;
+        };
+        /** TargetStates */
+        TargetStates: {
+            /** Primary */
+            primary?: string[];
+            /** Secondary */
+            secondary?: string[];
         };
         /** TokenOut */
         TokenOut: {
@@ -620,6 +894,28 @@ export interface components {
             /** Role */
             role: string;
             what_if?: components["schemas"]["WhatIf"] | null;
+        };
+        /** TrustSummary */
+        TrustSummary: {
+            /** Role */
+            role: string;
+            /** Eligible */
+            eligible: boolean;
+            /** Status */
+            status: string;
+            /** Score */
+            score: number | null;
+            /** Band */
+            band: string | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Provisional */
+            provisional: boolean | null;
+            /**
+             * Verdict
+             * @enum {string}
+             */
+            verdict: "Green" | "Amber" | "Red";
         };
         /** ValidationError */
         ValidationError: {
@@ -708,6 +1004,88 @@ export interface components {
             hq_state: string | null;
             latest?: components["schemas"]["LatestScore"] | null;
         };
+        /** ViewerFit */
+        ViewerFit: {
+            /** Company Id */
+            company_id: string;
+            /** Company Name */
+            company_name: string;
+            /** Fictional */
+            fictional: boolean;
+            /** Sme Id */
+            sme_id: string;
+            /** Role */
+            role: string;
+            /** Score */
+            score: number | null;
+            /** Score Raw */
+            score_raw: number | null;
+            /** Confidence */
+            confidence: number;
+            /**
+             * Category
+             * @enum {string}
+             */
+            category: "strong_fit" | "possible_fit" | "not_a_fit";
+            /** Category Label */
+            category_label: string;
+            /** Action */
+            action: string;
+            /** Factors */
+            factors: {
+                [key: string]: components["schemas"]["FitFactor"];
+            };
+            /** Gaps */
+            gaps: string[];
+            /** Competitor Conflict */
+            competitor_conflict: boolean;
+            /** @description The blocking competitor relation, when there is one */
+            conflict: components["schemas"]["FitConflict"] | null;
+            trust: components["schemas"]["TrustSummary"];
+            /**
+             * Combined Verdict
+             * @description Trust verdict after Fit (Fit can lower it, never raise it)
+             * @enum {string}
+             */
+            combined_verdict: "Green" | "Amber" | "Red";
+            /** Reasons */
+            reasons: components["schemas"]["ViewerReason"][];
+            /**
+             * Disclaimer
+             * @description TrustFit Score is not a credit rating or investment advice.
+             */
+            disclaimer: string;
+        };
+        /**
+         * ViewerPending
+         * @description One line of the SME-facing 'What turns it Green': a category's unchecked points, or a pending gate.
+         */
+        ViewerPending: {
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "category" | "gate";
+            /** Id */
+            id: string;
+            /** Label */
+            label: string;
+            /**
+             * Count
+             * @description Unchecked parameters in the category (1 for a gate)
+             */
+            count: number;
+            /**
+             * Points
+             * @description Points still unverified in the category; null for a gate
+             */
+            points: number | null;
+            /**
+             * Priority
+             * @description In a dimension under the verified minimum: check these first
+             */
+            priority: boolean;
+        };
         /** ViewerReason */
         ViewerReason: {
             /** Code */
@@ -765,6 +1143,11 @@ export interface components {
             };
             /** Reasons */
             reasons: components["schemas"]["ViewerReason"][];
+            /**
+             * Pending
+             * @description What turns it Green, by category (no parameter detail)
+             */
+            pending?: components["schemas"]["ViewerPending"][];
             /**
              * Disclaimer
              * @description TrustFit Score is not a credit rating or investment advice.
@@ -907,6 +1290,26 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+        };
+    };
+    public_fit_config_api_v1_config_fit_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicFitConfig"];
                 };
             };
         };
@@ -1389,6 +1792,157 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ViewerTrustReport"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_smes_api_v1_smes_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SmeOut"][];
+                };
+            };
+        };
+    };
+    new_sme_api_v1_smes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SmeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SmeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_sme_api_v1_smes__sme_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sme_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SmeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    edit_sme_api_v1_smes__sme_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sme_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SmePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SmeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    fit_api_v1_smes__sme_id__fit__company_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sme_id: string;
+                company_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ViewerFit"];
                 };
             };
             /** @description Validation Error */

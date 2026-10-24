@@ -141,6 +141,8 @@ class Sme(Base):
     competitors: Mapped[list[str]] = mapped_column(ARRAY(String), default=list)
     factor_importance: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
     readiness_answers: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
+    owner_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), index=True)
+    created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class ScoreRun(Base):
@@ -152,7 +154,7 @@ class ScoreRun(Base):
     company_id: Mapped[str | None] = mapped_column(ForeignKey("companies.id", ondelete="CASCADE"), index=True)
     sme_id: Mapped[str | None] = mapped_column(ForeignKey("smes.id", ondelete="CASCADE"), index=True)
     role: Mapped[str | None] = mapped_column(String(30))
-    config_version: Mapped[str] = mapped_column(String(20))
+    config_version: Mapped[str] = mapped_column(String(100))
     as_of: Mapped[dt.date] = mapped_column(Date)
     inputs_hash: Mapped[str] = mapped_column(String(64))
     is_what_if: Mapped[bool] = mapped_column(Boolean, default=False)

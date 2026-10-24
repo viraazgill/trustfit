@@ -12,7 +12,7 @@ API = "/api/v1"
 FORBIDDEN_KEYS = {"rubric", "where_to_check", "check", "note", "notes", "source_url", "evidence",
                   "knockouts", "next_checks", "parameters", "parameter_splits"}
 VIEWER_SCHEMAS = [schemas.ViewerTrustReport, schemas.ViewerCompany, schemas.ViewerCompanyListItem,
-                  schemas.PublicConfig]
+                  schemas.PublicConfig, schemas.PublicFitConfig, schemas.SmeOut, schemas.ViewerFit]
 
 
 def keys_in_schema(model) -> set[str]:
@@ -67,6 +67,10 @@ def viewer_responses(client, headers) -> list:
         for role in trust_config().roles:
             url = f"{API}/companies/{c['id']}/trust-report?role={role}"
             out.append(client.get(url, headers=headers).json())
+    out += [client.get(f"{API}/config/fit").json(), client.get(f"{API}/smes", headers=headers).json()]
+    for c in out[1]:
+        if c["type"] == "business_partner" and "distributor" in c["roles_offered"]:
+            out.append(client.get(f"{API}/smes/sorano/fit/{c['id']}", headers=headers).json())
     return out
 
 
@@ -97,3 +101,12 @@ def test_reports_show_the_disclaimer(client, as_viewer):
 def test_rubrics_are_analyst_only(client, as_analyst):
     body = client.get(f"{API}/config/rubrics", headers=as_analyst).json()
     assert body["parameters"]["A1"]["where_to_check"]
+
+
+def test_viewer_report_lists_what_turns_it_green_by_category(client, as_viewer):
+    report = client.get(f"{API}/companies/subros/trust-report?role=supplier", headers=as_viewer).json()
+    pending = report["pending"]
+    # Integrity (A, C) is under the 50% minimum, so its categories come first.
+    assert [(p["id"], p["count"], p["priority"]) for p in pending[:2]] == [("A", 4, True), ("C", 2, True)]
+    assert pending[0]["points"] == 12.0  # A1 1.5 + A3 3.75 + A4 5.25 + A5 1.5
+    assert [p["id"] for p in pending if p["type"] == "gate"] == ["V1", "V2", "V3"]

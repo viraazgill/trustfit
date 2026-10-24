@@ -12,10 +12,11 @@ from sqlalchemy.orm import Session
 
 from app import models
 from app.errors import ApiError
-from app.schemas import LatestScore, ViewerCategory, ViewerReason, ViewerTrustReport
+from app.schemas import LatestScore, ViewerCategory, ViewerPending, ViewerReason, ViewerTrustReport
 from app.settings import scoring_date, settings
 from trustfit_engine import models as engine
 from trustfit_engine.config import TrustConfig, load_trust_config
+from trustfit_engine.rounding import r4
 from trustfit_engine.trust import evidence_status, score_trust
 
 
@@ -128,7 +129,7 @@ def evidence_rows(company: models.Company) -> list[dict[str, Any]]:
     return rows
 
 
-def _viewer_reasons(result: dict[str, Any], cfg: TrustConfig) -> list[ViewerReason]:
+def viewer_reasons(result: dict[str, Any], cfg: TrustConfig) -> list[ViewerReason]:
     """Knock-outs at a 0% parameter quote rubric text in the engine result; viewers get the category."""
     if result["status"] != "not_eligible":
         return [ViewerReason(**r) for r in result["reasons"]]
@@ -160,5 +161,27 @@ def viewer_report(company: models.Company, role: str) -> ViewerTrustReport:
         confidence=result["confidence"], provisional=result["provisional"], verdict=result["verdict"],
         outlook=result["outlook"], categories=safe(result.get("categories", {})),
         dimensions=safe(result.get("dimensions", {})), gates=result.get("gates", {}),
-        reasons=_viewer_reasons(result, cfg), disclaimer=cfg.disclaimer,
+        reasons=viewer_reasons(result, cfg), pending=viewer_pending(result, cfg), disclaimer=cfg.disclaimer,
     )
+
+
+def viewer_pending(result: dict[str, Any], cfg: TrustConfig) -> list[ViewerPending]:
+    """The engine's next checks rolled up to categories (order kept: under-verified dimensions first,
+    then by points), followed by pending gates. No parameter names, rubric or check instructions."""
+    lines: dict[str, ViewerPending] = {}
+    under = {d for d, v in result.get("dimensions", {}).items()
+             if v["verified_pct"] is not None and v["verified_pct"] < cfg.confidence.dimension_provisional_below}
+    gates = []
+    for check in result.get("next_checks", []):
+        if check["type"] == "gate":
+            gates.append(ViewerPending(type="gate", id=check["id"], label=cfg.gates[check["id"]].label, count=1,
+                                       points=None, priority=False))
+            continue
+        cat = cfg.parameters[check["id"]].category
+        line = lines.get(cat)
+        if line is None:
+            line = lines[cat] = ViewerPending(type="category", id=cat, label=cfg.categories[cat].label, count=0,
+                                              points=0.0, priority=cfg.dimension_of(cat) in under)
+        line.count += 1
+        line.points = r4(line.points + check["points"])
+    return [*lines.values(), *gates]

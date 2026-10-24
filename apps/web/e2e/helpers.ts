@@ -16,3 +16,9 @@ export async function signIn(page: Page, role: "analyst" | "admin" | "viewer") {
 export async function shot(page: Page, name: string) {
   await page.screenshot({ path: path.join(SHOTS, `${name}.png`), fullPage: true });
 }
+
+/** Next keeps the previous page mounted (hidden) after a client-side navigation, so look up test ids
+ * among visible elements only. */
+export function byTestId(page: Page, id: string) {
+  return page.getByTestId(id).filter({ visible: true });
+}

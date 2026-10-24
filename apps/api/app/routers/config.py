@@ -1,9 +1,10 @@
-from typing import Any
+from typing import Any, get_args
 
 from fastapi import APIRouter, Depends
 
 from app.auth import analyst
-from app.schemas import PublicConfig
+from app.schemas import AfterSalesNeed, PublicConfig, PublicFitConfig
+from app.services.fit import fit_config
 from app.services.scoring import trust_config
 
 router = APIRouter(prefix="/config", tags=["config"])
@@ -39,3 +40,19 @@ def rubrics() -> dict[str, Any]:
         "gates": {k: v.model_dump() for k, v in cfg.gates.items()},
         "freshness": cfg.freshness.model_dump(),
     }
+
+
+@router.get("/fit")
+def public_fit_config() -> PublicFitConfig:
+    """Fit factors, role defaults, categories and the brief vocabularies (for the SME wizard)."""
+    cfg = fit_config()
+    voc = cfg.vocabularies
+    return PublicFitConfig(
+        version=cfg.version,
+        factors={k: v.model_dump() for k, v in cfg.factors.items()},
+        importance_levels=list(cfg.importance_multipliers),
+        role_default_importance=cfg.role_default_importance,
+        categories={k: {"label": v.label, "action": v.action} for k, v in cfg.categories.items()},
+        sectors=voc.sectors, product_families=voc.product_families, channels=voc.channels, states=voc.states,
+        after_sales_needs=list(get_args(AfterSalesNeed)), relations=cfg.relations,
+    )
