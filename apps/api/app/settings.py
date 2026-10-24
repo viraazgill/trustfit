@@ -7,7 +7,8 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=REPO_ROOT / ".env", extra="ignore")
+    # Empty values (e.g. SCORING_AS_OF= in .env.example) mean "use the default".
+    model_config = SettingsConfigDict(env_file=REPO_ROOT / ".env", extra="ignore", env_ignore_empty=True)
 
     DATABASE_URL: str = "postgresql+psycopg://trustfit:trustfit@localhost:5432/trustfit"
     TEST_DATABASE_URL: str = "postgresql+psycopg://trustfit:trustfit@localhost:5432/trustfit_test"
