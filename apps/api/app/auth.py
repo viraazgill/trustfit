@@ -27,8 +27,8 @@ def verify_password(password: str, password_hash: str) -> bool:
     return bcrypt.checkpw(password.encode(), password_hash.encode())
 
 
-def create_token(user: User) -> str:
-    expires = dt.datetime.now(dt.UTC) + dt.timedelta(hours=settings.JWT_EXPIRE_HOURS)
+def create_token(user: User, lifetime: dt.timedelta | None = None) -> str:
+    expires = dt.datetime.now(dt.UTC) + (lifetime or dt.timedelta(hours=settings.JWT_EXPIRE_HOURS))
     return jwt.encode({"sub": str(user.id), "role": user.role, "exp": expires},
                       settings.JWT_SECRET, algorithm=JWT_ALGORITHM)
 
@@ -61,3 +61,4 @@ viewer = require("viewer")
 analyst = require("analyst")
 admin = require("admin")
 AnalystUser = Annotated[User, Depends(analyst)]
+AdminUser = Annotated[User, Depends(admin)]

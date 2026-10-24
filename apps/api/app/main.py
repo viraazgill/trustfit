@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import errors
-from app.routers import auth, companies, config, evidence, health, smes, trust
+from app.routers import admin, auth, companies, config, evidence, health, reports, smes, trust
 from app.settings import settings
 
 app = FastAPI(title="TrustFit API", version="0.1.0",
@@ -14,5 +14,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 errors.install(app)
-for module in (health, auth, config, companies, evidence, trust, smes):
+for module in (health, auth, config, companies, evidence, trust, smes, reports, admin):
     app.include_router(module.router, prefix="/api/v1")

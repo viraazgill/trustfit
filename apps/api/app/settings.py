@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     # Fixed scoring date for demos and tests; None means today.
     SCORING_AS_OF: dt.date | None = None
     CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    # The web app the PDF printer opens (it prints the same report pages the SME sees)
+    WEB_URL: str = "http://localhost:3000"
 
     # Users created by `python -m app.seed`
     SEED_ADMIN_EMAIL: str = "admin@trustfit.local"

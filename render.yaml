@@ -1,0 +1,27 @@
+# Render blueprint for the API (the web app deploys on Vercel, Postgres on Neon).
+# Secrets marked sync: false are entered in the Render dashboard, never committed.
+services:
+  - type: web
+    name: trustfit-api
+    runtime: docker
+    dockerfilePath: apps/api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/v1/health
+    autoDeploy: false  # CI triggers the deploy hook after the tests pass on main
+    envVars:
+      - key: DATABASE_URL        # Neon connection string, postgresql+psycopg://...?sslmode=require
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: SEED_ANALYST_PASSWORD
+        sync: false
+      - key: SEED_VIEWER_PASSWORD
+        sync: false
+      - key: CORS_ORIGINS        # JSON list, e.g. ["https://trustfit.vercel.app"]
+        sync: false
+      - key: WEB_URL             # e.g. https://trustfit.vercel.app (the PDF printer opens it)
+        sync: false
+      - key: SCORING_AS_OF       # optional fixed demo date, YYYY-MM-DD
+        sync: false

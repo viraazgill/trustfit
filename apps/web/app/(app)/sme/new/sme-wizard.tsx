@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +16,7 @@ import { type BridgeConfig, useBridgeConfig } from "@/lib/bridge-queries";
 import { type FitConfig, useCreateSme, useFitConfig } from "@/lib/sme-queries";
 import { cn } from "@/lib/utils";
 
-const STEPS = ["Company profile", "India entry brief", "Readiness check"];
+const STEPS = ["profile", "brief", "readiness"] as const;
 
 interface Profile {
   name: string;
@@ -25,6 +26,7 @@ interface Profile {
 }
 
 function Wizard({ cfg, bridgeCfg }: { cfg: FitConfig; bridgeCfg: BridgeConfig }) {
+  const t = useTranslations("brief");
   const router = useRouter();
   const create = useCreateSme();
   const [step, setStep] = useState(0);
@@ -35,9 +37,9 @@ function Wizard({ cfg, bridgeCfg }: { cfg: FitConfig; bridgeCfg: BridgeConfig })
   const questionCount = Object.values(bridgeCfg.dimensions).reduce((n, d) => n + Object.keys(d.questions).length, 0);
 
   const problems = [
-    !profile.name.trim() && "Enter your company name",
-    step >= 1 && !brief.primary.length && "Pick at least one primary target state",
-    step >= 2 && Object.keys(answers).length < questionCount && "Answer every readiness question",
+    !profile.name.trim() && t("problem.name"),
+    step >= 1 && !brief.primary.length && t("problem.primary"),
+    step >= 2 && Object.keys(answers).length < questionCount && t("problem.answers"),
   ].filter(Boolean) as string[];
 
   function submit() {
@@ -56,7 +58,7 @@ function Wizard({ cfg, bridgeCfg }: { cfg: FitConfig; bridgeCfg: BridgeConfig })
             await api(`/smes/${sme.id}/readiness`, "PUT", { answers });
             router.push(`/sme/${sme.id}`);
           } catch (err) {
-            setSaveError(err instanceof Error ? err.message : "Could not save the readiness answers");
+            setSaveError(err instanceof Error ? err.message : t("readinessSaveFailed"));
           }
         },
       },
@@ -66,11 +68,11 @@ function Wizard({ cfg, bridgeCfg }: { cfg: FitConfig; bridgeCfg: BridgeConfig })
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-navy">New SME brief</h1>
+        <h1 className="text-2xl font-semibold text-navy">{t("newTitle")}</h1>
         <ol className="mt-3 flex gap-2 text-sm">
           {STEPS.map((s, i) => (
             <li key={s} className={cn("flex items-center gap-2 rounded-full border px-3 py-1", i === step ? "border-navy bg-navy text-white" : i < step ? "border-blue text-blue" : "text-ink-muted")}>
-              <span className="font-mono text-xs">{i + 1}</span> {s}
+              <span className="font-mono text-xs">{i + 1}</span> {t(`steps.${s}`)}
             </li>
           ))}
         </ol>
@@ -80,19 +82,19 @@ function Wizard({ cfg, bridgeCfg }: { cfg: FitConfig; bridgeCfg: BridgeConfig })
         {step === 0 && (
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="name">Company name</Label>
+              <Label htmlFor="name">{t("companyName")}</Label>
               <Input id="name" value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="city">City (Japan)</Label>
+              <Label htmlFor="city">{t("city")}</Label>
               <Input id="city" value={profile.city} onChange={(e) => setProfile({ ...profile, city: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="employees">Employees</Label>
+              <Label htmlFor="employees">{t("employees")}</Label>
               <Input id="employees" type="number" min={1} value={profile.employees} onChange={(e) => setProfile({ ...profile, employees: e.target.value })} />
             </div>
             <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="description">What you make</Label>
+              <Label htmlFor="description">{t("whatYouMake")}</Label>
               <Textarea id="description" value={profile.description} onChange={(e) => setProfile({ ...profile, description: e.target.value })} />
             </div>
           </div>
@@ -104,16 +106,16 @@ function Wizard({ cfg, bridgeCfg }: { cfg: FitConfig; bridgeCfg: BridgeConfig })
       <div className="flex flex-wrap items-center gap-3">
         {step > 0 && (
           <Button variant="outline" onClick={() => setStep(step - 1)}>
-            Back
+            {t("back")}
           </Button>
         )}
         {step < STEPS.length - 1 ? (
           <Button onClick={() => setStep(step + 1)} disabled={problems.length > 0}>
-            Next
+            {t("next")}
           </Button>
         ) : (
           <Button onClick={submit} disabled={problems.length > 0 || create.isPending}>
-            {create.isPending ? "Saving…" : "Save brief"}
+            {create.isPending ? t("saving") : t("save")}
           </Button>
         )}
         <span className="text-sm text-verdict-amber">{problems[0]}</span>

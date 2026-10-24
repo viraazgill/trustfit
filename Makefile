@@ -41,7 +41,8 @@ test-api:
 	cd apps/api && ../../$(PY) -m pytest -q
 
 lint:
-	$(PY) -m ruff check packages apps/api db
+	$(PY) -m ruff check packages apps/api db scripts
+	$(PY) scripts/i18n_review.py --check
 	cd $(WEB) && npm run lint && npx tsc --noEmit
 
 # Regenerate the web app's API types from FastAPI's OpenAPI schema (commit both files).

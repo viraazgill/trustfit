@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { FictionalBadge } from "@/components/brand";
+import { useTranslations } from "next-intl";
+import { DemoRibbon, FictionalBadge } from "@/components/brand";
 import { FitCard } from "@/components/fit";
 import { TrustReportView } from "@/components/trust-report";
 import { defaultRole } from "@/lib/roles";
-import { humanize, placeName } from "@/lib/format";
+import { placeName } from "@/lib/format";
 import { useCompany, usePublicConfig } from "@/lib/queries";
 import { useFit, useSme, useTrustReport } from "@/lib/sme-queries";
 
@@ -20,13 +21,19 @@ export default function CompanyReport() {
   const role = partner ? sme!.role_sought : defaultRole(company, cfg);
   const report = useTrustReport(cid, role || undefined);
   const fit = useFit(id, cid, partner);
+  const t = useTranslations("sme");
+  const tt = useTranslations("trust");
+  const tc = useTranslations("common");
 
-  if (!company || !sme || !role) return <p className="text-sm text-ink-muted">Loading…</p>;
+  if (!company || !sme || !role) return <p className="text-sm text-ink-muted">{tc("loading")}</p>;
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3">
         <Link href={`/sme/${id}/matches`} className="text-xs text-ink-muted hover:underline">
-          ← Matches
+          {t("backToMatches")}
+        </Link>
+        <Link href={`/report/company/${cid}?role=${role}`} className="ml-auto text-xs text-blue hover:underline">
+          {t("trustReport")} →
         </Link>
       </div>
       <div className="flex flex-wrap items-center gap-3">
@@ -35,10 +42,11 @@ export default function CompanyReport() {
         </h2>
         {company.fictional && <FictionalBadge />}
         <span className="text-sm text-ink-muted">
-          {humanize(company.type)} · Trust scored as a {cfg?.roles[role]?.label.toLowerCase()}
+          {tt(`companyType.${company.type}`)} · {tt("scoredAs", { role: tt(`roles.${role}`) })}
           {company.hq_state && ` · ${placeName(company.hq_state)}`}
         </span>
       </div>
+      {company.fictional && <DemoRibbon kind="company" />}
       {company.description && <p className="text-sm text-ink-muted">{company.description}</p>}
       {fit.data && <FitCard fit={fit.data} />}
       {fit.error && <p className="text-sm text-verdict-red">{fit.error.message}</p>}

@@ -76,3 +76,20 @@ def test_openapi_lists_every_route(client):
               "/api/v1/companies/{company_id}/gates", "/api/v1/companies/{company_id}/trends",
               "/api/v1/companies/{company_id}/trust-score", "/api/v1/companies/{company_id}/trust-report"]:
         assert p in paths, p
+
+
+def test_admin_resets_the_demo_data_and_stays_signed_in(client, as_admin, as_analyst, as_viewer):
+    created = client.post("/api/v1/smes", headers=as_viewer, json={
+        "name": "Temp (Demo)", "sector": "machinery", "role_sought": "supplier", "volume_units_per_month": 10,
+        "target_states": {"primary": ["goa"], "secondary": []}}).json()
+    assert client.post("/api/v1/admin/reset-demo", headers=as_analyst).status_code == 403
+    res = client.post("/api/v1/admin/reset-demo", headers=as_admin)
+    assert res.status_code == 200, res.text
+    assert res.json()["added"] == {"users": 0, "companies": 10, "smes": 1}
+    assert client.get(f"/api/v1/smes/{created['id']}", headers=as_admin).status_code == 404
+    assert client.get("/api/v1/auth/me", headers=as_admin).status_code == 200  # the token still works
+
+
+def test_public_config_reports_the_scoring_date(client):
+    body = client.get("/api/v1/config/public").json()
+    assert (body["scoring_date"], body["fixed_scoring_date"]) == ("2026-10-24", True)

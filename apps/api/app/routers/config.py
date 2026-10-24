@@ -7,6 +7,7 @@ from app.schemas import AfterSalesNeed, PublicBridgeConfig, PublicConfig, Public
 from app.services.bridge import bridge_config
 from app.services.fit import fit_config
 from app.services.scoring import trust_config
+from app.settings import scoring_date, settings
 
 router = APIRouter(prefix="/config", tags=["config"])
 
@@ -26,6 +27,7 @@ def public_config() -> PublicConfig:
         outlook_signals=cfg.outlook.signals,
         confidence=cfg.confidence.model_dump(),
         service_provider_trust_role=cfg.service_provider_trust_role,
+        scoring_date=scoring_date(), fixed_scoring_date=settings.SCORING_AS_OF is not None,
     )
 
 

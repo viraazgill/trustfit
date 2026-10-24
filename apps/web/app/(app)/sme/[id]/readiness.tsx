@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { GapCard, ReadinessRadar } from "@/components/bridge";
 import { ReadinessForm } from "@/components/readiness-form";
@@ -11,6 +12,7 @@ import { useSme } from "@/lib/sme-queries";
 
 function Questionnaire({ smeId, initial, onDone }: { smeId: string; initial: Record<string, number>; onDone?: () => void }) {
   const { data: cfg } = useBridgeConfig();
+  const t = useTranslations("readiness");
   const put = usePutReadiness(smeId);
   const [answers, setAnswers] = useState(initial);
   if (!cfg) return null;
@@ -20,11 +22,11 @@ function Questionnaire({ smeId, initial, onDone }: { smeId: string; initial: Rec
       <ReadinessForm cfg={cfg} answers={answers} onChange={setAnswers} />
       <div className="flex items-center gap-3">
         <Button onClick={() => put.mutate(answers, { onSuccess: onDone })} disabled={Object.keys(answers).length < total || put.isPending}>
-          {put.isPending ? "Saving…" : "Save answers"}
+          {put.isPending ? t("saving") : t("save")}
         </Button>
         {onDone && (
           <Button variant="outline" onClick={onDone}>
-            Cancel
+            {t("cancel")}
           </Button>
         )}
         {put.isError && <span className="text-sm text-verdict-red">{put.error.message}</span>}
@@ -39,14 +41,17 @@ export default function Readiness() {
   const { data: sme } = useSme(id);
   const { data: readiness } = useReadiness(id);
   const [editing, setEditing] = useState(false);
-  if (!sme || !readiness) return <p className="text-sm text-ink-muted">Loading…</p>;
+  const t = useTranslations("readiness");
+  const tc = useTranslations("common");
+  const tt = useTranslations("trust");
+  if (!sme || !readiness) return <p className="text-sm text-ink-muted">{tc("loading")}</p>;
 
   if (!readiness.answered || editing) {
-    if (!sme.mine) return <p className="text-sm text-ink-muted">This SME hasn&apos;t answered the readiness check yet.</p>;
+    if (!sme.mine) return <p className="text-sm text-ink-muted">{t("notAnswered")}</p>;
     return (
       <div className="space-y-3">
-        <h2 className="text-lg font-semibold text-navy">India Entry Readiness check</h2>
-        <p className="text-sm text-ink-muted">16 questions on JETRO&apos;s six asks. Your weak areas become gaps that TrustFit fills with trusted Indian partners.</p>
+        <h2 className="text-lg font-semibold text-navy">{t("checkTitle")}</h2>
+        <p className="text-sm text-ink-muted">{t("checkIntro")}</p>
         <Questionnaire smeId={id} initial={readiness.answers ?? {}} onDone={editing ? () => setEditing(false) : undefined} />
       </div>
     );
@@ -58,21 +63,21 @@ export default function Readiness() {
       <div className="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
         <section className="rounded-xl border bg-white p-5">
           <div className="flex items-baseline justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-ink-muted">Readiness by JETRO ask (0-100)</h2>
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-ink-muted">{t("radarTitle")}</h2>
             {sme.mine && (
               <button className="text-xs text-blue hover:underline" onClick={() => setEditing(true)}>
-                Edit answers
+                {t("editAnswers")}
               </button>
             )}
           </div>
           <ReadinessRadar dimensions={dims} />
         </section>
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-ink-muted">Your gaps</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-ink-muted">{t("yourGaps")}</h2>
           <p className="text-sm text-ink-muted">
-            Severity = how far from ready, weighted by how much it matters for a {sme.role_sought.replace("_", " ")}.{" "}
+            {t("severityHelp", { role: tt(`roles.${sme.role_sought}`) })}{" "}
             <Link href={`/sme/${id}/matches`} className="text-blue hover:underline">
-              See who in India can fill them →
+              {t("seeWho")}
             </Link>
           </p>
         </section>

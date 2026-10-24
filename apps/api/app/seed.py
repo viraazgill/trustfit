@@ -29,9 +29,10 @@ SME_COLUMNS = ("name", "fictional", "country", "city", "employees", "description
                "after_sales_need", "competitors", "factor_importance", "readiness_answers")
 
 
-def reset(db: Session) -> None:
-    for table in (models.ScoreRun, models.EvidenceHistory, models.Evidence, models.Flag, models.Sme,
-                  models.Company, models.User):
+def reset(db: Session, keep_users: bool = False) -> None:
+    tables = [models.ScoreRun, models.EvidenceHistory, models.Evidence, models.Flag, models.Sme,
+              models.Company]
+    for table in tables if keep_users else [*tables, models.User]:
         db.execute(delete(table))
 
 
@@ -82,9 +83,11 @@ def seed_smes(db: Session) -> int:
     return added
 
 
-def seed(db: Session, as_of: dt.date, wipe: bool = False) -> dict[str, int]:
+def seed(db: Session, as_of: dt.date, wipe: bool = False, keep_users: bool = False) -> dict[str, int]:
+    """Load the seed files. `wipe` empties the tables first; `keep_users` spares the users table (the
+    admin's "Reset demo data" button, so whoever pressed it stays signed in)."""
     if wipe:
-        reset(db)
+        reset(db, keep_users=keep_users)
     counts = {"users": seed_users(db), "companies": seed_companies(db, as_of), "smes": seed_smes(db)}
     db.commit()
     return counts

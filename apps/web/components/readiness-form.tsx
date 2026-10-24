@@ -1,7 +1,9 @@
 "use client";
 
 /** The 16-question India Entry Readiness check, grouped by JETRO's six asks, with a progress bar. */
+import { useTranslations } from "next-intl";
 import type { BridgeConfig } from "@/lib/bridge-queries";
+import { useLabel } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export function ReadinessForm({
@@ -13,6 +15,8 @@ export function ReadinessForm({
   answers: Record<string, number>;
   onChange: (a: Record<string, number>) => void;
 }) {
+  const t = useTranslations("readiness");
+  const tl = useLabel();
   const scale = Object.entries(cfg.answer_scale).map(([k, label]) => ({ value: Number(k), label }));
   const total = Object.values(cfg.dimensions).reduce((n, d) => n + Object.keys(d.questions).length, 0);
   const done = Object.keys(answers).length;
@@ -20,10 +24,8 @@ export function ReadinessForm({
     <div className="space-y-6">
       <div>
         <div className="flex justify-between text-xs text-ink-muted">
-          <span>
-            {done} of {total} answered
-          </span>
-          <span>0 = not started · 4 = done and validated</span>
+          <span>{t("answered", { done, total })}</span>
+          <span>{t("scaleHint")}</span>
         </div>
         <div className="mt-1 h-2 rounded-full bg-muted" role="progressbar" aria-valuenow={done} aria-valuemax={total}>
           <div className="h-2 rounded-full bg-blue transition-all" style={{ width: `${(100 * done) / total}%` }} />
@@ -33,14 +35,14 @@ export function ReadinessForm({
         <fieldset key={dim} className="space-y-3">
           <legend className="text-sm font-semibold text-navy">
             <span className="mr-2 font-mono text-blue">{dim}</span>
-            {d.label}
+            {tl(`readiness.${dim}.label`, d.label)}
           </legend>
-          <p className="-mt-2 text-xs text-ink-muted">JETRO ask: {d.jetro_ask}</p>
+          <p className="-mt-2 text-xs text-ink-muted">{t("jetroAsk", { ask: tl(`readiness.${dim}.ask`, d.jetro_ask) })}</p>
           {Object.entries(d.questions).map(([q, text]) => (
             <div key={q} className="rounded-lg border bg-white p-3" data-testid={`question-${q}`}>
               <p className="text-sm text-navy">
                 <span className="mr-2 font-mono text-xs text-ink-muted">{q}</span>
-                {text}
+                {tl(`questions.${q.replace(".", "_")}`, text)}
               </p>
               <div className="mt-2 flex flex-wrap gap-1.5" role="radiogroup" aria-label={q}>
                 {scale.map((s) => (
@@ -56,7 +58,7 @@ export function ReadinessForm({
                     )}
                   >
                     <span className="mr-1 font-mono">{s.value}</span>
-                    {s.label}
+                    {tl(`scale.${s.value}`, s.label)}
                   </button>
                 ))}
               </div>

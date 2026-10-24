@@ -440,6 +440,11 @@ class ViewerBridge(BaseModel):
     disclaimer: str = DISCLAIMER_FIELD
 
 
+class ResetOut(BaseModel):
+    as_of: dt.date
+    added: dict[str, int]
+
+
 # ---------------------------------------------------------------- config
 
 class PublicLabel(BaseModel):
@@ -481,6 +486,8 @@ class PublicConfig(BaseModel):
     outlook_signals: dict[str, str]
     confidence: PublicConfidence
     service_provider_trust_role: str
+    scoring_date: dt.date = Field(description="The date every score is computed as of")
+    fixed_scoring_date: bool = Field(description="True when SCORING_AS_OF pins the date (demo mode)")
 
 
 class PublicFitFactor(BaseModel):

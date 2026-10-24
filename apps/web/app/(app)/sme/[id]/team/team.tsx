@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { FictionalBadge } from "@/components/brand";
 import { CoverageHeatmap, CoverageRing, SeverityChip } from "@/components/bridge";
 import { VerdictChip } from "@/components/trust";
 import { useBridge, useBridgeConfig, useReadiness } from "@/lib/bridge-queries";
-import { humanize, rhu } from "@/lib/format";
+import { rhu } from "@/lib/format";
+import { useLabel } from "@/lib/i18n";
 import type { Verdict } from "@/lib/trust-types";
 import { cn } from "@/lib/utils";
 
@@ -22,19 +24,24 @@ export default function Team() {
   const { data: readiness } = useReadiness(id);
   const bridge = useBridge(id, !!readiness?.answered);
   const { data: cfg } = useBridgeConfig();
+  const t = useTranslations("bridge");
+  const tt = useTranslations("trust");
+  const tl = useLabel();
   if (readiness && !readiness.answered)
     return (
       <p className="text-sm text-ink-muted">
-        Answer the{" "}
-        <Link href={`/sme/${id}`} className="text-blue hover:underline">
-          readiness check
-        </Link>{" "}
-        first.
+        {t.rich("answerFirstTeam", {
+          link: () => (
+            <Link href={`/sme/${id}`} className="text-blue hover:underline">
+              {t("readinessLink")}
+            </Link>
+          ),
+        })}
       </p>
     );
   if (bridge.error) return <p className="text-sm text-verdict-red">{bridge.error.message}</p>;
   const b = bridge.data;
-  if (!b || !cfg) return <p className="text-sm text-ink-muted">Building your team…</p>;
+  if (!b || !cfg) return <p className="text-sm text-ink-muted">{t("building")}</p>;
 
   const byId = Object.fromEntries(b.companies.map((c) => [c.company_id, c]));
   const gaps = Object.entries(b.gap_status).map(([g, s]) => ({
@@ -50,33 +57,37 @@ export default function Team() {
     <div className="space-y-6">
       <div className="grid gap-5 lg:grid-cols-[auto_1fr]">
         <section className="rounded-xl border bg-white p-5">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">Team coverage</h2>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">{t("teamCoverage")}</h2>
           <CoverageRing value={b.team_coverage} target={cfg.target_team_coverage} />
         </section>
         <section className="rounded-xl border bg-white p-5" data-testid="gap-status">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">Gaps after the team</h2>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">{t("gapsAfter")}</h2>
           <ul className="space-y-1.5 text-sm">
             {gaps.map((g) => (
               <li key={g.id} className="flex flex-wrap items-center gap-3">
                 <span className="w-7 font-mono text-xs text-blue">{g.id}</span>
-                <span className="flex-1">{g.label}</span>
+                <span className="flex-1">{tl(`readiness.${g.id}.label`, g.label)}</span>
                 <SeverityChip label={g.severity} />
                 <span className={cn("w-28 text-right text-xs font-medium", STATUS_STYLE[g.status])}>
-                  {g.status} ({rhu(100 * g.team)}%)
+                  {t(`status.${g.status}`)} ({rhu(100 * g.team)}%)
                 </span>
               </li>
             ))}
           </ul>
           {weak.length > 0 && (
             <p className="mt-3 rounded-md bg-muted px-3 py-2 text-xs text-navy" data-testid="uncovered">
-              Still open: {weak.map((g) => `${g.label} (${g.severity}, ${g.status})`).join("; ")}. Plan these yourself or ask TrustFit for more partners.
+              {t("stillOpen", {
+                gaps: weak
+                  .map((g) => `${tl(`readiness.${g.id}.label`, g.label)} (${tl(`severity.${g.severity}`, g.severity)}, ${t(`status.${g.status}`)})`)
+                  .join("; "),
+              })}
             </p>
           )}
         </section>
       </div>
 
       <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">Your India entry team</h2>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">{t("yourTeam")}</h2>
         <div className="grid gap-4 md:grid-cols-2">
           {b.team.map((m) => {
             const c = byId[m.company_id];
@@ -90,21 +101,21 @@ export default function Team() {
                     {c.fictional && <FictionalBadge />}
                   </span>
                   <span className="rounded-full bg-navy px-2 py-0.5 text-xs text-white">
-                    {m.slot === "primary" ? `Primary ${humanize(c.trust_role).toLowerCase()}` : "Service provider"}
+                    {m.slot === "primary" ? t("primary", { role: tt(`roles.${c.trust_role}`) }) : t("serviceProvider")}
                   </span>
                 </div>
                 <div className="mt-2 flex items-center gap-2 text-xs text-ink-muted">
-                  Trust <span className="font-mono text-navy">{c.trust_score}</span>
+                  {t("trust")} <span className="font-mono text-navy">{c.trust_score}</span>
                   <VerdictChip verdict={c.trust_verdict as Verdict} size="sm" />
-                  {c.fit !== null && <span>· Fit {c.fit}</span>}· adds {rhu(m.gain, 1)} coverage points
+                  {c.fit !== null && <span>· {t("fit")} {c.fit}</span>}· {t("adds", { points: rhu(m.gain, 1) })}
                 </div>
                 <ul className="mt-3 space-y-1 text-sm">
                   {m.covers.map((cv) => (
                     <li key={`${cv.gap}-${cv.capability}`} className="flex gap-2">
                       <span className="w-7 shrink-0 font-mono text-xs text-blue">{cv.gap}</span>
-                      <span className="flex-1">{cv.label}</span>
+                      <span className="flex-1">{tl(`capabilities.${cv.capability}`, cv.label)}</span>
                       <span className="text-xs text-ink-muted">
-                        {rhu(100 * cv.strength)}%{cv.verified ? "" : ", not yet verified"}
+                        {rhu(100 * cv.strength)}%{cv.verified ? "" : t("notYetVerified")}
                       </span>
                     </li>
                   ))}
@@ -116,7 +127,7 @@ export default function Team() {
       </section>
 
       <section className="rounded-xl border bg-white p-5">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">Coverage matrix</h2>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">{t("matrix")}</h2>
         <CoverageHeatmap
           gaps={gaps}
           members={b.team.map((m) => ({ id: m.company_id, name: byId[m.company_id].name, perGap: byId[m.company_id].per_gap }))}

@@ -1387,6 +1387,33 @@
           }
         }
       }
+    },
+    "/api/v1/admin/reset-demo": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Reset Demo",
+        "description": "Wipe companies, evidence, flags, SMEs and score runs, then reload the seed files (users are kept).",
+        "operationId": "reset_demo_api_v1_admin_reset_demo_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -2687,6 +2714,17 @@
           "service_provider_trust_role": {
             "type": "string",
             "title": "Service Provider Trust Role"
+          },
+          "scoring_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Scoring Date",
+            "description": "The date every score is computed as of"
+          },
+          "fixed_scoring_date": {
+            "type": "boolean",
+            "title": "Fixed Scoring Date",
+            "description": "True when SCORING_AS_OF pins the date (demo mode)"
           }
         },
         "type": "object",
@@ -2702,7 +2740,9 @@
           "gates",
           "outlook_signals",
           "confidence",
-          "service_provider_trust_role"
+          "service_provider_trust_role",
+          "scoring_date",
+          "fixed_scoring_date"
         ],
         "title": "PublicConfig"
       },
@@ -2994,6 +3034,28 @@
           "answers"
         ],
         "title": "ReadinessOut"
+      },
+      "ResetOut": {
+        "properties": {
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of"
+          },
+          "added": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Added"
+          }
+        },
+        "type": "object",
+        "required": [
+          "as_of",
+          "added"
+        ],
+        "title": "ResetOut"
       },
       "SmeIn": {
         "properties": {

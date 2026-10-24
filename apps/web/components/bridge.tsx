@@ -1,8 +1,10 @@
 "use client";
 
 /** Gap Bridge pieces: severity chip, readiness radar, gap card, coverage ring, coverage heatmap. */
+import { useTranslations } from "next-intl";
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip } from "recharts";
 import { rhu } from "@/lib/format";
+import { useLabel } from "@/lib/i18n";
 import type { ReadinessDimension } from "@/lib/bridge-queries";
 import { cn } from "@/lib/utils";
 
@@ -14,26 +16,35 @@ const SEVERITY_STYLE: Record<string, string> = {
 };
 
 export function SeverityChip({ label }: { label: string }) {
+  const tl = useLabel();
   return (
     <span data-testid="severity" className={cn("inline-flex rounded-full border px-2 py-0.5 text-xs font-medium capitalize", SEVERITY_STYLE[label])}>
-      {label}
+      {tl(`severity.${label}`, label)}
     </span>
   );
 }
 
 export function CoveredByTrustFit() {
+  const t = useTranslations("readiness");
   return (
     <span className="inline-flex rounded-full border border-blue/40 bg-blue/10 px-2 py-0.5 text-xs font-medium text-blue">
-      Covered by TrustFit
+      {t("coveredByTrustFit")}
     </span>
   );
 }
 
 /** Axis label wrapped onto two lines at a word boundary, anchored away from the chart. */
 function AxisLabel({ x, y, payload, textAnchor }: { x?: number | string; y?: number | string; payload?: { value: string }; textAnchor?: string }) {
-  const words = (payload?.value ?? "").split(" ");
+  const text = payload?.value ?? "";
+  const words = text.split(" ");
   const half = Math.ceil(words.length / 2);
-  const lines = words.length > 2 ? [words.slice(0, half).join(" "), words.slice(half).join(" ")] : [words.join(" ")];
+  // Japanese has no spaces: split a long label in the middle instead
+  const lines =
+    words.length > 2
+      ? [words.slice(0, half).join(" "), words.slice(half).join(" ")]
+      : words.length === 1 && text.length > 8
+        ? [text.slice(0, Math.ceil(text.length / 2)), text.slice(Math.ceil(text.length / 2))]
+        : [text];
   return (
     <text x={x} y={y} textAnchor={textAnchor as "start" | "middle" | "end"} fill="#4a5568" fontSize={11}>
       {lines.map((line, i) => (
@@ -49,9 +60,16 @@ const BRAND_BLUE = "#1f4e8c"; // single series: contrast-checked against the whi
 
 /** Readiness 0-100 on the six JETRO asks. One series, so the title names it and no legend is shown. */
 export function ReadinessRadar({ dimensions }: { dimensions: Record<string, ReadinessDimension> }) {
-  const data = Object.entries(dimensions).map(([id, d]) => ({ id, label: d.label, ask: d.jetro_ask, readiness: d.readiness }));
+  const t = useTranslations("readiness");
+  const tl = useLabel();
+  const data = Object.entries(dimensions).map(([id, d]) => ({
+    id,
+    label: tl(`readiness.${id}.label`, d.label),
+    ask: tl(`readiness.${id}.ask`, d.jetro_ask),
+    readiness: d.readiness,
+  }));
   return (
-    <div className="h-80 w-full" data-testid="readiness-radar" role="img" aria-label="Readiness by JETRO ask, 0 to 100">
+    <div className="h-80 w-full" data-testid="readiness-radar" role="img" aria-label={t("radarAria")}>
       <ResponsiveContainer>
         <RadarChart data={data} outerRadius="66%" margin={{ top: 24, right: 72, bottom: 24, left: 72 }}>
           <PolarGrid stroke="#d9d6cf" />
@@ -67,9 +85,9 @@ export function ReadinessRadar({ dimensions }: { dimensions: Record<string, Read
               return (
                 <div className="max-w-64 rounded-md border bg-white px-3 py-2 text-xs shadow-sm">
                   <div className="font-medium text-navy">
-                    {p.id} {p.label}: {rhu(p.readiness, 1)}% ready
+                    {t("radarTip", { id: p.id, label: p.label, pct: rhu(p.readiness, 1) })}
                   </div>
-                  <div className="text-ink-muted">JETRO ask: {p.ask}</div>
+                  <div className="text-ink-muted">{t("jetroAsk", { ask: p.ask })}</div>
                 </div>
               );
             }}
@@ -81,28 +99,30 @@ export function ReadinessRadar({ dimensions }: { dimensions: Record<string, Read
 }
 
 export function GapCard({ id, d }: { id: string; d: ReadinessDimension }) {
+  const t = useTranslations("readiness");
+  const tl = useLabel();
   return (
     <div data-testid={`gap-${id}`} className="rounded-xl border bg-white p-4">
       <div className="flex items-start justify-between gap-2">
         <div>
           <span className="mr-2 font-mono text-xs font-semibold text-blue">{id}</span>
-          <span className="text-sm font-medium text-navy">{d.label}</span>
+          <span className="text-sm font-medium text-navy">{tl(`readiness.${id}.label`, d.label)}</span>
         </div>
         {d.covered_by_trustfit ? <CoveredByTrustFit /> : <SeverityChip label={d.severity_label} />}
       </div>
-      <p className="mt-1 text-xs text-ink-muted">{d.jetro_ask}</p>
+      <p className="mt-1 text-xs text-ink-muted">{tl(`readiness.${id}.ask`, d.jetro_ask)}</p>
       <div className="mt-3 flex items-baseline gap-4 text-sm">
         <span>
           <span className="font-mono text-lg font-semibold text-navy">{rhu(d.readiness)}%</span>{" "}
-          <span className="text-xs text-ink-muted">ready</span>
+          <span className="text-xs text-ink-muted">{t("ready")}</span>
         </span>
         <span>
           <span className="font-mono text-lg font-semibold text-navy">{rhu(d.severity)}</span>{" "}
-          <span className="text-xs text-ink-muted">gap severity</span>
+          <span className="text-xs text-ink-muted">{t("gapSeverity")}</span>
         </span>
       </div>
       {d.covered_by_trustfit && (
-        <p className="mt-2 text-xs text-blue">Every company TrustFit recommends is already Trust-scored and verified.</p>
+        <p className="mt-2 text-xs text-blue">{t("coveredNote")}</p>
       )}
     </div>
   );
@@ -110,12 +130,13 @@ export function GapCard({ id, d }: { id: string; d: ReadinessDimension }) {
 
 /** A single headline number with a ring: the share of the SME's gap severity the team covers. */
 export function CoverageRing({ value, target }: { value: number; target: number }) {
+  const t = useTranslations("bridge");
   const r = 52;
   const c = 2 * Math.PI * r;
   const pctValue = Math.max(0, Math.min(100, value));
   return (
     <div className="flex items-center gap-4" data-testid="team-coverage">
-      <svg width="128" height="128" viewBox="0 0 128 128" role="img" aria-label={`Team covers ${rhu(value)}% of gap severity`}>
+      <svg width="128" height="128" viewBox="0 0 128 128" role="img" aria-label={t("ringAria", { pct: rhu(value) })}>
         <circle cx="64" cy="64" r={r} fill="none" stroke="#e8e5de" strokeWidth="12" />
         <circle cx="64" cy="64" r={r} fill="none" stroke={BRAND_BLUE} strokeWidth="12" strokeLinecap="round"
           strokeDasharray={`${(pctValue / 100) * c} ${c}`} transform="rotate(-90 64 64)" />
@@ -125,8 +146,8 @@ export function CoverageRing({ value, target }: { value: number; target: number 
         </text>
       </svg>
       <div className="text-sm">
-        <div className="font-medium text-navy">of your gap severity covered</div>
-        <div className="text-xs text-ink-muted">The team stops growing at {target}% (coral mark) or when another member adds too little.</div>
+        <div className="font-medium text-navy">{t("ringLabel")}</div>
+        <div className="text-xs text-ink-muted">{t("ringHelp", { target })}</div>
       </div>
     </div>
   );
@@ -148,18 +169,20 @@ export function CoverageHeatmap({
   gaps: { id: string; label: string; severity: string; team: number }[];
   members: { id: string; name: string; perGap: Record<string, number> }[];
 }) {
+  const t = useTranslations("bridge");
+  const tl = useLabel();
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-separate text-xs" style={{ borderSpacing: 2 }} data-testid="coverage-matrix">
         <thead>
           <tr>
-            <th className="p-2 text-left font-normal text-ink-muted">Gap</th>
+            <th className="p-2 text-left font-normal text-ink-muted">{t("gap")}</th>
             {members.map((m) => (
               <th key={m.id} className="max-w-28 p-2 text-left font-medium text-navy">
                 {m.name.replace(" (Demo)", "")}
               </th>
             ))}
-            <th className="p-2 text-left font-medium text-navy">Team</th>
+            <th className="p-2 text-left font-medium text-navy">{t("team")}</th>
           </tr>
         </thead>
         <tbody>
@@ -167,19 +190,20 @@ export function CoverageHeatmap({
             <tr key={g.id}>
               <td className="p-2 text-navy">
                 <span className="mr-1 font-mono text-blue">{g.id}</span>
-                {g.label} <span className="text-ink-muted">({g.severity})</span>
+                {tl(`readiness.${g.id}.label`, g.label)}{" "}
+                <span className="text-ink-muted">({tl(`severity.${g.severity}`, g.severity)})</span>
               </td>
               {members.map((m) => {
                 const v = m.perGap[g.id] ?? 0;
                 return (
-                  <td key={m.id} title={`${m.name}: covers ${rhu(100 * v)}% of ${g.label}`}
+                  <td key={m.id} title={t("cellTitle", { name: m.name, pct: rhu(100 * v), gap: tl(`readiness.${g.id}.label`, g.label) })}
                     className={cn("rounded p-2 text-center font-mono", v >= 0.6 ? "text-white" : "text-navy")}
                     style={{ background: cellColor(v) }}>
                     {v > 0 ? `${rhu(100 * v)}%` : "—"}
                   </td>
                 );
               })}
-              <td title={`Team covers ${rhu(100 * g.team)}% of ${g.label}`}
+              <td title={t("teamCellTitle", { pct: rhu(100 * g.team), gap: tl(`readiness.${g.id}.label`, g.label) })}
                 className={cn("rounded p-2 text-center font-mono font-semibold", g.team >= 0.6 ? "text-white" : "text-navy")}
                 style={{ background: cellColor(g.team) }}>
                 {rhu(100 * g.team)}%
@@ -188,7 +212,7 @@ export function CoverageHeatmap({
           ))}
         </tbody>
       </table>
-      <p className="mt-2 text-xs text-ink-muted">Darker = more of the gap covered. Each capability counts once, from the team&apos;s strongest member.</p>
+      <p className="mt-2 text-xs text-ink-muted">{t("matrixHelp")}</p>
     </div>
   );
 }

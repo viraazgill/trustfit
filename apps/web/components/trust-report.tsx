@@ -1,14 +1,19 @@
 "use client";
 
 /** The SME-facing Trust report: categories, weights, scores and reasons only (never rubric detail). */
+import { useTranslations } from "next-intl";
 import { CategoryBar, ConfidenceMeter, DimensionCard, ReasonsList, ScoreCard } from "@/components/trust";
 import { num } from "@/lib/format";
+import { useLabel } from "@/lib/i18n";
 import { usePublicConfig } from "@/lib/queries";
 import type { TrustReport } from "@/lib/sme-queries";
 import type { Verdict } from "@/lib/trust-types";
 
 export function TrustReportView({ report }: { report: TrustReport }) {
   const { data: cfg } = usePublicConfig();
+  const t = useTranslations("trust");
+  const tc = useTranslations("common");
+  const label = useLabel();
   const dimensions = report.dimensions ?? {};
   const categories = report.categories ?? {};
   const pending = report.pending ?? [];
@@ -36,8 +41,8 @@ export function TrustReportView({ report }: { report: TrustReport }) {
           {Object.entries(dimensions).map(([key, d]) => (
             <DimensionCard
               key={key}
-              label={d.label}
-              question={cfg.dimensions[key]?.question}
+              label={label(`trustDimensions.${key}.label`, d.label)}
+              question={label(`trustDimensions.${key}.question`, cfg.dimensions[key]?.question ?? "")}
               scorePct={d.score_pct}
               verifiedPct={d.verified_pct}
               minVerified={minVerified}
@@ -47,23 +52,25 @@ export function TrustReportView({ report }: { report: TrustReport }) {
       )}
       <div className="grid gap-5 lg:grid-cols-2">
         <section className="rounded-xl border bg-white p-5">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">Why {report.verdict}</h2>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">{t("why", { verdict: report.verdict })}</h2>
           <ReasonsList reasons={report.reasons} />
         </section>
         <section className="rounded-xl border bg-white p-5" data-testid="what-turns-it-green">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">What turns it Green</h2>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">{t("whatTurnsGreen")}</h2>
           {pending.length === 0 ? (
-            <p className="text-sm text-ink-muted">Nothing left to check.</p>
+            <p className="text-sm text-ink-muted">{t("nothingLeft")}</p>
           ) : (
             <ul className="space-y-1.5 text-sm">
               {pending.map((p) => (
                 <li key={`${p.type}-${p.id}`} className="flex gap-3">
                   <span className="w-7 shrink-0 font-mono text-xs font-semibold text-blue">{p.id}</span>
                   <span className="flex-1">
-                    {p.type === "gate" ? `Verification gate: ${p.label}` : `${p.label}: ${p.count} check${p.count > 1 ? "s" : ""} to run`}
-                    {p.priority && <span className="ml-2 text-xs font-medium text-verdict-amber">first</span>}
+                    {p.type === "gate"
+                      ? t("gateLine", { label: label(`gates.${p.id}`, p.label) })
+                      : t("checksToRun", { label: label(`trustCategories.${p.id}`, p.label), count: p.count })}
+                    {p.priority && <span className="ml-2 text-xs font-medium text-verdict-amber">{t("first")}</span>}
                   </span>
-                  {p.points !== null && <span className="text-xs text-ink-muted">{num(p.points)} pts</span>}
+                  {p.points !== null && <span className="text-xs text-ink-muted">{tc("pts", { points: num(p.points) })}</span>}
                 </li>
               ))}
             </ul>
@@ -73,13 +80,13 @@ export function TrustReportView({ report }: { report: TrustReport }) {
       {Object.keys(categories).length > 0 && (
         <section className="rounded-xl border bg-white p-5">
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">
-            Categories and weights (pale = under half verified)
+            {t("categoriesWeights")}
           </h2>
           {Object.entries(categories).map(([key, c]) => (
             <CategoryBar
               key={key}
               id={key}
-              label={c.label}
+              label={label(`trustCategories.${key}`, c.label)}
               scorePct={c.score_pct}
               verifiedPct={c.verified_pct}
               points={c.weight}

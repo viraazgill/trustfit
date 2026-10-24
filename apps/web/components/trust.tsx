@@ -1,4 +1,8 @@
+"use client";
+
 /** Shared Trust components, used by the analyst score panel and the SME-facing reports. */
+import { useTranslations } from "next-intl";
+import { useLabel } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { num, pct, rhu } from "@/lib/format";
 import type { Verdict } from "@/lib/trust-types";
@@ -42,11 +46,13 @@ export function ScoreCard({
   provisional: boolean | null;
   outlook: string | null;
 }) {
+  const t = useTranslations("trust");
+  const label = useLabel();
   const headline =
-    status === "not_eligible" ? "Not eligible" : status === "insufficient_data" ? "No score" : null;
+    status === "not_eligible" ? t("notEligible") : status === "insufficient_data" ? t("noScore") : null;
   return (
     <div className="flex flex-col gap-3 rounded-xl border bg-white p-6">
-      <div className="text-xs font-medium uppercase tracking-wider text-ink-muted">TrustFit Score</div>
+      <div className="text-xs font-medium uppercase tracking-wider text-ink-muted">{t("title")}</div>
       <div className="flex items-end gap-4">
         {headline ? (
           <span data-testid="score" className="text-4xl font-semibold text-navy">
@@ -59,7 +65,7 @@ export function ScoreCard({
         )}
         {band && (
           <span data-testid="band" className="pb-1 text-lg font-medium text-blue">
-            {band}
+            {label(`band.${band}`, band)}
           </span>
         )}
       </div>
@@ -67,12 +73,12 @@ export function ScoreCard({
         <VerdictChip verdict={verdict} size="lg" />
         {provisional && (
           <span className="rounded-full border border-verdict-amber/50 px-2 py-0.5 text-xs text-verdict-amber">
-            Provisional
+            {t("provisional")}
           </span>
         )}
         {outlook && (
           <span data-testid="outlook" className="text-sm text-ink-muted">
-            Outlook: <span className="font-medium text-navy">{outlook}</span>
+            {t("outlook")} <span className="font-medium text-navy">{label(`outlook.${outlook}`, outlook)}</span>
           </span>
         )}
       </div>
@@ -90,15 +96,16 @@ export function ConfidenceMeter({
   noScoreBelow: number;
   provisionalBelow: number;
 }) {
+  const t = useTranslations("trust");
   const v = value ?? 0;
   const color = v < noScoreBelow ? "bg-verdict-red" : v < provisionalBelow ? "bg-verdict-amber" : "bg-verdict-green";
   return (
     <div className="rounded-xl border bg-white p-6">
       <div className="flex items-baseline justify-between">
-        <span className="text-xs font-medium uppercase tracking-wider text-ink-muted">Confidence</span>
+        <span className="text-xs font-medium uppercase tracking-wider text-ink-muted">{t("confidence")}</span>
         <span data-testid="confidence" className="font-mono text-2xl font-semibold text-navy">
           {value === null ? "—" : rhu(v, 2)}
-          <span className="text-sm text-ink-muted"> / 100 verified</span>
+          <span className="text-sm text-ink-muted"> {t("perVerified")}</span>
         </span>
       </div>
       <div className="relative mt-4 h-3 rounded-full bg-muted">
@@ -110,7 +117,7 @@ export function ConfidenceMeter({
         ))}
       </div>
       <p className="mt-5 text-xs text-ink-muted">
-        Below {noScoreBelow}: no score. Below {provisionalBelow}: provisional. Missing evidence lowers confidence, never the score.
+        {t("confidenceHelp", { noScore: noScoreBelow, provisional: provisionalBelow })}
       </p>
     </div>
   );
@@ -129,6 +136,7 @@ export function DimensionCard({
   verifiedPct: number | null;
   minVerified: number;
 }) {
+  const t = useTranslations("trust");
   const under = verifiedPct !== null && verifiedPct < minVerified;
   return (
     <div
@@ -141,8 +149,8 @@ export function DimensionCard({
         {scorePct === null ? "—" : rhu(scorePct, 1)}
       </div>
       <div className={cn("text-xs", under ? "font-medium text-verdict-amber" : "text-ink-muted")}>
-        {pct(verifiedPct, 2)} verified
-        {under && ` · under the ${minVerified}% minimum`}
+        {t("verified", { pct: pct(verifiedPct, 2) })}
+        {under && t("underMinimum", { min: minVerified })}
       </div>
     </div>
   );
@@ -165,6 +173,8 @@ export function CategoryBar({
   points: number;
   minVerified: number;
 }) {
+  const t = useTranslations("trust");
+  const tc = useTranslations("common");
   const pale = verifiedPct === null || verifiedPct < minVerified;
   return (
     <div data-testid={`category-${id}`} className="grid grid-cols-[2rem_1fr_auto] items-center gap-3 py-1.5">
@@ -173,8 +183,10 @@ export function CategoryBar({
         <div className="flex justify-between text-xs">
           <span className="text-navy">{label}</span>
           <span className="text-ink-muted">
-            {verifiedPoints !== undefined ? `${num(verifiedPoints)} / ${num(points)} pts verified` : `${num(points)} pts`}
-            {pale && " · under half verified"}
+            {verifiedPoints !== undefined
+              ? t("ptsVerified", { verified: num(verifiedPoints), points: num(points) })
+              : tc("pts", { points: num(points) })}
+            {pale && t("underHalf")}
           </span>
         </div>
         <div className="mt-1 h-2.5 rounded-full bg-muted">
@@ -190,7 +202,8 @@ export function CategoryBar({
 }
 
 export function ReasonsList({ reasons }: { reasons: { code: string; text: string }[] }) {
-  if (!reasons.length) return <p className="text-sm text-ink-muted">No conditions hold the verdict back.</p>;
+  const t = useTranslations("trust");
+  if (!reasons.length) return <p className="text-sm text-ink-muted">{t("noConditions")}</p>;
   return (
     <ul data-testid="reasons" className="space-y-1.5 text-sm">
       {reasons.map((r, i) => (

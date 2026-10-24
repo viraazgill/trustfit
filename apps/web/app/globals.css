@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-plex-sans);
+  --font-sans: var(--font-plex-sans), var(--font-plex-jp), sans-serif;
   --font-mono: var(--font-plex-mono);
-  --font-heading: var(--font-plex-sans);
+  --font-heading: var(--font-plex-sans), var(--font-plex-jp), sans-serif;
   /* TrustFit design tokens (pitch deck) */
   --color-navy: #15213a;
   --color-blue: #1f4e8c;
@@ -135,5 +135,23 @@
   }
   html {
     @apply font-sans;
+  }
+}
+/* Print (and the API's PDF printer): A4, the same page as on screen without the app chrome. */
+@page {
+  size: A4;
+}
+
+@media print {
+  body {
+    background: #ffffff;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  main {
+    padding-top: 0 !important;
+  }
+  nextjs-portal {
+    display: none;
   }
 }

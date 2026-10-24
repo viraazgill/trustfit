@@ -61,4 +61,5 @@ PostgreSQL 16; Docker Compose for local dev.
 - `make seed`: load config, Subros and the demo data
 - `make types`: regenerate `apps/web/lib/api/schema.d.ts` from the API's OpenAPI schema (after any schema change)
 - `make test-e2e`: Playwright browser tests of the demo path (needs `make db seed`); screenshots go to `artifacts/`
+- `python scripts/i18n_review.py`: check `apps/web/messages/ja.json` is complete and rewrite `ja.REVIEW.md` (run after editing any message)
 - `python reference/trustfit_reference.py --check`: verify the golden outputs

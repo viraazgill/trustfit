@@ -2,9 +2,11 @@
 
 /** Inputs for an SME brief, shared by the new-SME wizard and the brief editor. */
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { humanize, placeName } from "@/lib/format";
+import { useLabel } from "@/lib/i18n";
 import type { FitConfig } from "@/lib/sme-queries";
 import { cn } from "@/lib/utils";
 
@@ -92,6 +94,8 @@ export function BriefFields({ cfg, brief, onChange }: { cfg: FitConfig; brief: B
   const [custom, setCustom] = useState("");
   const set = (patch: Partial<Brief>) => onChange({ ...brief, ...patch });
   const toggle = (list: string[], v: string) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
+  const t = useTranslations("brief");
+  const tl = useLabel();
   const allProducts = [...new Set([...Object.values(cfg.product_families).flat(), ...brief.products])];
 
   function setRole(role: Brief["role_sought"]) {
@@ -111,32 +115,32 @@ export function BriefFields({ cfg, brief, onChange }: { cfg: FitConfig; brief: B
   return (
     <div className="space-y-6">
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Sector">
+        <Field label={t("sector")}>
           <select
-            aria-label="Sector"
+            aria-label={t("sector")}
             className="h-9 w-full rounded-md border bg-white px-2 text-sm"
             value={brief.sector}
             onChange={(e) => set({ sector: e.target.value })}
           >
             {cfg.sectors.map((s) => (
               <option key={s} value={s}>
-                {humanize(s)}
+                {tl(`sectors.${s}`, humanize(s))}
               </option>
             ))}
           </select>
         </Field>
-        <Field label="Role you need in India">
+        <Field label={t("role")}>
           <div className="flex gap-2">
             {ROLE_OPTIONS.map((r) => (
               <Chip key={r.value} on={brief.role_sought === r.value} onClick={() => setRole(r.value)}>
-                {r.label}
+                {t(`roleOption.${r.value}`)}
               </Chip>
             ))}
           </div>
         </Field>
       </div>
 
-      <Field label="Products" hint="Pick the products you will sell in India, or add your own tag.">
+      <Field label={t("products")} hint={t("productsHint")}>
         <div className="flex flex-wrap gap-2">
           {allProducts.map((p) => (
             <Chip key={p} on={brief.products.includes(p)} onClick={() => set({ products: toggle(brief.products, p) })}>
@@ -152,35 +156,35 @@ export function BriefFields({ cfg, brief, onChange }: { cfg: FitConfig; brief: B
               setCustom("");
             }}
           >
-            <Input value={custom} onChange={(e) => setCustom(e.target.value)} placeholder="Other product" className="h-7 w-36 text-xs" />
+            <Input value={custom} onChange={(e) => setCustom(e.target.value)} placeholder={t("otherProduct")} className="h-7 w-36 text-xs" />
           </form>
         </div>
       </Field>
 
-      <Field label="Target states" hint="Click once for primary (counts double), twice for secondary, again to clear.">
+      <Field label={t("states")} hint={t("statesHint")}>
         <div className="flex flex-wrap gap-2" data-testid="state-picker">
           {cfg.states.map((s) => (
             <Chip key={s} on={brief.primary.includes(s) || brief.secondary.includes(s)} tone={brief.secondary.includes(s) ? "blue" : "navy"} onClick={() => cycleState(s)}>
               {placeName(s)}
-              {brief.primary.includes(s) && " · primary"}
-              {brief.secondary.includes(s) && " · secondary"}
+              {brief.primary.includes(s) && ` · ${t("primary")}`}
+              {brief.secondary.includes(s) && ` · ${t("secondary")}`}
             </Chip>
           ))}
         </div>
       </Field>
 
-      <Field label="Sales channels you need" hint="Leave empty if channels don't matter (the channel factor then doesn't count).">
+      <Field label={t("channels")} hint={t("channelsHint")}>
         <div className="flex flex-wrap gap-2">
           {cfg.channels.map((c) => (
             <Chip key={c} on={brief.channels_needed.includes(c)} onClick={() => set({ channels_needed: toggle(brief.channels_needed, c) })}>
-              {humanize(c)}
+              {tl(`channels.${c}`, humanize(c))}
             </Chip>
           ))}
         </div>
       </Field>
 
       <div className="grid gap-5 sm:grid-cols-3">
-        <Field label="Volume (units per month)">
+        <Field label={t("volume")}>
           <Input
             type="number"
             min={1}
@@ -188,26 +192,26 @@ export function BriefFields({ cfg, brief, onChange }: { cfg: FitConfig; brief: B
             onChange={(e) => set({ volume_units_per_month: Math.max(1, Number(e.target.value) || 1) })}
           />
         </Field>
-        <Field label="After-sales service need">
+        <Field label={t("afterSales")}>
           <div className="flex gap-2">
             {cfg.after_sales_needs.map((n) => (
               <Chip key={n} on={brief.after_sales_need === n} onClick={() => set({ after_sales_need: n as Brief["after_sales_need"] })}>
-                {humanize(n)}
+                {tl(`afterSales.${n}`, humanize(n))}
               </Chip>
             ))}
           </div>
         </Field>
-        <Field label="Competitors to avoid" hint="Brand names, separated by commas.">
-          <Input value={brief.competitors} onChange={(e) => set({ competitors: e.target.value })} placeholder="e.g. Flowtek (Demo)" />
+        <Field label={t("competitors")} hint={t("competitorsHint")}>
+          <Input value={brief.competitors} onChange={(e) => set({ competitors: e.target.value })} placeholder={t("competitorsPlaceholder")} />
         </Field>
       </div>
 
-      <Field label="How much each factor matters" hint="Pre-filled with the defaults for the role you need.">
+      <Field label={t("importance")} hint={t("importanceHint")}>
         <div className="divide-y rounded-lg border bg-white">
           {Object.entries(cfg.factors).map(([f, spec]) => (
             <div key={f} className="flex flex-wrap items-center gap-3 px-3 py-2 text-sm">
               <span className="w-8 font-mono text-xs text-blue">{f}</span>
-              <span className="flex-1">{spec.label}</span>
+              <span className="flex-1">{tl(`fitFactors.${f}`, spec.label)}</span>
               <div className="flex gap-1">
                 {cfg.importance_levels.map((imp) => (
                   <Chip
@@ -215,7 +219,7 @@ export function BriefFields({ cfg, brief, onChange }: { cfg: FitConfig; brief: B
                     on={brief.importance[f] === imp}
                     onClick={() => set({ importance: { ...brief.importance, [f]: imp }, edited: [...new Set([...brief.edited, f])] })}
                   >
-                    {humanize(imp)}
+                    {tl(`importance.${imp}`, humanize(imp))}
                   </Chip>
                 ))}
               </div>

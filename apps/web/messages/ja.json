@@ -1,0 +1,398 @@
+{
+  "common": {
+    "disclaimer": "TrustFitスコアは信用格付けや投資助言ではありません。",
+    "fictionalBadge": "架空のデモデータ",
+    "fictionalTitle": "この企業は架空です。TrustFitのデモ用に作成されています。",
+    "demoRibbon": "デモデータ · {what}は架空であり、TrustFitのデモ用にのみ存在します。",
+    "thisCompany": "この企業",
+    "thisSme": "この中小企業",
+    "loading": "読み込み中…",
+    "language": "言語",
+    "pts": "{points}点",
+    "yes": "はい",
+    "no": "いいえ"
+  },
+  "trust": {
+    "title": "TrustFitスコア",
+    "notEligible": "対象外",
+    "noScore": "スコアなし",
+    "provisional": "暫定",
+    "outlook": "見通し：",
+    "confidence": "確信度",
+    "perVerified": "/ 100 検証済み",
+    "confidenceHelp": "{noScore}未満はスコアなし。{provisional}未満は暫定。未確認の情報は確信度を下げますが、スコアは下げません。",
+    "verified": "{pct} 検証済み",
+    "underMinimum": " · 最低基準{min}%未満",
+    "ptsVerified": "{points}点中{verified}点を検証済み",
+    "underHalf": " · 検証は半分未満",
+    "noConditions": "判定を引き下げる条件はありません。",
+    "why": "{verdict}の理由",
+    "whatTurnsGreen": "Greenにするには",
+    "nothingLeft": "確認すべき項目は残っていません。",
+    "gateLine": "検証ゲート：{label}",
+    "checksToRun": "{label}：未実施のチェック{count}件",
+    "first": "優先",
+    "categoriesWeights": "カテゴリと配点（淡色＝検証が半分未満）",
+    "roles": {
+      "supplier": "サプライヤー",
+      "distributor": "販売代理店",
+      "jv_partner": "合弁パートナー"
+    },
+    "companyType": {
+      "business_partner": "事業パートナー",
+      "service_provider": "サービス事業者"
+    },
+    "scoredAs": "{role}としてTrust評価"
+  },
+  "fit": {
+    "title": "貴社ブリーフに対するFitスコア",
+    "action": "推奨対応：",
+    "fitConfidence": "Fit確信度 {pct}%",
+    "combined": "総合判定",
+    "trustSummary": "Trust {score}（{verdict}）",
+    "trustNoScore": "スコアなし",
+    "trustNotEligible": "対象外",
+    "neverRaises": "Fitは判定を下げることはあっても、上げることはありません。",
+    "conflict": "競合関係あり：この企業は{detail}。{brand}は貴社の競合ブランドです。",
+    "relation": {
+      "owner": "{brand}に所有されています",
+      "shareholder_10": "{brand}に10%以上保有されています",
+      "exclusive": "{brand}と独占契約を結んでいます",
+      "represents": "{brand}を代理しています",
+      "supplies": "{brand}に供給しています"
+    },
+    "factor": "要素",
+    "importance": "重要度",
+    "weight": "ウェイト",
+    "level": "レベル",
+    "verified": "検証済み",
+    "gap": "ギャップ",
+    "unknown": "不明"
+  },
+  "sme": {
+    "journey": "中小企業ジャーニー",
+    "journeyIntro": "インド進出ブリーフ、準備度チェック、マッチしたパートナー、インド進出チーム。",
+    "newBrief": "新しいブリーフ",
+    "seeking": "{role}を募集中",
+    "seekingIn": "{states}で{role}を募集中",
+    "allBriefs": "← ブリーフ一覧",
+    "tabs": {
+      "readiness": "準備度",
+      "matches": "マッチ",
+      "team": "インド進出チーム",
+      "brief": "ブリーフ",
+      "report": "レポート"
+    },
+    "backToMatches": "← マッチ",
+    "trustReport": "Trustレポート"
+  },
+  "readiness": {
+    "checkTitle": "インド進出準備度チェック",
+    "checkIntro": "JETROの6つの課題に沿った16の質問です。弱い分野はギャップとなり、TrustFitが信頼できるインドのパートナーで補います。",
+    "notAnswered": "この中小企業はまだ準備度チェックに回答していません。",
+    "save": "回答を保存",
+    "saving": "保存中…",
+    "cancel": "キャンセル",
+    "radarTitle": "JETROの課題別準備度（0〜100）",
+    "radarAria": "JETROの課題別準備度、0〜100",
+    "radarTip": "{id} {label}：準備度{pct}%",
+    "jetroAsk": "JETROの課題：{ask}",
+    "editAnswers": "回答を編集",
+    "yourGaps": "貴社のギャップ",
+    "severityHelp": "深刻度＝準備の不足度を、{role}にとっての重要度で重み付けしたものです。",
+    "seeWho": "インドで誰が補えるか見る →",
+    "ready": "準備度",
+    "gapSeverity": "ギャップ深刻度",
+    "coveredByTrustFit": "TrustFitで対応済み",
+    "coveredNote": "TrustFitが推薦する企業はすべてTrust評価・検証済みです。",
+    "answered": "{total}問中{done}問回答済み",
+    "scaleHint": "0＝未着手 · 4＝完了・検証済み"
+  },
+  "bridge": {
+    "answerFirst": "まず{link}に回答してください。マッチは貴社のギャップに基づいて順位付けされます。",
+    "answerFirstTeam": "まず{link}に回答してください。",
+    "readinessLink": "準備度チェック",
+    "matching": "マッチング中…",
+    "building": "チームを編成中…",
+    "ranking": "主要パートナーの順位",
+    "rankingHelp": "マッチ＝0.6×Fit＋0.4×ギャップカバー率。信頼でき、ブリーフに合う企業のみを順位付けします。",
+    "company": "企業",
+    "trust": "Trust",
+    "fit": "Fit",
+    "gapCoverage": "ギャップカバー率",
+    "match": "マッチ",
+    "noneFits": "このブリーフに合う信頼できる企業はまだありません。",
+    "provisional": "暫定",
+    "whoFills": "各ギャップを補う企業",
+    "covers": "カバー率{pct}%",
+    "noneCovers": "このギャップを補う信頼できる企業はまだありません。",
+    "excluded": "除外",
+    "excludedHelp": "TrustFitは、ノックアウト、Red判定、競合のパートナー、検証データが不足している企業を推薦しません。",
+    "nobodyExcluded": "除外された企業はありません。",
+    "exclusion": {
+      "knockout": "ノックアウト：対象外",
+      "insufficient": "スコアに必要な検証データが不足",
+      "red": "Trust判定がRed",
+      "notAFit": "貴社ブリーフに不適合",
+      "conflict": "競合関係あり：{detail}"
+    },
+    "teamCoverage": "チームのカバー率",
+    "ringLabel": "ギャップ深刻度のカバー率",
+    "ringHelp": "チームは{target}%（コーラルの印）に達するか、追加メンバーの効果が小さくなった時点で編成を終えます。",
+    "ringAria": "チームはギャップ深刻度の{pct}%をカバー",
+    "gapsAfter": "チーム編成後のギャップ",
+    "status": {
+      "covered": "カバー済み",
+      "partly covered": "一部カバー",
+      "not covered": "未カバー"
+    },
+    "stillOpen": "残る課題：{gaps}。自社で計画するか、TrustFitに追加のパートナーをご相談ください。",
+    "yourTeam": "貴社のインド進出チーム",
+    "primary": "主要{role}",
+    "serviceProvider": "サービス事業者",
+    "adds": "カバー率を{points}ポイント上乗せ",
+    "notYetVerified": "、未検証",
+    "matrix": "カバー率マトリクス",
+    "gap": "ギャップ",
+    "team": "チーム",
+    "cellTitle": "{name}：{gap}の{pct}%をカバー",
+    "teamCellTitle": "チームで{gap}の{pct}%をカバー",
+    "matrixHelp": "濃いほど多くカバー。各能力はチーム内で最も強いメンバーの分だけを数えます。"
+  },
+  "report": {
+    "title": "中小企業レポート",
+    "downloadPdf": "PDFをダウンロード",
+    "preparing": "PDFを作成中…",
+    "pdfFailed": "PDFの作成に失敗しました",
+    "scoredOn": "{date}時点の評価 · ウェイトセット{version}"
+  },
+  "labels": {
+    "outlook": {
+      "Positive": "ポジティブ",
+      "Stable": "安定",
+      "Watch": "要注意",
+      "Not assessed": "未評価"
+    },
+    "band": {
+      "Very strong": "非常に強い",
+      "Strong": "強い",
+      "Adequate": "標準",
+      "Weak": "弱い",
+      "Very weak": "非常に弱い"
+    },
+    "trustDimensions": {
+      "integrity": {
+        "label": "誠実性",
+        "question": "適切に行動するか？"
+      },
+      "financial": {
+        "label": "財務",
+        "question": "存続し、支払えるか？"
+      },
+      "capability": {
+        "label": "実行力",
+        "question": "実行できるか？"
+      }
+    },
+    "trustCategories": {
+      "A": "法務・規制上の健全性",
+      "B": "財務の健全性",
+      "C": "経営とガバナンス",
+      "D": "顧客・市場での評判",
+      "E": "支払い・契約の履行",
+      "F": "業務遂行能力",
+      "G": "越境取引への対応力",
+      "H": "ESGとサステナビリティ"
+    },
+    "gates": {
+      "V1": "登記住所と現地の確認",
+      "V2": "制裁・AML・PEPのスクリーニング",
+      "V3": "担当者の本人確認"
+    },
+    "fitFactors": {
+      "FT1": "業種・製品の経験",
+      "FT2": "地域カバー",
+      "FT3": "販売・流通チャネル",
+      "FT4": "要求量に対する能力",
+      "FT5": "アフターサービス",
+      "FT6": "競合ブランドとの関係（逆指標）"
+    },
+    "importance": {
+      "must": "必須",
+      "important": "重要",
+      "nice": "あれば良い",
+      "irrelevant": "対象外"
+    },
+    "fitCategory": {
+      "strong_fit": "高い適合",
+      "possible_fit": "適合の可能性",
+      "not_a_fit": "不適合"
+    },
+    "fitAction": {
+      "strong_fit": "候補に追加",
+      "possible_fit": "解消すべきギャップあり",
+      "not_a_fit": "見送り（信頼できても）"
+    },
+    "severity": {
+      "critical": "重大",
+      "significant": "大きい",
+      "minor": "軽微"
+    },
+    "scale": {
+      "0": "未着手",
+      "1": "構想段階",
+      "2": "一部完了",
+      "3": "ほぼ完了",
+      "4": "完了・検証済み"
+    },
+    "readiness": {
+      "R1": {
+        "label": "市場理解",
+        "ask": "インド市場、ターゲット顧客、州ごとの地域差を理解する"
+      },
+      "R2": {
+        "label": "パートナーの特定と検証",
+        "ask": "信頼できる現地の販売代理店、合弁パートナー、機会を特定・評価・検証する"
+      },
+      "R3": {
+        "label": "現地化",
+        "ask": "製品、包装、価格、市場投入モデルを現地化する"
+      },
+      "R4": {
+        "label": "規制・法務・税務",
+        "ask": "規制、法務、税務、業務上の要件に対応する"
+      },
+      "R5": {
+        "label": "コミュニケーションと商習慣",
+        "ask": "コミュニケーション、交渉、商習慣の違いを埋める"
+      },
+      "R6": {
+        "label": "持続可能な事業運営",
+        "ask": "長期的に持続可能な現地事業と信頼できるパートナーシップを築く"
+      }
+    },
+    "questions": {
+      "R1_1": "どのインドの顧客層が当社製品を購入するか把握している。",
+      "R1_2": "需要データに基づいてターゲットの州・地域を選定している。",
+      "R1_3": "現地の競合と、対抗すべき価格帯を把握している。",
+      "R2_1": "インドのパートナー候補のショートリストがある。",
+      "R2_2": "候補パートナーの法的・財務的な健全性を確認済みである。",
+      "R3_1": "当社の製品と包装はインドの顧客ニーズと環境に合っている。",
+      "R3_2": "関税・税金を含めても、インドで価格競争力がある。",
+      "R3_3": "必要に応じて現地での調達・製造の選択肢がある。",
+      "R4_1": "当社製品に必要なインドの認証・許認可を把握している。",
+      "R4_2": "必要な認証を取得済み、または取得の計画とパートナーがある。",
+      "R4_3": "輸入関税、GST、進出形態の選択肢を理解している。",
+      "R5_1": "当社チームは英語またはインドの言語でコミュニケーション・交渉ができる。",
+      "R5_2": "これまでにインド企業と取引したことがある。",
+      "R6_1": "インドでアフターサービスと交換部品を提供できる。",
+      "R6_2": "物流、通関、倉庫の手配ができている。",
+      "R6_3": "インドでの代金回収と与信リスクを管理できる。"
+    },
+    "capabilities": {
+      "quality_certified": "品質認証",
+      "regulatory_clean": "クリーンな規制履歴と有効な許認可",
+      "japanese_language": "日本語対応スタッフまたは日本企業との取引実績",
+      "foreign_partner_experience": "外国企業との長期的な提携",
+      "payment_reliability": "確実な支払い・契約履行",
+      "regional_reach": "ターゲット州での販売拠点",
+      "sector_customer_access": "貴社の業種・製品の経験",
+      "after_sales_network": "ターゲット州でのサービス網",
+      "market_research": "インド市場調査",
+      "contract_manufacturing": "受託製造",
+      "local_sourcing": "部品・材料の現地調達",
+      "engineering_localisation": "設計・製品の現地化",
+      "certification_support": "認証取得支援（BISなど）",
+      "customs_clearance": "通関",
+      "tax_compliance": "GST・税務コンプライアンス",
+      "business_interpretation": "日英ビジネス通訳",
+      "warehousing_logistics": "倉庫・物流"
+    },
+    "sectors": {
+      "auto_components": "自動車部品",
+      "industrial_instruments": "産業用計測機器",
+      "water_treatment": "水処理",
+      "machinery": "機械",
+      "electronics": "電子機器",
+      "medical_devices": "医療機器",
+      "food_processing": "食品加工",
+      "consumer_products": "消費財",
+      "logistics_services": "物流サービス",
+      "business_services": "ビジネスサービス"
+    },
+    "channels": {
+      "industrial_b2b": "産業向けB2B",
+      "epc_projects": "EPCプロジェクト",
+      "government_tenders": "政府入札",
+      "oem_direct": "OEM直販",
+      "dealer_network": "販売店網",
+      "modern_trade": "近代的小売",
+      "ecommerce": "EC",
+      "exports": "輸出"
+    },
+    "afterSales": {
+      "none": "不要",
+      "basic": "基本",
+      "full": "フル"
+    }
+  },
+  "brief": {
+    "steps": {
+      "profile": "会社概要",
+      "brief": "インド進出ブリーフ",
+      "readiness": "準備度チェック"
+    },
+    "newTitle": "新しいブリーフ",
+    "companyName": "会社名",
+    "city": "所在地（日本）",
+    "employees": "従業員数",
+    "whatYouMake": "主な製品",
+    "back": "戻る",
+    "next": "次へ",
+    "save": "ブリーフを保存",
+    "saving": "保存中…",
+    "saved": "保存しました。Fitとマッチは新しいブリーフを使用します。",
+    "readinessSaveFailed": "準備度の回答を保存できませんでした",
+    "problem": {
+      "name": "会社名を入力してください",
+      "primary": "主要ターゲット州を1つ以上選んでください",
+      "answers": "準備度の質問にすべて回答してください"
+    },
+    "sector": "業種",
+    "role": "インドで必要な役割",
+    "roleOption": {
+      "distributor": "販売代理店",
+      "supplier": "サプライヤー",
+      "jv_partner": "合弁パートナー"
+    },
+    "products": "製品",
+    "productsHint": "インドで販売する製品を選ぶか、独自のタグを追加してください。",
+    "otherProduct": "その他の製品",
+    "states": "ターゲット州",
+    "statesHint": "1回クリックで主要（2倍で計算）、2回で副次、もう1回で解除。",
+    "primary": "主要",
+    "secondary": "副次",
+    "channels": "必要な販売チャネル",
+    "channelsHint": "チャネルが重要でなければ空欄に（その場合チャネル要素は計算されません）。",
+    "volume": "数量（月あたり台数）",
+    "afterSales": "アフターサービスの必要度",
+    "competitors": "避けたい競合",
+    "competitorsHint": "ブランド名をカンマ区切りで入力。",
+    "competitorsPlaceholder": "例：Flowtek (Demo)",
+    "importance": "各要素の重要度",
+    "importanceHint": "必要な役割の既定値が入力済みです。",
+    "readOnly": "これはデモ用のブリーフです。閲覧はできますが、変更できるのは所有者またはアナリストのみです。",
+    "row": {
+      "sector": "業種",
+      "products": "製品",
+      "role": "必要な役割",
+      "primary": "主要州",
+      "secondary": "副次州",
+      "channels": "チャネル",
+      "volume": "数量",
+      "afterSales": "アフターサービス",
+      "competitors": "競合"
+    },
+    "unitsPerMonth": "月{n}台"
+  }
+}

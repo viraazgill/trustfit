@@ -6,8 +6,10 @@ COPY apps/api apps/api
 COPY config config
 COPY seed seed
 COPY db db
-RUN pip install --no-cache-dir ./packages/trustfit_engine ./apps/api
-ENV CONFIG_DIR=/srv/config
+# The [pdf] extra and Chromium let the API print the report pages to PDF.
+RUN pip install --no-cache-dir ./packages/trustfit_engine "./apps/api[pdf]" \
+    && python -m playwright install --with-deps chromium
+ENV CONFIG_DIR=/srv/config SEED_DIR=/srv/seed
 WORKDIR /srv/apps/api
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "start.sh"]

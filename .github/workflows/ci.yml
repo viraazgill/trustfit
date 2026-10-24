@@ -37,12 +37,14 @@ jobs:
           .venv/bin/python -m pip install --upgrade pip
           .venv/bin/python -m pip install -e "packages/trustfit_engine[dev]" -e "apps/api[dev]"
       - name: Lint
-        run: .venv/bin/python -m ruff check packages apps/api db
+        run: |
+          .venv/bin/python -m ruff check packages apps/api db scripts
+          .venv/bin/python scripts/i18n_review.py --check
       - name: Test
         run: make test
 
   web:
-    name: Web (lint, build)
+    name: Web (lint, types, build)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -56,4 +58,73 @@ jobs:
           cache-dependency-path: apps/web/package-lock.json
       - run: npm ci
       - run: npm run lint
+      - run: npx tsc --noEmit
       - run: npm run build
+
+  e2e:
+    name: End to end (the demo script in a browser)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: trustfit
+          POSTGRES_PASSWORD: trustfit
+          POSTGRES_DB: trustfit
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U trustfit" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://trustfit:trustfit@localhost:5432/trustfit
+      JWT_SECRET: ci-only-secret-${{ github.run_id }}-not-used-anywhere-else
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/python -m pip install -e packages/trustfit_engine -e "apps/api[pdf]"
+          .venv/bin/python -m playwright install --with-deps chromium
+          cd apps/web && npm ci && npx playwright install --with-deps chromium
+      - name: Migrate and seed
+        run: make seed
+      - name: Browser tests
+        working-directory: apps/web
+        run: npx playwright test
+      - name: Demo screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-screenshots
+          path: artifacts/
+          if-no-files-found: ignore
+
+  deploy:
+    name: Deploy (main only, after every test passes)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [python, web, e2e]
+    runs-on: ubuntu-latest
+    env:
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skip when deploy secrets are not set
+        if: env.RENDER_DEPLOY_HOOK_URL == '' || env.VERCEL_TOKEN == ''
+        run: echo "::notice::Deploy secrets are not configured yet; skipping the deploy (see README, Deployment)."
+      - name: API on Render
+        if: env.RENDER_DEPLOY_HOOK_URL != ''
+        run: curl --fail --silent --show-error -X POST "$RENDER_DEPLOY_HOOK_URL"
+      - name: Web on Vercel
+        if: env.VERCEL_TOKEN != ''
+        run: npx --yes vercel@latest deploy --prod --yes --token "$VERCEL_TOKEN"

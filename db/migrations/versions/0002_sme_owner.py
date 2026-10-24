@@ -23,7 +23,9 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.alter_column("score_runs", "config_version", type_=sa.String(20), existing_type=sa.String(100))
+    # values like "trust:v1 fit:v1 gap_bridge:v1" don't fit the old width: keep their first 20 characters
+    op.alter_column("score_runs", "config_version", type_=sa.String(20), existing_type=sa.String(100),
+                    postgresql_using="left(config_version, 20)")
     op.drop_index("ix_smes_owner_id", table_name="smes")
     op.drop_column("smes", "created_at")
     op.drop_column("smes", "owner_id")

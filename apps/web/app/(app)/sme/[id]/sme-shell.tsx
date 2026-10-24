@@ -2,38 +2,43 @@
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { Disclaimer, FictionalBadge } from "@/components/brand";
+import { useTranslations } from "next-intl";
+import { DemoRibbon, Disclaimer, FictionalBadge } from "@/components/brand";
 import { RequireRole } from "@/lib/auth";
-import { humanize, placeName } from "@/lib/format";
+import { placeName } from "@/lib/format";
 import { useSme } from "@/lib/sme-queries";
 import { cn } from "@/lib/utils";
 
 function SmeHeader({ id }: { id: string }) {
   const { data: sme, error } = useSme(id);
   const pathname = usePathname();
+  const t = useTranslations("sme");
+  const tt = useTranslations("trust");
   const tabs = [
-    { href: `/sme/${id}`, label: "Readiness" },
-    { href: `/sme/${id}/matches`, label: "Matches" },
-    { href: `/sme/${id}/team`, label: "India entry team" },
-    { href: `/sme/${id}/brief`, label: "Brief" },
+    { href: `/sme/${id}`, label: t("tabs.readiness") },
+    { href: `/sme/${id}/matches`, label: t("tabs.matches") },
+    { href: `/sme/${id}/team`, label: t("tabs.team") },
+    { href: `/sme/${id}/brief`, label: t("tabs.brief") },
+    { href: `/sme/${id}/report`, label: t("tabs.report") },
   ];
   if (error) return <p className="text-sm text-verdict-red">{error.message}</p>;
   return (
-    <div className="mb-6 space-y-3 print:hidden">
-      <Link href="/sme" className="text-xs text-ink-muted hover:underline">
-        ← All SME briefs
+    <div className="mb-6 space-y-3">
+      <Link href="/sme" className="text-xs text-ink-muted hover:underline print:hidden">
+        {t("allBriefs")}
       </Link>
+      {sme?.fictional && <DemoRibbon kind="sme" />}
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-2xl font-semibold text-navy">{sme?.name ?? "…"}</h1>
         {sme?.fictional && <FictionalBadge />}
       </div>
       {sme && (
         <p className="text-sm text-ink-muted">
-          {[sme.city, sme.country].filter(Boolean).join(", ")} · seeking a {humanize(sme.role_sought).toLowerCase()} in{" "}
-          {(sme.target_states.primary ?? []).map(placeName).join(", ")}
+          {[sme.city, sme.country].filter(Boolean).join(", ")} ·{" "}
+          {t("seekingIn", { role: tt(`roles.${sme.role_sought}`), states: (sme.target_states.primary ?? []).map(placeName).join(", ") })}
         </p>
       )}
-      <nav className="flex gap-1 border-b">
+      <nav className="flex gap-1 border-b print:hidden">
         {tabs.map((t) => (
           <Link
             key={t.href}

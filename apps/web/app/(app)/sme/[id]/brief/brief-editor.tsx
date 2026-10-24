@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { type Brief, BriefFields, briefPayload } from "@/components/brief-fields";
 import { humanize, placeName } from "@/lib/format";
+import { useLabel } from "@/lib/i18n";
 import { type FitConfig, type Sme, useFitConfig, usePatchSme, useSme } from "@/lib/sme-queries";
 
 function toBrief(sme: Sme, cfg: FitConfig): Brief {
@@ -25,6 +27,7 @@ function toBrief(sme: Sme, cfg: FitConfig): Brief {
 }
 
 function Editor({ sme, cfg }: { sme: Sme; cfg: FitConfig }) {
+  const t = useTranslations("brief");
   const patch = usePatchSme(sme.id);
   const [brief, setBrief] = useState(() => toBrief(sme, cfg));
   return (
@@ -34,9 +37,9 @@ function Editor({ sme, cfg }: { sme: Sme; cfg: FitConfig }) {
       </div>
       <div className="flex items-center gap-3">
         <Button onClick={() => patch.mutate(briefPayload(brief, cfg))} disabled={patch.isPending || !brief.primary.length}>
-          {patch.isPending ? "Saving…" : "Save brief"}
+          {patch.isPending ? t("saving") : t("save")}
         </Button>
-        {patch.isSuccess && <span className="text-sm text-verdict-green">Saved. Fit and matches use the new brief.</span>}
+        {patch.isSuccess && <span className="text-sm text-verdict-green">{t("saved")}</span>}
         {patch.isError && <span className="text-sm text-verdict-red">{patch.error.message}</span>}
       </div>
     </div>
@@ -44,20 +47,23 @@ function Editor({ sme, cfg }: { sme: Sme; cfg: FitConfig }) {
 }
 
 function Summary({ sme }: { sme: Sme }) {
+  const t = useTranslations("brief");
+  const tl = useLabel();
+  const need = sme.after_sales_need ?? "none";
   const rows: [string, string][] = [
-    ["Sector", humanize(sme.sector)],
-    ["Products", sme.products.map(humanize).join(", ") || "—"],
-    ["Role sought", humanize(sme.role_sought)],
-    ["Primary states", sme.target_states.primary?.map(placeName).join(", ") || "—"],
-    ["Secondary states", sme.target_states.secondary?.map(placeName).join(", ") || "—"],
-    ["Channels", sme.channels_needed.map(humanize).join(", ") || "—"],
-    ["Volume", `${sme.volume_units_per_month ?? "—"} units per month`],
-    ["After-sales need", humanize(sme.after_sales_need ?? "none")],
-    ["Competitors", sme.competitors.join(", ") || "—"],
+    [t("row.sector"), tl(`sectors.${sme.sector}`, humanize(sme.sector))],
+    [t("row.products"), sme.products.map(humanize).join(", ") || "—"],
+    [t("row.role"), t(`roleOption.${sme.role_sought}`)],
+    [t("row.primary"), sme.target_states.primary?.map(placeName).join(", ") || "—"],
+    [t("row.secondary"), sme.target_states.secondary?.map(placeName).join(", ") || "—"],
+    [t("row.channels"), sme.channels_needed.map((c) => tl(`channels.${c}`, humanize(c))).join(", ") || "—"],
+    [t("row.volume"), t("unitsPerMonth", { n: sme.volume_units_per_month ?? "—" })],
+    [t("row.afterSales"), tl(`afterSales.${need}`, humanize(need))],
+    [t("row.competitors"), sme.competitors.join(", ") || "—"],
   ];
   return (
     <div className="space-y-3">
-      <p className="text-sm text-ink-muted">This is a demo brief: you can read it, but only its owner or an analyst can change it.</p>
+      <p className="text-sm text-ink-muted">{t("readOnly")}</p>
       <dl className="grid grid-cols-[10rem_1fr] gap-x-4 gap-y-2 rounded-xl border bg-white p-6 text-sm">
         {rows.map(([k, v]) => (
           <div key={k} className="contents">

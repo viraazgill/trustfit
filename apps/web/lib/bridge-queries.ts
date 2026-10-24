@@ -35,12 +35,3 @@ export function usePutReadiness(smeId: string) {
     },
   });
 }
-
-/** Exclusion reasons from the engine, in plain words for the SME. */
-export function exclusionText(reason: string): string {
-  if (reason === "knock-out") return "Knock-out: not eligible";
-  if (reason === "insufficient verified data") return "Not enough verified data for a score";
-  if (reason === "Trust verdict Red") return "Trust verdict Red";
-  if (reason === "not a fit") return "Not a fit for your brief";
-  return reason.charAt(0).toUpperCase() + reason.slice(1); // "competitor conflict: represents ..."
-}

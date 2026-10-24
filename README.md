@@ -129,3 +129,44 @@ reference/trustfit_reference.py   reference implementation (Python + PyYAML)
 reference/expected/*.json         golden outputs the real engine must match
 prompts/00-06                     paste-ready phase prompts
 ```
+
+## Running and deploying the app (added during the build)
+
+### Local (also the offline demo fallback)
+
+```bash
+make install PYTHON=python3.12   # once: .venv, engine + API (+ [pdf] for PDF export), web deps
+.venv/Scripts/python -m pip install -e "apps/api[pdf]" && .venv/Scripts/python -m playwright install chromium
+make db seed                     # Postgres in Docker, migrations, seed (wipes and reloads)
+make dev                         # API on http://localhost:8000/docs, web on http://localhost:3000
+make test lint test-e2e          # engine + API + reference; ruff, ESLint, types, i18n; the demo in a browser
+```
+
+`docker compose --profile full up` runs Postgres, the API and the web app in containers instead.
+Demo screenshots from `make test-e2e` land in `artifacts/demo/`.
+
+### Hosting: web on Vercel, API on Render, Postgres on Neon
+
+1. **Neon:** create a project and copy its connection string as
+   `postgresql+psycopg://USER:PASSWORD@HOST/DB?sslmode=require`.
+2. **Render:** New > Blueprint, pick this repo (`render.yaml`). Fill in the variables below. The container
+   migrates and seeds an empty database on start. Copy the service's **Deploy Hook** URL.
+3. **Vercel:** import the repo with **Root Directory `apps/web`** and set `NEXT_PUBLIC_API_URL`.
+4. **GitHub secrets** (Settings > Secrets > Actions): `RENDER_DEPLOY_HOOK_URL`, `VERCEL_TOKEN`,
+   `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`. CI then deploys on every push to `main`, only after the
+   Python, web and end-to-end jobs pass. Without the secrets the deploy job just skips.
+
+| Variable | Where | What |
+| --- | --- | --- |
+| `DATABASE_URL` | API | Postgres connection string (Neon in hosting) |
+| `JWT_SECRET` | API | Long random string; Render generates one |
+| `JWT_EXPIRE_HOURS` | API | Token lifetime, default 12 |
+| `SEED_ADMIN_EMAIL` / `_PASSWORD` (also `ANALYST`, `VIEWER`) | API | The three seed users; set new passwords in hosting |
+| `CORS_ORIGINS` | API | JSON list of web origins, e.g. `["https://trustfit.vercel.app"]` |
+| `WEB_URL` | API | The web app the PDF printer opens (same pages the SME sees) |
+| `SCORING_AS_OF` | API | Optional fixed scoring date (`YYYY-MM-DD`) for a reproducible demo; empty = today |
+| `CONFIG_DIR`, `SEED_DIR` | API | Set by the Docker image; defaults to the repo's `config/` and `seed/` |
+| `NEXT_PUBLIC_API_URL` | Web | The API base URL, e.g. `https://trustfit-api.onrender.com/api/v1` |
+
+The admin's **Reset demo data** button (top bar) reloads the seed without touching users. Japanese
+strings on the SME pages are listed for human review in `apps/web/messages/ja.REVIEW.md`.

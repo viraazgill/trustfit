@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { FictionalBadge } from "@/components/brand";
+import { DemoRibbon, FictionalBadge } from "@/components/brand";
 import { RequireRole } from "@/lib/auth";
 import { humanize, placeName } from "@/lib/format";
 import { useCompany } from "@/lib/queries";
@@ -22,6 +22,7 @@ function CompanyHeader({ id }: { id: string }) {
       <Link href="/companies" className="text-xs text-ink-muted hover:underline">
         ← All companies
       </Link>
+      {company?.fictional && <DemoRibbon kind="company" />}
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-2xl font-semibold text-navy">{company?.name ?? "…"}</h1>
         {company?.fictional && <FictionalBadge />}
