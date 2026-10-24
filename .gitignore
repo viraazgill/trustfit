@@ -27,3 +27,8 @@ next-env.d.ts
 Thumbs.db
 .vscode/
 .idea/
+
+# Screenshots and e2e output
+artifacts/
+apps/web/test-results/
+apps/web/playwright-report/

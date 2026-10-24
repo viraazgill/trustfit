@@ -78,8 +78,18 @@ def run_trust(db: Session, company: models.Company, role: str, what_if: engine.W
     return run
 
 
-def latest_scores(db: Session) -> dict[str, LatestScore]:
-    """Latest real (never what-if) trust run per company."""
+def default_role(company: models.Company) -> str:
+    """The role a company is shown in by default: its first role offered, else the first configured role
+    (service providers are scored with service_provider_trust_role)."""
+    cfg = trust_config()
+    if company.type == "service_provider":
+        return cfg.service_provider_trust_role
+    return company.roles_offered[0] if company.roles_offered else next(iter(cfg.roles))
+
+
+def latest_scores(db: Session, companies: list[models.Company] | None = None) -> dict[str, LatestScore]:
+    """Latest real (never what-if) trust run per company. Companies without a saved run (for example
+    right after a reseed) are scored live in their default role, without saving a run."""
     runs = db.scalars(select(models.ScoreRun)
                       .where(models.ScoreRun.kind == "trust", models.ScoreRun.is_what_if.is_(False))
                       .order_by(models.ScoreRun.created_at.desc(), models.ScoreRun.id.desc()))
@@ -89,6 +99,13 @@ def latest_scores(db: Session) -> dict[str, LatestScore]:
             r = run.result
             out[run.company_id] = LatestScore(role=run.role, score=r["score"], verdict=r["verdict"],
                                               confidence=r["confidence"], as_of=run.as_of)
+    cfg, as_of = trust_config(), scoring_date()
+    for company in companies or []:
+        if company.id not in out:
+            role = default_role(company)
+            r = score_trust(to_engine(company), role, cfg, as_of)
+            out[company.id] = LatestScore(role=role, score=r["score"], verdict=r["verdict"],
+                                          confidence=r["confidence"], as_of=as_of)
     return out
 
 

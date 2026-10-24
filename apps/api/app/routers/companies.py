@@ -32,11 +32,12 @@ def viewer_company(c: models.Company) -> ViewerCompany:
 
 @router.get("", dependencies=[Depends(viewer)])
 def list_companies(db: DbSession) -> list[ViewerCompanyListItem]:
-    latest = latest_scores(db)
+    companies = list(db.scalars(select(models.Company).order_by(models.Company.name)))
+    latest = latest_scores(db, companies)
     return [ViewerCompanyListItem(id=c.id, name=c.name, fictional=c.fictional, type=c.type,
                                   roles_offered=list(c.roles_offered), hq_state=c.hq_state,
                                   latest=latest.get(c.id))
-            for c in db.scalars(select(models.Company).order_by(models.Company.name))]
+            for c in companies]
 
 
 @router.post("", status_code=201, dependencies=[Depends(analyst)])

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from app.auth import AnalystUser, viewer
 from app.db import DbSession
 from app.schemas import TrustRunOut, TrustScoreIn, ViewerTrustReport
-from app.services.scoring import get_company, run_trust, trust_config, viewer_report
+from app.services.scoring import default_role, get_company, run_trust, viewer_report
 
 router = APIRouter(prefix="/companies/{company_id}", tags=["trust"])
 
@@ -20,5 +20,4 @@ def trust_score(company_id: str, body: TrustScoreIn, db: DbSession,
 def trust_report(company_id: str, db: DbSession, role: str | None = None) -> ViewerTrustReport:
     """SME-safe report: categories, weights, scores and reasons only. Defaults to the first role offered."""
     company = get_company(db, company_id)
-    default_role = company.roles_offered[0] if company.roles_offered else next(iter(trust_config().roles))
-    return viewer_report(company, role or default_role)
+    return viewer_report(company, role or default_role(company))

@@ -87,6 +87,17 @@ def test_what_if_run_is_saved_and_hidden_from_viewers(client, as_analyst, as_vie
     assert (report["score"], report["verdict"]) == (87, "Amber")
 
 
+def test_listing_scores_live_when_no_run_is_saved(client, as_viewer, session_factory):
+    listing = {c["id"]: c["latest"] for c in client.get(f"{API}/companies", headers=as_viewer).json()}
+    assert (listing["subros"]["role"], listing["subros"]["score"], listing["subros"]["verdict"]) == \
+        ("supplier", 87, "Amber")
+    assert (listing["konkan-trade"]["score"], listing["konkan-trade"]["verdict"]) == (None, "Red")
+    # service providers are scored with service_provider_trust_role (distributor)
+    assert (listing["certipath"]["role"], listing["certipath"]["score"]) == ("distributor", 90)
+    with session_factory() as db:
+        assert db.scalars(select(models.ScoreRun)).all() == []  # listing never saves runs
+
+
 def test_analyst_updates_evidence_and_the_score_changes(client, as_analyst, session_factory):
     before = score(client, as_analyst)["result"]
     res = client.put(f"{API}/companies/subros/evidence/B2", headers=as_analyst,

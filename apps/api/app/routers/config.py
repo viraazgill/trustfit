@@ -22,6 +22,8 @@ def public_config() -> PublicConfig:
         bands=[b.model_dump() for b in cfg.bands],
         gates={k: {"label": v.label} for k, v in cfg.gates.items()},
         outlook_signals=cfg.outlook.signals,
+        confidence=cfg.confidence.model_dump(),
+        service_provider_trust_role=cfg.service_provider_trust_role,
     )
 
 

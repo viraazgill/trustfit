@@ -247,6 +247,12 @@ class PublicBand(BaseModel):
     label: str
 
 
+class PublicConfidence(BaseModel):
+    no_score_below: int
+    provisional_below: int
+    dimension_provisional_below: int
+
+
 class PublicConfig(BaseModel):
     version: str
     disclaimer: str
@@ -258,3 +264,5 @@ class PublicConfig(BaseModel):
     bands: list[PublicBand]
     gates: dict[str, PublicLabel]
     outlook_signals: dict[str, str]
+    confidence: PublicConfidence
+    service_provider_trust_role: str

@@ -1,0 +1,2498 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TrustFit API",
+    "description": "TrustFit Score is not a credit rating or investment advice.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health",
+        "operationId": "health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Api V1 Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Me",
+        "operationId": "me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/config/public": {
+      "get": {
+        "tags": [
+          "config"
+        ],
+        "summary": "Public Config",
+        "description": "Categories, dimensions and role weights. No rubric text or check instructions.",
+        "operationId": "public_config_api_v1_config_public_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicConfig"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/config/rubrics": {
+      "get": {
+        "tags": [
+          "config"
+        ],
+        "summary": "Rubrics",
+        "description": "CONFIDENTIAL (analyst/admin): parameter rubrics, where to check, override and gate checks.",
+        "operationId": "rubrics_api_v1_config_rubrics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Rubrics Api V1 Config Rubrics Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/companies": {
+      "get": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "List Companies",
+        "operationId": "list_companies_api_v1_companies_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ViewerCompanyListItem"
+                  },
+                  "type": "array",
+                  "title": "Response List Companies Api V1 Companies Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Create Company",
+        "operationId": "create_company_api_v1_companies_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ViewerCompany"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/companies/{company_id}": {
+      "get": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Read Company",
+        "operationId": "read_company_api_v1_companies__company_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ViewerCompany"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Update Company",
+        "operationId": "update_company_api_v1_companies__company_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ViewerCompany"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{company_id}/gates": {
+      "put": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Set Gates",
+        "operationId": "set_gates_api_v1_companies__company_id__gates_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "enum": [
+                    "passed",
+                    "pending",
+                    "failed"
+                  ],
+                  "type": "string"
+                },
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ViewerCompany"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{company_id}/trends": {
+      "get": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Read Trends",
+        "operationId": "read_trends_api_v1_companies__company_id__trends_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/TrendIn"
+                  },
+                  "title": "Response Read Trends Api V1 Companies  Company Id  Trends Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Set Trends",
+        "operationId": "set_trends_api_v1_companies__company_id__trends_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/TrendIn"
+                },
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/TrendIn"
+                  },
+                  "title": "Response Set Trends Api V1 Companies  Company Id  Trends Put"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{company_id}/flags": {
+      "get": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "List Flags",
+        "operationId": "list_flags_api_v1_companies__company_id__flags_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FlagOut"
+                  },
+                  "title": "Response List Flags Api V1 Companies  Company Id  Flags Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Add Flag",
+        "operationId": "add_flag_api_v1_companies__company_id__flags_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlagIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FlagOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{company_id}/flags/{flag_id}": {
+      "delete": {
+        "tags": [
+          "companies"
+        ],
+        "summary": "Delete Flag",
+        "operationId": "delete_flag_api_v1_companies__company_id__flags__flag_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "flag_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Flag Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{company_id}/evidence": {
+      "get": {
+        "tags": [
+          "evidence"
+        ],
+        "summary": "List Evidence",
+        "operationId": "list_evidence_api_v1_companies__company_id__evidence_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EvidenceRow"
+                  },
+                  "title": "Response List Evidence Api V1 Companies  Company Id  Evidence Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{company_id}/evidence/{parameter_id}": {
+      "put": {
+        "tags": [
+          "evidence"
+        ],
+        "summary": "Put Evidence",
+        "operationId": "put_evidence_api_v1_companies__company_id__evidence__parameter_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "parameter_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Parameter Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvidenceIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceRow"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{company_id}/evidence/{parameter_id}/history": {
+      "get": {
+        "tags": [
+          "evidence"
+        ],
+        "summary": "Evidence History",
+        "operationId": "evidence_history_api_v1_companies__company_id__evidence__parameter_id__history_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "parameter_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Parameter Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EvidenceHistoryRow"
+                  },
+                  "title": "Response Evidence History Api V1 Companies  Company Id  Evidence  Parameter Id  History Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{company_id}/trust-score": {
+      "post": {
+        "tags": [
+          "trust"
+        ],
+        "summary": "Trust Score",
+        "description": "Full engine result (analyst view). Saved as a score run; what-if runs are flagged.",
+        "operationId": "trust_score_api_v1_companies__company_id__trust_score_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrustScoreIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustRunOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{company_id}/trust-report": {
+      "get": {
+        "tags": [
+          "trust"
+        ],
+        "summary": "Trust Report",
+        "description": "SME-safe report: categories, weights, scores and reasons only. Defaults to the first role offered.",
+        "operationId": "trust_report_api_v1_companies__company_id__trust_report_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Company Id"
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Role"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ViewerTrustReport"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CompanyCreate": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{1,99}$",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "fictional": {
+            "type": "boolean",
+            "title": "Fictional",
+            "default": false
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "business_partner",
+              "service_provider"
+            ],
+            "title": "Type",
+            "default": "business_partner"
+          },
+          "roles_offered": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Roles Offered"
+          },
+          "cin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cin"
+          },
+          "nse_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nse Code"
+          },
+          "bse_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bse Code"
+          },
+          "msme_category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Msme Category"
+          },
+          "hq_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hq State"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "profile": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Profile"
+          },
+          "capabilities": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Capabilities"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "CompanyCreate"
+      },
+      "CompanyPatch": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "fictional": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fictional"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "business_partner",
+                  "service_provider"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type"
+          },
+          "roles_offered": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Roles Offered"
+          },
+          "cin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cin"
+          },
+          "nse_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nse Code"
+          },
+          "bse_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bse Code"
+          },
+          "msme_category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Msme Category"
+          },
+          "hq_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hq State"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profile"
+          },
+          "capabilities": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capabilities"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "CompanyPatch"
+      },
+      "EvidenceHistoryRow": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "level": {
+            "type": "integer",
+            "title": "Level"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "source_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Date"
+          },
+          "checked_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked At"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "changed_by": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changed By"
+          },
+          "changed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Changed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "level",
+          "verified",
+          "source_url",
+          "source_date",
+          "checked_at",
+          "note",
+          "changed_by",
+          "changed_at"
+        ],
+        "title": "EvidenceHistoryRow"
+      },
+      "EvidenceIn": {
+        "properties": {
+          "level": {
+            "type": "integer",
+            "title": "Level"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "source_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Date"
+          },
+          "checked_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked At"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "level",
+          "verified"
+        ],
+        "title": "EvidenceIn"
+      },
+      "EvidenceRow": {
+        "properties": {
+          "parameter_id": {
+            "type": "string",
+            "title": "Parameter Id"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "missing",
+              "unverified",
+              "stale",
+              "verified"
+            ],
+            "title": "Status"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "source_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Date"
+          },
+          "checked_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked At"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "parameter_id",
+          "category",
+          "name",
+          "status"
+        ],
+        "title": "EvidenceRow"
+      },
+      "FlagIn": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "knockout",
+              "cap",
+              "notch",
+              "fake_reviews"
+            ],
+            "title": "Type"
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Code"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "code"
+        ],
+        "title": "FlagIn"
+      },
+      "FlagOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "code",
+          "note",
+          "source_url"
+        ],
+        "title": "FlagOut"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LatestScore": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "Green",
+              "Amber",
+              "Red"
+            ],
+            "title": "Verdict"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "score",
+          "verdict",
+          "confidence",
+          "as_of"
+        ],
+        "title": "LatestScore"
+      },
+      "LoginIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginIn"
+      },
+      "MeOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "role"
+        ],
+        "title": "MeOut"
+      },
+      "PublicBand": {
+        "properties": {
+          "min": {
+            "type": "integer",
+            "title": "Min"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          }
+        },
+        "type": "object",
+        "required": [
+          "min",
+          "label"
+        ],
+        "title": "PublicBand"
+      },
+      "PublicCategory": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "dimension": {
+            "type": "string",
+            "title": "Dimension"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "dimension"
+        ],
+        "title": "PublicCategory"
+      },
+      "PublicConfidence": {
+        "properties": {
+          "no_score_below": {
+            "type": "integer",
+            "title": "No Score Below"
+          },
+          "provisional_below": {
+            "type": "integer",
+            "title": "Provisional Below"
+          },
+          "dimension_provisional_below": {
+            "type": "integer",
+            "title": "Dimension Provisional Below"
+          }
+        },
+        "type": "object",
+        "required": [
+          "no_score_below",
+          "provisional_below",
+          "dimension_provisional_below"
+        ],
+        "title": "PublicConfidence"
+      },
+      "PublicConfig": {
+        "properties": {
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer"
+          },
+          "scale_levels": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Scale Levels"
+          },
+          "roles": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PublicLabel"
+            },
+            "type": "object",
+            "title": "Roles"
+          },
+          "dimensions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PublicDimension"
+            },
+            "type": "object",
+            "title": "Dimensions"
+          },
+          "categories": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PublicCategory"
+            },
+            "type": "object",
+            "title": "Categories"
+          },
+          "category_weights": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Category Weights"
+          },
+          "bands": {
+            "items": {
+              "$ref": "#/components/schemas/PublicBand"
+            },
+            "type": "array",
+            "title": "Bands"
+          },
+          "gates": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PublicLabel"
+            },
+            "type": "object",
+            "title": "Gates"
+          },
+          "outlook_signals": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Outlook Signals"
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/PublicConfidence"
+          },
+          "service_provider_trust_role": {
+            "type": "string",
+            "title": "Service Provider Trust Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "version",
+          "disclaimer",
+          "scale_levels",
+          "roles",
+          "dimensions",
+          "categories",
+          "category_weights",
+          "bands",
+          "gates",
+          "outlook_signals",
+          "confidence",
+          "service_provider_trust_role"
+        ],
+        "title": "PublicConfig"
+      },
+      "PublicDimension": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "categories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Categories"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "question",
+          "categories"
+        ],
+        "title": "PublicDimension"
+      },
+      "PublicLabel": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label"
+        ],
+        "title": "PublicLabel"
+      },
+      "TokenOut": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "const": "bearer",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "role"
+        ],
+        "title": "TokenOut"
+      },
+      "TrendIn": {
+        "properties": {
+          "direction": {
+            "type": "string",
+            "enum": [
+              "improving",
+              "stable",
+              "worsening"
+            ],
+            "title": "Direction"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "direction"
+        ],
+        "title": "TrendIn"
+      },
+      "TrustRunOut": {
+        "properties": {
+          "run_id": {
+            "type": "integer",
+            "title": "Run Id"
+          },
+          "is_what_if": {
+            "type": "boolean",
+            "title": "Is What If"
+          },
+          "result": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Result",
+            "description": "Full engine result (analyst view)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run_id",
+          "is_what_if",
+          "result"
+        ],
+        "title": "TrustRunOut"
+      },
+      "TrustScoreIn": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "what_if": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WhatIf"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "role"
+        ],
+        "title": "TrustScoreIn"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "ViewerCategory": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "weight": {
+            "type": "number",
+            "title": "Weight",
+            "description": "Points out of 100 for this role"
+          },
+          "verified_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified Pct"
+          },
+          "score_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score Pct"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "weight",
+          "verified_pct",
+          "score_pct"
+        ],
+        "title": "ViewerCategory"
+      },
+      "ViewerCompany": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "fictional": {
+            "type": "boolean",
+            "title": "Fictional"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "roles_offered": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Roles Offered"
+          },
+          "cin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cin"
+          },
+          "nse_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nse Code"
+          },
+          "bse_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bse Code"
+          },
+          "msme_category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Msme Category"
+          },
+          "hq_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hq State"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "profile": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Profile"
+          },
+          "capabilities": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Capabilities"
+          },
+          "gates": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "passed",
+                "pending",
+                "failed"
+              ]
+            },
+            "type": "object",
+            "title": "Gates"
+          },
+          "trends": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Trends",
+            "description": "signal -> direction (analyst notes left out)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "fictional",
+          "type",
+          "roles_offered",
+          "cin",
+          "nse_code",
+          "bse_code",
+          "msme_category",
+          "hq_state",
+          "description",
+          "profile",
+          "capabilities",
+          "gates",
+          "trends"
+        ],
+        "title": "ViewerCompany"
+      },
+      "ViewerCompanyListItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "fictional": {
+            "type": "boolean",
+            "title": "Fictional"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "roles_offered": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Roles Offered"
+          },
+          "hq_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hq State"
+          },
+          "latest": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LatestScore"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "fictional",
+          "type",
+          "roles_offered",
+          "hq_state"
+        ],
+        "title": "ViewerCompanyListItem"
+      },
+      "ViewerReason": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "text"
+        ],
+        "title": "ViewerReason"
+      },
+      "ViewerTrustReport": {
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "title": "Company Id"
+          },
+          "company_name": {
+            "type": "string",
+            "title": "Company Name"
+          },
+          "fictional": {
+            "type": "boolean",
+            "title": "Fictional"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of"
+          },
+          "weight_set": {
+            "type": "string",
+            "title": "Weight Set"
+          },
+          "eligible": {
+            "type": "boolean",
+            "title": "Eligible"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "band": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "provisional": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provisional"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "Green",
+              "Amber",
+              "Red"
+            ],
+            "title": "Verdict"
+          },
+          "outlook": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outlook"
+          },
+          "categories": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ViewerCategory"
+            },
+            "type": "object",
+            "title": "Categories"
+          },
+          "dimensions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ViewerCategory"
+            },
+            "type": "object",
+            "title": "Dimensions"
+          },
+          "gates": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "passed",
+                "pending",
+                "failed"
+              ]
+            },
+            "type": "object",
+            "title": "Gates"
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/ViewerReason"
+            },
+            "type": "array",
+            "title": "Reasons"
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer",
+            "description": "TrustFit Score is not a credit rating or investment advice."
+          }
+        },
+        "type": "object",
+        "required": [
+          "company_id",
+          "company_name",
+          "fictional",
+          "role",
+          "as_of",
+          "weight_set",
+          "eligible",
+          "status",
+          "score",
+          "band",
+          "confidence",
+          "provisional",
+          "verdict",
+          "outlook",
+          "reasons",
+          "disclaimer"
+        ],
+        "title": "ViewerTrustReport"
+      },
+      "WhatIf": {
+        "properties": {
+          "evidence": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Evidence"
+          },
+          "gates": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "passed",
+                "pending",
+                "failed"
+              ]
+            },
+            "type": "object",
+            "title": "Gates"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "WhatIf",
+        "description": "Hypothetical evidence (treated as verified, dated as_of) and gate results."
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
