@@ -1,0 +1,9 @@
+line-length = 110
+target-version = "py312"
+extend-exclude = ["apps/web", "reference"]  # reference/ is kit code: read-only, not linted
+
+[lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[lint.isort]
+known-first-party = ["app", "trustfit_engine"]
