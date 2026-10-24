@@ -1,0 +1,124 @@
+# TrustFit Gap Bridge configuration, version 1.
+#
+# 1. The Japanese SME answers a 16-question India Entry Readiness check, built on the six
+#    things JETRO-PS-01 says a solution should address.
+# 2. Each low-readiness area becomes a gap with a severity (0-100).
+# 3. Each gap needs capabilities. Indian companies have capability strengths, taken from
+#    their verified Trust evidence, their Fit attributes, or declared capability tags.
+# 4. TrustFit recommends trusted companies that are strong where the SME is weak, and
+#    assembles a small "India entry team" that covers the most gap severity.
+
+version: v1
+
+answer_scale:
+  0: Not started
+  1: Early idea
+  2: Partly done
+  3: Mostly done
+  4: Done and validated
+
+dimensions:
+  R1:
+    label: Market understanding
+    jetro_ask: "Understand Indian markets, target customers and regional differences across states"
+    questions:
+      R1.1: "We know which Indian customer segments will buy our product."
+      R1.2: "We have chosen target states or regions based on demand data."
+      R1.3: "We know local competitors and the price points we must meet."
+  R2:
+    label: Partner identification and verification
+    jetro_ask: "Identify, evaluate and verify reliable local distributors, JV partners and opportunities"
+    questions:
+      R2.1: "We have a shortlist of possible Indian partners."
+      R2.2: "We have checked our shortlisted partners' legal and financial standing."
+  R3:
+    label: Localisation
+    jetro_ask: "Localize products, packaging, pricing and go-to-market models"
+    questions:
+      R3.1: "Our product and packaging meet Indian customer needs and conditions."
+      R3.2: "Our pricing is competitive in India, including duties and taxes."
+      R3.3: "We have local sourcing or manufacturing options if we need them."
+  R4:
+    label: Regulatory, legal and tax
+    jetro_ask: "Navigate regulatory, legal, taxation and operational requirements"
+    questions:
+      R4.1: "We know which Indian certifications and licences our product needs."
+      R4.2: "We hold those certifications, or have a plan and a partner to get them."
+      R4.3: "We understand import duties, GST and our options for an entry structure."
+  R5:
+    label: Communication and business culture
+    jetro_ask: "Bridge differences in communication, negotiation and business culture"
+    questions:
+      R5.1: "Our team can communicate and negotiate in English or an Indian language."
+      R5.2: "We have done business with Indian companies before."
+  R6:
+    label: Sustainable operations
+    jetro_ask: "Build sustainable long-term local operations and trustworthy partnerships"
+    questions:
+      R6.1: "We can provide after-sales service and spare parts in India."
+      R6.2: "We have logistics, customs clearance and warehousing arranged."
+      R6.3: "We can manage payment collection and credit risk in India."
+
+# readiness = mean(answers) / 4 x 100
+# severity  = min(100, (100 - readiness) x relevance[role_sought][dimension])
+relevance:
+  distributor: {R1: 1.2, R2: 1.0, R3: 0.8, R4: 1.2, R5: 1.0, R6: 1.2}
+  supplier:    {R1: 0.8, R2: 1.0, R3: 1.2, R4: 1.0, R5: 1.0, R6: 0.8}
+  jv_partner:  {R1: 1.0, R2: 1.0, R3: 1.2, R4: 1.2, R5: 1.2, R6: 1.0}
+
+severity_labels:   # checked top-down
+  - {min: 60, label: critical}
+  - {min: 35, label: significant}
+  - {min: 0, label: minor}
+
+# R2 is what TrustFit itself solves: every recommended company is Trust-scored.
+# It is shown in the diagnostic but left out of partner coverage maths.
+covered_by_trustfit: [R2]
+
+capabilities:
+  # derived from a company's verified, fresh Trust evidence (strength = mean level / 100 of
+  # the listed parameters that are verified; none verified -> 0). `applies_to` limits a
+  # capability to one company type: a consultant's own ISO certificate doesn't localise
+  # the SME's product, but a distributor's payment conduct does protect its receivables.
+  quality_certified: {label: Quality certifications, source: trust, parameters: [F3], applies_to: business_partner}
+  regulatory_clean: {label: Clean regulatory record and valid licences, source: trust, parameters: [A5], applies_to: business_partner}
+  japanese_language: {label: Japanese-speaking staff or prior Japanese partners, source: trust, parameters: [G4]}
+  foreign_partner_experience: {label: Long-running foreign partnerships, source: trust, parameters: [G2]}
+  payment_reliability: {label: Reliable payment and contract conduct, source: trust, parameters: [E1, E2], applies_to: business_partner}
+  # derived from Fit attributes, computed against THIS SME's brief (business partners only
+  # for the first two; anyone with service_states for the third)
+  regional_reach: {label: Sales presence in your target states, source: fit, factor: FT2, applies_to: business_partner}
+  sector_customer_access: {label: Experience with your sector and products, source: fit, factor: FT1, applies_to: business_partner}
+  after_sales_network: {label: Service network in your target states, source: service_states}
+  # declared capability tags (level 0-100 + verified flag), mainly for service providers
+  market_research: {label: India market research, source: declared}
+  contract_manufacturing: {label: Contract manufacturing, source: declared}
+  local_sourcing: {label: Local sourcing of parts and materials, source: declared}
+  engineering_localisation: {label: Engineering and product localisation, source: declared}
+  certification_support: {label: Certification support (BIS and others), source: declared}
+  customs_clearance: {label: Customs clearance, source: declared}
+  tax_compliance: {label: GST and tax compliance, source: declared}
+  business_interpretation: {label: Japanese-English business interpretation, source: declared}
+  warehousing_logistics: {label: Warehousing and logistics, source: declared}
+
+# Strength of an unverified attribute or declared tag is multiplied by this factor.
+unverified_factor: 0.5
+
+# What each gap needs. Weights inside a gap sum to 1.
+gap_needs:
+  R1: {regional_reach: 0.4, sector_customer_access: 0.3, market_research: 0.3}
+  R3: {contract_manufacturing: 0.35, local_sourcing: 0.25, engineering_localisation: 0.2, quality_certified: 0.2}
+  R4: {certification_support: 0.35, customs_clearance: 0.25, tax_compliance: 0.2, regulatory_clean: 0.2}
+  R5: {japanese_language: 0.5, foreign_partner_experience: 0.3, business_interpretation: 0.2}
+  R6: {after_sales_network: 0.35, warehousing_logistics: 0.3, payment_reliability: 0.35}
+
+bridge:
+  match_weights: {fit: 0.6, gap_coverage: 0.4}   # ranks primary partners (the SME's sought role)
+  max_supporting_partners: 3
+  min_marginal_gain: 5.0      # stop adding team members below this gain (coverage points)
+  target_team_coverage: 85.0  # stop once the team covers this much gap severity
+  per_gap_top_n: 3
+  per_gap_min_coverage: 0.25
+  list_gaps_with_labels: [critical, significant]
+  partly_covered_below: 0.5   # team coverage of a gap under this -> "partly covered"
+  not_covered_below: 0.25     # under this -> "not covered"

@@ -1,0 +1,73 @@
+{
+  "_note": "Real company. Category results match the TrustFit pitch deck (Oct 2026). Parameter levels were reconstructed to reproduce those category results; the data lead must confirm every level, note and source before the demo. Missing parameters are deliberately left out (they lower confidence, not the score).",
+  "id": "subros",
+  "fictional": false,
+  "name": "Subros Ltd",
+  "type": "business_partner",
+  "roles_offered": ["supplier"],
+  "cin": "L74899DL1985PLC020134",
+  "nse_code": "SUBROS",
+  "bse_code": "517168",
+  "msme_category": "large",
+  "hq_state": "delhi",
+  "as_of": "2026-10-24",
+  "sources": {
+    "icra": {"title": "ICRA rating rationale for Subros", "url": "https://www.icra.in/Rating/GetRationalReportFilePdf?id=141949", "date": "2026-03-27"},
+    "investor_presentation": {"title": "Subros investor presentation", "url": "https://nsearchives.nseindia.com/corporate/SUBROS_07082026200341_Investorpresentation07082026.pdf", "date": "2026-08-07"},
+    "screener": {"title": "Screener: Subros consolidated", "url": "https://www.screener.in/company/SUBROS/consolidated/", "date": "2026-10-24"}
+  },
+  "evidence": {
+    "A2": {"level": 100, "verified": true, "source": "screener", "note": "Listed; annual and quarterly filings up to date. Confirm MCA filing dates."},
+    "B1": {"level": 100, "verified": true, "source": "screener", "note": "Revenue Rs 3,071 cr (FY24) to Rs 3,756 cr (FY26), about 10.6% a year. Confirm the 3-year CAGR with FY23."},
+    "B2": {"level": 50, "verified": true, "source": "screener", "note": "Operating margin 9.7% (FY25); EBITDA margin 8.47% (Q1 FY27)"},
+    "B3": {"level": 100, "verified": true, "source": "screener", "note": "Debt/equity about 0.06"},
+    "B4": {"level": 100, "verified": true, "source": "screener", "note": "Interest cover 28.3x"},
+    "B5": {"level": 75, "verified": true, "source": "screener", "note": "Cash conversion cycle lengthened from 21 to 34 days"},
+    "B6": {"level": 100, "verified": true, "source": "icra", "note": "[ICRA]AA (Stable)/A1+, upgraded from AA- in Jan 2024"},
+    "C3": {"level": 75, "verified": true, "source": "screener", "note": "Promoters 36.79%, Denso 20%, Suzuki 11.96%, public 31.25%. Confirm pledge data."},
+    "C4": {"level": 75, "verified": true, "source": "screener", "note": "Related-party deals mainly with strategic shareholders' groups. Confirm promoter-entity deals in the related-party note."},
+    "C5": {"level": 75, "verified": true, "source": "screener", "note": "Governance filings in place; minor gaps to confirm"},
+    "D2": {"level": 100, "verified": true, "source": "investor_presentation", "note": "Maruti Suzuki is the main customer (80-85% of revenue); Rs 1,280 cr seven-year EV compressor order from Maruti (Jan 2026)"},
+    "D5": {"level": 50, "verified": true, "source": "screener", "note": "Share price Rs 590 vs 52-week high Rs 1,162: good news but a sharp fall"},
+    "E1": {"level": 75, "verified": true, "source": "screener", "note": "Payable days 82"},
+    "F1": {"level": 100, "verified": true, "source": "icra", "note": "Incorporated 1985 (CIN L74899DL1985PLC020134)"},
+    "F3": {"level": 100, "verified": true, "source": "investor_presentation", "note": "IATF 16949, ISO 14001, ISO 45001 (and ISO 31000)"},
+    "F4": {"level": 100, "verified": true, "source": "investor_presentation", "note": "8 locations near carmaker customers, including Kharkhoda"},
+    "F5": {"level": 75, "verified": true, "source": "investor_presentation", "note": "Capacity adequate, expansion underway (Kharkhoda)"},
+    "G1": {"level": 75, "verified": true, "source": "icra", "note": "Trade mainly in one direction (imports). Confirm in the Board's report (foreign exchange earnings and outgo)."},
+    "G2": {"level": 100, "verified": true, "source": "investor_presentation", "note": "Long technical collaboration with Denso; technical assistance agreement with Denso and Toyota Industries (7 Aug 2026)"},
+    "G4": {"level": 100, "verified": true, "source": "screener", "note": "Japanese shareholders and partners (Denso, Suzuki)"},
+    "H1": {"level": 75, "verified": true, "source": "investor_presentation", "note": "ISO 14001/45001 held; confirm pollution consents and PF/ESI regularity to reach 100"},
+    "H2": {"level": 100, "verified": true, "source": "screener", "note": "BRSR with data in the annual report. Confirm the latest year."}
+  },
+  "pending_checks": {
+    "A1": "MCA master data and GST registration status (30-day check)",
+    "A3": "GST portal filing table, last 12 months (30-day check)",
+    "A4": "eCourts, NCLT and DRT search (30-day check)",
+    "A5": "Regulator orders, BIS and pollution board portals",
+    "C1": "MCA DIN status, suit-filed defaulter search, SEBI/ED/SFIO orders (30-day check)",
+    "C2": "Director history and senior-management changes"
+  },
+  "flags": [
+    {"type": "notch", "code": "strategic_shareholder_10", "note": "Denso 20% and Suzuki 11.96% (one notch for both)", "source": "screener"},
+    {"type": "notch", "code": "customer_concentration_70", "note": "Maruti Suzuki at 80-85% of revenue", "source": "icra"}
+  ],
+  "gates": {"V1": "pending", "V2": "pending", "V3": "pending"},
+  "trends": {
+    "revenue_growth": {"direction": "improving", "note": "Rs 3,071 cr (FY24) to Rs 3,756 cr (FY26); Q1 FY27 revenue Rs 1,032.11 cr, up 17.52% year on year"},
+    "operating_margin": {"direction": "worsening", "note": "9.7% (FY25) to 8.47% (Q1 FY27)"},
+    "operating_cash_flow": {"direction": "worsening", "note": "Rs 175 cr to Rs 105 cr. Label the years before the demo."},
+    "cash_conversion_cycle": {"direction": "worsening", "note": "21 to 34 days. Label the years before the demo."},
+    "credit_rating_action": {"direction": "stable", "note": "[ICRA]AA (Stable), 27 Mar 2026"}
+  },
+  "profile": {
+    "sectors": {"value": ["auto_components"], "verified": true, "source": "icra"},
+    "products": {"value": ["car_ac_systems", "compressors"], "verified": true, "source": "investor_presentation"},
+    "channels": {"value": ["oem_direct"], "verified": true, "source": "icra"},
+    "brand_relationships": {"value": [{"brand": "Denso", "relation": "shareholder_10"}, {"brand": "Suzuki", "relation": "shareholder_10"}], "verified": true, "source": "screener"},
+    "states": null,
+    "capacity_units_per_month": null,
+    "service_states": null
+  },
+  "capabilities": {}
+}

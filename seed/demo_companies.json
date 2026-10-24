@@ -1,0 +1,295 @@
+{
+  "_note": "FICTIONAL demo companies for the Fit and Gap Bridge demo. Every name ends in (Demo); any resemblance to a real company is accidental. Never present these as real.",
+  "_format": "trust_evidence lists levels per category in parameter order (A1..A5, B1..B7, C1..C5, D1..D5, E1..E4, F1..F5, G1..G4, H1..H2). A number is a verified level; null means no verified evidence. Dates use the defaults below; 'today-Nd' is resolved against the scoring date, so the demo stays fresh whenever it runs.",
+  "evidence_defaults": {
+    "source_url": "https://example.com/demo/{company_id}/{parameter_id}",
+    "source_date": "today-120d",
+    "checked_at": "today-4d"
+  },
+  "companies": [
+    {
+      "id": "deccan-instrumentation",
+      "name": "Deccan Instrumentation (Demo)",
+      "fictional": true,
+      "type": "business_partner",
+      "roles_offered": ["distributor"],
+      "msme_category": "medium",
+      "hq_state": "telangana",
+      "description": "Distributor of industrial instruments with a service team in five southern and western states",
+      "profile": {
+        "sectors": {"value": ["industrial_instruments", "water_treatment"], "verified": true},
+        "products": {"value": ["flow_meters", "pressure_gauges"], "verified": true},
+        "states": {"value": ["telangana", "andhra_pradesh", "karnataka", "tamil_nadu", "maharashtra"], "verified": true},
+        "channels": {"value": ["industrial_b2b", "government_tenders", "epc_projects"], "verified": true},
+        "capacity_units_per_month": {"value": 520, "verified": false},
+        "service_states": {"value": ["telangana", "andhra_pradesh", "karnataka", "tamil_nadu", "maharashtra"], "verified": true},
+        "brand_relationships": {"value": [{"brand": "Kaiyo Pumps (Demo)", "relation": "represents"}], "verified": true}
+      },
+      "capabilities": {"warehousing_logistics": {"level": 50, "verified": true}},
+      "trust_evidence": {
+        "A": [100, 100, 100, 75, 100],
+        "B": [75, 75, 100, 100, 75, 75, 100],
+        "C": [100, 75, 100, 75, 75],
+        "D": [null, 100, 75, null, 75],
+        "E": [75, null, 100, 75],
+        "F": [100, 75, 75, 100, 75],
+        "G": [75, 75, 75, 75],
+        "H": [75, 50]
+      },
+      "flags": [],
+      "gates": {"V1": "passed", "V2": "passed", "V3": "passed"},
+      "trends": {"revenue_growth": "improving", "operating_margin": "stable", "operating_cash_flow": "improving", "cash_conversion_cycle": "stable", "credit_rating_action": "stable"}
+    },
+    {
+      "id": "western-flow",
+      "name": "Western Flow Systems (Demo)",
+      "fictional": true,
+      "type": "business_partner",
+      "roles_offered": ["distributor"],
+      "msme_category": "medium",
+      "hq_state": "maharashtra",
+      "description": "Strong, well-run instrument distributor in western India that already represents a competing flow-meter brand",
+      "profile": {
+        "sectors": {"value": ["industrial_instruments"], "verified": true},
+        "products": {"value": ["flow_meters", "level_sensors"], "verified": true},
+        "states": {"value": ["maharashtra", "gujarat", "goa", "karnataka"], "verified": true},
+        "channels": {"value": ["industrial_b2b", "epc_projects"], "verified": true},
+        "capacity_units_per_month": {"value": 700, "verified": true},
+        "service_states": {"value": ["maharashtra", "gujarat"], "verified": true},
+        "brand_relationships": {"value": [{"brand": "Flowtek (Demo)", "relation": "represents"}], "verified": true}
+      },
+      "capabilities": {"warehousing_logistics": {"level": 75, "verified": true}},
+      "trust_evidence": {
+        "A": [100, 100, 100, 100, 100],
+        "B": [100, 75, 100, 100, 75, 100, 100],
+        "C": [100, 100, 75, 75, 100],
+        "D": [null, 100, 100, 75, 75],
+        "E": [100, 75, 100, 75],
+        "F": [100, 100, 75, 100, 75],
+        "G": [100, 100, 75, 75],
+        "H": [75, 75]
+      },
+      "flags": [],
+      "gates": {"V1": "passed", "V2": "passed", "V3": "passed"},
+      "trends": {"revenue_growth": "improving", "operating_margin": "improving", "operating_cash_flow": "stable", "cash_conversion_cycle": "stable", "credit_rating_action": "improving"}
+    },
+    {
+      "id": "sabarmati-process",
+      "name": "Sabarmati Process Controls (Demo)",
+      "fictional": true,
+      "type": "business_partner",
+      "roles_offered": ["distributor"],
+      "msme_category": "small",
+      "hq_state": "gujarat",
+      "description": "Small Gujarat distributor of gauges and valves; limited public data",
+      "profile": {
+        "sectors": {"value": ["industrial_instruments"], "verified": true},
+        "products": {"value": ["pressure_gauges", "process_valves"], "verified": true},
+        "states": {"value": ["gujarat", "rajasthan", "maharashtra"], "verified": true},
+        "channels": {"value": ["industrial_b2b"], "verified": true},
+        "capacity_units_per_month": {"value": 300, "verified": false},
+        "service_states": {"value": ["gujarat"], "verified": true},
+        "brand_relationships": {"value": [], "verified": true}
+      },
+      "capabilities": {},
+      "trust_evidence": {
+        "A": [100, 75, null, null, null],
+        "B": [50, 50, 75, 75, 50, null, 100],
+        "C": [null, 75, null, null, null],
+        "D": [null, 75, null, null, 50],
+        "E": [50, null, null, null],
+        "F": [75, 50, 50, 50, 50],
+        "G": [50, 25, null, 50],
+        "H": [null, 25]
+      },
+      "flags": [],
+      "gates": {"V1": "passed", "V2": "pending", "V3": "passed"},
+      "trends": {}
+    },
+    {
+      "id": "konkan-trade",
+      "name": "Konkan Trade Links (Demo)",
+      "fictional": true,
+      "type": "business_partner",
+      "roles_offered": ["distributor"],
+      "msme_category": "small",
+      "hq_state": "maharashtra",
+      "description": "Coastal trading company whose GST registration has been cancelled",
+      "profile": {
+        "sectors": {"value": ["industrial_instruments"], "verified": true},
+        "products": {"value": ["flow_meters"], "verified": true},
+        "states": {"value": ["maharashtra", "goa"], "verified": true},
+        "channels": {"value": ["industrial_b2b", "epc_projects"], "verified": true},
+        "capacity_units_per_month": {"value": 450, "verified": false},
+        "service_states": {"value": ["maharashtra"], "verified": true},
+        "brand_relationships": {"value": [], "verified": true}
+      },
+      "capabilities": {},
+      "trust_evidence": {
+        "A": [100, 50, 0, 50, 75],
+        "B": [50, 50, 50, 50, 50, 50, 75],
+        "C": [75, 50, 75, 75, 50],
+        "D": [null, 50, 50, null, 50],
+        "E": [50, 50, 50, 50],
+        "F": [75, 50, 50, 75, 50],
+        "G": [50, 25, null, 50],
+        "H": [50, 25]
+      },
+      "flags": [],
+      "gates": {"V1": "passed", "V2": "passed", "V3": "pending"},
+      "trends": {}
+    },
+    {
+      "id": "nihon-india-bridge",
+      "name": "Nihon-India Bridge Consultants (Demo)",
+      "fictional": true,
+      "type": "service_provider",
+      "roles_offered": [],
+      "msme_category": "small",
+      "hq_state": "haryana",
+      "description": "Bilingual business-support firm for Japanese companies in India",
+      "profile": {
+        "sectors": {"value": ["business_services"], "verified": true},
+        "states": {"value": ["haryana", "delhi", "karnataka", "maharashtra"], "verified": true}
+      },
+      "capabilities": {
+        "business_interpretation": {"level": 100, "verified": true},
+        "market_research": {"level": 75, "verified": true},
+        "certification_support": {"level": 25, "verified": false}
+      },
+      "trust_evidence": {
+        "A": [100, 100, 100, 100, 100],
+        "B": [100, 75, 100, 100, 100, null, 100],
+        "C": [100, 100, 100, 75, 75],
+        "D": [null, 100, 75, 100, 100],
+        "E": [100, 100, 100, null],
+        "F": [75, 100, 50, 75, 75],
+        "G": [75, 75, 100, 100],
+        "H": [75, 50]
+      },
+      "flags": [],
+      "gates": {"V1": "passed", "V2": "passed", "V3": "passed"},
+      "trends": {}
+    },
+    {
+      "id": "certipath",
+      "name": "CertiPath Compliance (Demo)",
+      "fictional": true,
+      "type": "service_provider",
+      "roles_offered": [],
+      "msme_category": "small",
+      "hq_state": "maharashtra",
+      "description": "Certification and tax-compliance consultancy (BIS, GST, import documentation)",
+      "profile": {
+        "sectors": {"value": ["business_services"], "verified": true},
+        "states": {"value": ["maharashtra", "gujarat", "delhi"], "verified": true}
+      },
+      "capabilities": {
+        "certification_support": {"level": 100, "verified": true},
+        "tax_compliance": {"level": 75, "verified": true},
+        "customs_clearance": {"level": 50, "verified": true}
+      },
+      "trust_evidence": {
+        "A": [100, 100, 100, 100, 100],
+        "B": [75, 100, 100, 100, 100, null, 100],
+        "C": [100, 100, 100, 100, 75],
+        "D": [null, 75, 100, 100, 75],
+        "E": [100, 100, 100, null],
+        "F": [75, 75, 75, 75, 75],
+        "G": [50, 50, 75, 50],
+        "H": [75, 50]
+      },
+      "flags": [],
+      "gates": {"V1": "passed", "V2": "passed", "V3": "passed"},
+      "trends": {}
+    },
+    {
+      "id": "swift-cargo",
+      "name": "Swift Cargo & Customs (Demo)",
+      "fictional": true,
+      "type": "service_provider",
+      "roles_offered": [],
+      "msme_category": "medium",
+      "hq_state": "maharashtra",
+      "description": "Customs broker and warehousing operator at western and southern ports",
+      "profile": {
+        "sectors": {"value": ["logistics_services"], "verified": true},
+        "states": {"value": ["maharashtra", "gujarat", "tamil_nadu", "karnataka", "telangana"], "verified": true}
+      },
+      "capabilities": {
+        "customs_clearance": {"level": 100, "verified": true},
+        "warehousing_logistics": {"level": 100, "verified": true}
+      },
+      "trust_evidence": {
+        "A": [100, 75, 75, 75, 75],
+        "B": [75, 50, 50, 50, 50, 50, 75],
+        "C": [75, 75, 75, 50, 75],
+        "D": [null, 75, 50, null, 50],
+        "E": [50, 75, 50, 50],
+        "F": [100, 75, 75, 100, 75],
+        "G": [100, 50, 50, 50],
+        "H": [50, 50]
+      },
+      "flags": [],
+      "gates": {"V1": "passed", "V2": "passed", "V3": "pending"},
+      "trends": {}
+    },
+    {
+      "id": "bharat-calibration",
+      "name": "Bharat Calibration Services (Demo)",
+      "fictional": true,
+      "type": "service_provider",
+      "roles_offered": [],
+      "msme_category": "small",
+      "hq_state": "tamil_nadu",
+      "description": "Calibration and repair network for industrial instruments",
+      "profile": {
+        "sectors": {"value": ["business_services", "industrial_instruments"], "verified": true},
+        "states": {"value": ["tamil_nadu", "karnataka", "telangana", "maharashtra", "gujarat"], "verified": true},
+        "service_states": {"value": ["tamil_nadu", "karnataka", "telangana", "maharashtra", "gujarat"], "verified": true}
+      },
+      "capabilities": {"engineering_localisation": {"level": 50, "verified": true}},
+      "trust_evidence": {
+        "A": [100, 100, 100, 100, 100],
+        "B": [75, 100, 100, 100, 75, null, 100],
+        "C": [100, 75, 100, 100, 75],
+        "D": [null, 100, 100, 75, 75],
+        "E": [100, 100, 100, 100],
+        "F": [100, 75, 100, 100, 75],
+        "G": [50, 50, 75, 50],
+        "H": [75, 75]
+      },
+      "flags": [],
+      "gates": {"V1": "passed", "V2": "passed", "V3": "passed"},
+      "trends": {}
+    },
+    {
+      "id": "lotus-insights",
+      "name": "Lotus Market Insights (Demo)",
+      "fictional": true,
+      "type": "service_provider",
+      "roles_offered": [],
+      "msme_category": "micro",
+      "hq_state": "karnataka",
+      "description": "Young market-research boutique; little verified data so far",
+      "profile": {
+        "sectors": {"value": ["business_services"], "verified": true},
+        "states": {"value": ["karnataka"], "verified": true}
+      },
+      "capabilities": {"market_research": {"level": 100, "verified": true}},
+      "trust_evidence": {
+        "A": [100, 100, null, null, null],
+        "B": [75, 75, 100, null, 75, null, null],
+        "C": [null, 100, 100, null, null],
+        "D": [null, 75, null, null, 75],
+        "E": [75, null, null, null],
+        "F": [50, null, null, 75, null],
+        "G": [null, null, null, 75],
+        "H": [75, null]
+      },
+      "flags": [],
+      "gates": {"V1": "passed", "V2": "passed", "V3": "pending"},
+      "trends": {}
+    }
+  ]
+}

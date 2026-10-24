@@ -1,0 +1,603 @@
+# TrustFit Trust Score configuration, version 1 (founder system).
+#
+# CONFIDENTIAL: the `rubric` and `where_to_check` text is for analysts and admins only.
+# Viewer (SME) endpoints and reports must never return those fields.
+#
+# Every number the scoring engine uses lives in this file. Do not hard-code weights in code.
+
+version: v1
+scale_levels: [0, 25, 50, 75, 100]
+
+roles:
+  supplier: {label: Supplier}
+  distributor: {label: Distributor}
+  jv_partner: {label: JV partner}
+
+dimensions:
+  integrity: {label: Integrity, question: "Will they behave?", categories: [A, C]}
+  financial: {label: Financial, question: "Will they survive and pay?", categories: [B, E]}
+  capability: {label: Capability, question: "Can they deliver?", categories: [D, F, G, H]}
+
+categories:
+  A: {label: Legal and regulatory standing, dimension: integrity}
+  B: {label: Financial health, dimension: financial}
+  C: {label: Management and governance, dimension: integrity}
+  D: {label: Customer and market reputation, dimension: capability}
+  E: {label: Payment and contract conduct, dimension: financial}
+  F: {label: Operational capability, dimension: capability}
+  G: {label: Cross-border readiness, dimension: capability}
+  H: {label: ESG and sustainability, dimension: capability}
+
+# Points out of 100. Each role must sum to 100.
+category_weights:
+  supplier:    {A: 15, B: 20, C: 15, D: 10, E: 10, F: 20, G: 5, H: 5}
+  distributor: {A: 15, B: 20, C: 10, D: 15, E: 20, F: 10, G: 5, H: 5}
+  jv_partner:  {A: 15, B: 25, C: 25, D: 5, E: 5, F: 10, G: 10, H: 5}
+
+# Percent of the category's points. Each category must sum to 100 for every role.
+# A parameter's points = category weight x split / 100 (supplier A4 = 15 x 35% = 5.25).
+parameter_splits:
+  default:
+    A1: 10
+    A2: 20
+    A3: 25
+    A4: 35
+    A5: 10
+    B1: 15
+    B2: 15
+    B3: 15
+    B4: 20
+    B5: 20
+    B6: 10
+    B7: 5
+    C1: 35
+    C2: 20
+    C3: 15
+    C4: 20
+    C5: 10
+    D1: 25
+    D2: 30
+    D3: 20
+    D4: 20
+    D5: 5
+    E1: 40
+    E2: 30
+    E3: 20
+    E4: 10
+    F1: 15
+    F2: 15
+    F3: 30
+    F4: 15
+    F5: 25
+    G1: 35
+    G2: 30
+    G3: 20
+    G4: 15
+    H1: 70
+    H2: 30
+  distributor:   # role-specific overrides; F1 and F2 keep their default 15 each
+    F3: 10
+    F4: 50
+    F5: 10
+
+freshness:
+  max_source_age_days: 730   # evidence older than 24 months is stale and does not count
+  # Parameters with `recheck_days` must also have been checked within that many days.
+
+# Data tiers: T1 public record (company effort: none), T2 peer and third party,
+# T3 company-provided, shared with consent.
+parameters:
+  A1:
+    category: A
+    name: Corporate status and registrations
+    tier: T1
+    recheck_days: 30
+    knockout_at_zero: true
+    rubric:
+      100: "Active on MCA; GST, IEC and Udyam valid where needed"
+      75: "Active; one non-critical registration being renewed"
+      50: "Name, address or directors don't match across registries"
+      25: "MCA flags non-compliance, or strike-off has started"
+      0: "Struck off, dormant or cancelled (knock-out)"
+    where_to_check: "MCA master data, GST portal, DGFT, Udyam"
+  A2:
+    category: A
+    name: Statutory filing regularity
+    tier: T1
+    rubric:
+      100: "All annual filings on time for 3 years"
+      75: "1-2 late filings, now complete"
+      50: "3-5 late filings, or one year filed over 6 months late"
+      25: "One year's filings missing"
+      0: "Two or more years missing"
+    where_to_check: "MCA filings; stock exchange filings if listed"
+  A3:
+    category: A
+    name: GST compliance (GSTR-3B, last 12 months)
+    tier: T1
+    recheck_days: 30
+    knockout_at_zero: true
+    rubric:
+      100: "All on time"
+      75: "1-2 late, under 30 days"
+      50: "3-4 late"
+      25: "5+ late, or a gap over 60 days"
+      0: "Cancelled or suspended (knock-out)"
+    where_to_check: "GST portal filing table"
+  A4:
+    category: A
+    name: Litigation and insolvency (5 years)
+    tier: T1
+    recheck_days: 30
+    rubric:
+      100: "Nothing material"
+      75: "Disputes under 1% of net worth"
+      50: "1-5% of net worth, or any cheque-bounce case (Section 138, NI Act)"
+      25: "Over 5%, repeated cheque-bounce cases, or a lender recovery case (DRT)"
+      0: "Insolvency petition pending; once admitted, a knock-out"
+    where_to_check: "eCourts, NCLT, DRT, contingent liabilities note"
+  A5:
+    category: A
+    name: Regulatory actions and licences
+    tier: T1
+    rubric:
+      100: "No penalties in 3 years; required licences (BIS, pollution consent, factory) valid"
+      75: "One minor procedural penalty, settled"
+      50: "A material penalty, or a lapsed licence since renewed"
+      25: "Ongoing regulatory proceedings, or repeated penalties"
+      0: "Core licence suspended or cancelled"
+    where_to_check: "Regulator orders, BRSR Principle 1, BIS and pollution board portals"
+  B1:
+    category: B
+    name: Revenue scale and growth (3-year CAGR)
+    tier: T1
+    max_level_if_revenue_below_25_crore: 75
+    rubric:
+      100: "10% or more"
+      75: "5-10%"
+      50: "0-5%"
+      25: "Fell up to 10%"
+      0: "Fell more than 10%"
+    where_to_check: "Audited financials (MCA), quarterly results"
+  B2:
+    category: B
+    name: EBITDA margin
+    tier: T1
+    rubric:
+      100: "15% or more"
+      75: "10-15%"
+      50: "6-10%"
+      25: "3-6%"
+      0: "Under 3%, or a loss"
+    where_to_check: "Audited financials"
+  B3:
+    category: B
+    name: Debt/equity
+    tier: T1
+    rubric:
+      100: "0.5 or less"
+      75: "Up to 1"
+      50: "Up to 2"
+      25: "Up to 3"
+      0: "Over 3, or negative net worth"
+    where_to_check: "Balance sheet"
+  B4:
+    category: B
+    name: Interest cover (EBITDA / interest)
+    tier: T1
+    rubric:
+      100: "6x or more"
+      75: "3-6x"
+      50: "2-3x"
+      25: "1-2x"
+      0: "Under 1x"
+    where_to_check: "Financials, rating rationale"
+  B5:
+    category: B
+    name: Liquidity
+    tier: T1
+    rubric:
+      100: "Current ratio 1.5+ and cash cycle stable or better"
+      75: "Current ratio 1.2-1.5, or cash cycle lengthening"
+      50: "Current ratio 1.0-1.2"
+      25: "Current ratio 0.8-1.0"
+      0: "Below 0.8, or negative operating cash flow two years running"
+    where_to_check: "Balance sheet, cash-flow statement"
+  B6:
+    category: B
+    name: External credit rating
+    tier: T1
+    rubric:
+      100: "AA- or better"
+      75: "A band"
+      50: "BBB band"
+      25: "BB or below"
+      0: "Default, or not cooperating with the rating agency"
+    where_to_check: "Rating agency press releases; if unrated, a consent-based commercial credit report"
+  B7:
+    category: B
+    name: Audit quality and opinion
+    tier: T1
+    rubric:
+      100: "Unmodified opinion; no mid-term auditor change in 3 years"
+      75: "Unmodified, with an emphasis of matter"
+      50: "Auditor resigned mid-term with a stated reason, or CARO remarks on delayed statutory dues"
+      25: "Qualified opinion"
+      0: "Adverse or disclaimer (also a cap)"
+    where_to_check: "Auditor's report, CARO report"
+  C1:
+    category: C
+    name: Promoter and director integrity
+    tier: T1
+    recheck_days: 30
+    knockout_at_zero: true
+    rubric:
+      100: "No adverse record for any promoter or director"
+      75: "One old matter (over 5 years ago), resolved"
+      50: "A director linked to a struck-off or defaulting company in the past"
+      25: "A pending enforcement or fraud-related case against a promoter or director"
+      0: "Disqualified, wilful defaulter, or fraud finding (knock-out)"
+    where_to_check: "MCA DIN status, suit-filed defaulter search, SEBI/ED/SFIO orders, news"
+  C2:
+    category: C
+    name: Management experience and stability
+    tier: T1
+    rubric:
+      100: "Key managers have 10+ years in the industry; no unplanned CEO or CFO exit in 3 years"
+      75: "5-10 years' experience, or one planned change"
+      50: "One unplanned senior exit"
+      25: "Two or more unplanned exits, or the business depends on one person"
+      0: "No identifiable management"
+    where_to_check: "MCA director history, exchange filings, interviews"
+  C3:
+    category: C
+    name: Ownership transparency
+    tier: T1
+    rubric:
+      100: "Beneficial owners clear; no shares pledged"
+      75: "Under 25% of promoter shares pledged, or minor gaps"
+      50: "25-50% pledged"
+      25: "Over 50% pledged, or layered ownership"
+      0: "Owners can't be identified"
+    where_to_check: "Shareholding pattern, beneficial-owner filings (BEN-2)"
+  C4:
+    category: C
+    name: Related-party deals
+    tier: T1
+    note: "Related-party sales to a strategic shareholder's group (an OEM customer, a technology partner) are not penalised; money flowing to promoter-owned entities is."
+    rubric:
+      100: "None material, or arm's-length deals with strategic partners"
+      75: "Small deals with promoter entities"
+      50: "Promoter-entity deals at 5-10% of revenue"
+      25: "Over 10% of revenue"
+      0: "Loans or advances to promoter entities over 25% of net worth"
+    where_to_check: "Related-party note, exchange disclosures, AGM approvals"
+  C5:
+    category: C
+    name: Board and disclosure quality
+    tier: T1
+    rubric:
+      100: "Board meets legal requirements; filings complete and consistent"
+      75: "Minor inconsistencies"
+      50: "Late or incomplete governance filings"
+      25: "Repeated non-compliance"
+      0: "Misleading disclosure found"
+    where_to_check: "Governance report, filings"
+  D1:
+    category: D
+    name: Verified peer rating (verified trading partners only)
+    tier: T2
+    note: "Under 3 verified raters counts as missing. Excluded entirely if the fake_reviews flag is set."
+    rubric:
+      100: "Average 4.5/5 or more from 5+ raters"
+      75: "4.0-4.5, or only 3-4 raters"
+      50: "3.5-4.0"
+      25: "2.5-3.5"
+      0: "Below 2.5"
+    where_to_check: "TrustFit peer network"
+  D2:
+    category: D
+    name: Repeat business and retention
+    tier: T2
+    rubric:
+      100: "Top customers kept 5+ years, plus new multi-year awards"
+      75: "Top customers kept 3-5 years"
+      50: "Some churn among top customers"
+      25: "Lost a top customer in the last 2 years"
+      0: "Lost several top customers"
+    where_to_check: "Rating rationale, order announcements, references"
+  D3:
+    category: D
+    name: Complaints and resolution
+    tier: T2
+    rubric:
+      100: "No material complaints; a complaint process in place"
+      75: "A few complaints, resolved within 30 days"
+      50: "Recurring complaints, or slow resolution"
+      25: "Consumer-forum or regulator complaints pending"
+      0: "Safety recall, or complaints pointing to fraud"
+    where_to_check: "BRSR Principle 9, consumer forum records, customer feedback"
+  D4:
+    category: D
+    name: Reference check (2-3 structured calls)
+    tier: T2
+    rubric:
+      100: "All positive on quality, delivery and honesty"
+      75: "Positive, with minor issues"
+      50: "Mixed"
+      25: "One negative reference"
+      0: "References refuse, or report misconduct"
+    where_to_check: "Your own calls"
+  D5:
+    category: D
+    name: Public and media sentiment (12 months)
+    tier: T1
+    rubric:
+      100: "Positive coverage, nothing adverse"
+      75: "Neutral or positive, minor criticism"
+      50: "Mixed, e.g. good news but a sharp share-price fall"
+      25: "Repeated negative coverage"
+      0: "Coverage of fraud, raids or misconduct"
+    where_to_check: "News search; share price if listed"
+  E1:
+    category: E
+    name: Supplier payments
+    tier: T2
+    rubric:
+      100: "No overdue MSME dues; payable days 60 or less"
+      75: "Up to 90 days; no MSME dues over 45 days"
+      50: "Some MSME dues overdue"
+      25: "MSME overdue over 10% of payables"
+      0: "A supplier has filed an insolvency petition"
+    where_to_check: "Payables ageing schedule (MSME, disputed), MSME Form I, eCourts"
+  E2:
+    category: E
+    name: Contract fulfilment (on time, in full)
+    tier: T2
+    rubric:
+      100: "98% or more"
+      75: "95-98%"
+      50: "90-95%"
+      25: "80-90%"
+      0: "Below 80%, or a contract terminated for non-performance"
+    where_to_check: "Customer scorecards (with consent), references"
+  E3:
+    category: E
+    name: Disputes and arbitration (5 years)
+    tier: T2
+    recheck_days: 30
+    rubric:
+      100: "No commercial disputes"
+      75: "Minor disputes, settled"
+      50: "One material dispute pending"
+      25: "Several disputes, or an arbitration award against it"
+      0: "An unpaid award or court decree"
+    where_to_check: "eCourts, contingent liabilities note, references"
+  E4:
+    category: E
+    name: Warranty and returns
+    tier: T2
+    rubric:
+      100: "Claims stable; returns within customer limits"
+      75: "Slight rise in claims"
+      50: "Rising claims, or customer quality alerts"
+      25: "Penalties or chargebacks from customers"
+      0: "A recall, or business lost over quality"
+    where_to_check: "Warranty provision note, customer scorecards"
+  F1:
+    category: F
+    name: Years operating
+    tier: T1
+    rubric:
+      100: "15 or more"
+      75: "10-15"
+      50: "5-10"
+      25: "2-5"
+      0: "Under 2"
+    where_to_check: "MCA incorporation date"
+  F2:
+    category: F
+    name: Workforce trend (EPFO, 12 months)
+    tier: T1
+    rubric:
+      100: "Growing"
+      75: "Stable, within +/-5%"
+      50: "Down 5-15%"
+      25: "Down 15-30%"
+      0: "Down over 30%, or PF payments stopped"
+    where_to_check: "EPFO establishment search"
+  F3:
+    category: F
+    name: Quality certifications
+    tier: T3
+    note: "Rubric shown for auto components. Other sectors swap in their own certification, such as ISO 13485 for medical devices."
+    rubric:
+      100: "IATF 16949 at main plants, plus ISO 14001 and 45001"
+      75: "IATF at the main plant"
+      50: "ISO 9001 only"
+      25: "Certification in process"
+      0: "None"
+    where_to_check: "Certificates, checked with the issuing body"
+  F4:
+    category: F
+    name: "Reach (supplier: plants near customers; distributor: sales and service network)"
+    tier: T2
+    rubric:
+      100: "Covers every region the buyer needs"
+      75: "Most regions"
+      50: "One region, with plans"
+      25: "One location far from the buyer's customers"
+      0: "No verifiable locations"
+    where_to_check: "Plant list, site verification (V1)"
+  F5:
+    category: F
+    name: Capacity
+    tier: T3
+    rubric:
+      100: "Installed capacity documented; utilisation under 85%; headroom of 1.5x the buyer's volume"
+      75: "Adequate, with expansion underway"
+      50: "Adequate but tight (utilisation over 85%)"
+      25: "Below the buyer's requirement"
+      0: "Unverifiable, or overstated at the site check"
+    where_to_check: "Capacity disclosures, site visit, video tour"
+  G1:
+    category: G
+    name: Export/import record and FEMA
+    tier: T1
+    rubric:
+      100: "Regular imports and exports for 3+ years; IEC active; no FEMA issues"
+      75: "Regular trade in one direction"
+      50: "Occasional trade"
+      25: "IEC held, no recent trade"
+      0: "A FEMA violation, or IEC suspended"
+    where_to_check: "DGFT IEC status, Board's report (foreign exchange earnings and outgo)"
+  G2:
+    category: G
+    name: Foreign partner history
+    tier: T2
+    rubric:
+      100: "An active JV or technical collaboration of 5+ years"
+      75: "An active partnership under 5 years, or a past one ended amicably"
+      50: "Foreign customers only"
+      25: "None"
+      0: "A foreign partnership ended in litigation or arbitration"
+    where_to_check: "Board's report (imported technology), filings, news"
+  G3:
+    category: G
+    name: Anti-bribery and compliance policy
+    tier: T3
+    rubric:
+      100: "Written policy, training and a whistle-blower channel; no cases"
+      75: "Policy exists, little training"
+      50: "A general code of conduct only"
+      25: "None"
+      0: "A bribery or corruption case"
+    where_to_check: "BRSR Principle 1, policy documents"
+  G4:
+    category: G
+    name: Communication readiness
+    tier: T2
+    rubric:
+      100: "Japanese-speaking staff or directors, or prior Japanese partners"
+      75: "Fluent English and prior foreign clients"
+      50: "English only through intermediaries"
+      25: "Limited"
+      0: "Can't engage directly"
+    where_to_check: "Filings (nominee directors), interviews"
+  H1:
+    category: H
+    name: Environmental and labour compliance
+    tier: T1
+    rubric:
+      100: "Valid pollution consents; ISO 14001/45001 or equal; PF and ESI paid regularly; no violations"
+      75: "Compliant, without certifications"
+      50: "Minor violations, since fixed"
+      25: "Pending notices, or irregular PF payments"
+      0: "A closure order, child or forced labour, or a fatal accident with prosecution"
+    where_to_check: "Pollution board portal, EPFO, BRSR Principles 3 and 6"
+  H2:
+    category: H
+    name: Sustainability disclosure
+    tier: T3
+    rubric:
+      100: "BRSR or an equal report, with data"
+      75: "Policies plus some metrics"
+      50: "Policies only"
+      25: "Minimal"
+      0: "None"
+    where_to_check: "BRSR, annual report"
+
+overrides:
+  knockouts:   # any confirmed knock-out: not eligible, no score, verdict Red
+    registration_struck_off:
+      label: "Company or GST registration struck off, cancelled or dormant"
+      check: "MCA master data, GST portal"
+    sanctions_match:
+      label: "Confirmed sanctions or AML match on the company, a director or a beneficial owner"
+      check: "Sanctions and PEP screening, confirmed by manual review; a name match alone doesn't count"
+    insolvency_admitted:
+      label: "Insolvency proceedings admitted, or liquidation"
+      check: "NCLT orders, IBBI announcements"
+    wilful_defaulter_or_disqualified:
+      label: "A promoter or director on the suit-filed wilful-defaulter list, or disqualified"
+      check: "Credit bureaus' suit-filed search, MCA DIN status"
+    fraud_finding:
+      label: "A regulator or court has found fraud or fund diversion in the last 5 years"
+      check: "SEBI, SFIO and ED orders; court judgments"
+  caps:        # ceiling on the final score
+    adverse_audit_opinion:
+      label: "Adverse or disclaimer audit opinion"
+      max_score: 50
+      check: "Auditor's report"
+    going_concern_uncertainty:
+      label: "Auditor reports a material uncertainty about going concern"
+      max_score: 60
+      check: "Auditor's report (separate going-concern section)"
+    asset_attachment_24m:
+      label: "Tax or enforcement authority attached company or promoter assets in the last 24 months"
+      max_score: 65
+      check: "Exchange disclosures, orders, news"
+  fake_reviews:
+    label: "Fake or manipulated reviews"
+    effect: "D1 excluded; verdict no better than Amber"
+    check: "Review-pattern checks"
+  notches:     # only for risks outside the 37 parameters; total clamped to +/- notch_total_limit
+    customer_concentration_70:
+      label: "One customer is over 70% of revenue"
+      points: -3
+      check: "Rating rationale, annual report"
+    promoter_group_default:
+      label: "A promoter-group company is in default or insolvency"
+      points: -5
+      check: "NCLT orders, defaulter searches, rating actions"
+    strategic_shareholder_10:
+      label: "A strong carmaker, tier-1 supplier or multinational holds 10% or more"
+      points: 3
+      check: "Shareholding pattern"
+  notch_total_limit: 8
+  weakest_link_margin: 15   # final score <= weakest dimension score + 15
+
+gates:   # pass / pending / failed. Failed -> Red. Pending -> Amber at best.
+  V1:
+    label: "Registered address and site verification"
+    check: "Address matched to registry; geo-tagged photos or video"
+  V2:
+    label: "Sanctions, AML and PEP screening"
+    check: "Entity, directors and beneficial owners checked"
+  V3:
+    label: "Contact person authentication"
+    check: "Named signatory verified and authorised by the company"
+
+bands:   # checked top-down on the rounded final score
+  - {min: 85, label: Very strong}
+  - {min: 70, label: Strong}
+  - {min: 55, label: Adequate}
+  - {min: 40, label: Weak}
+  - {min: 0, label: Very weak}
+
+confidence:
+  no_score_below: 40              # verified points < 40 -> no score issued
+  provisional_below: 60           # verified points < 60 -> provisional
+  dimension_provisional_below: 50 # any dimension under 50% verified -> provisional
+
+verdict:
+  red_below: 55
+  green_from: 70
+  fit_red_below: 50     # applied only when a Fit result is supplied
+  fit_green_from: 70
+
+outlook:
+  signals:
+    revenue_growth: Revenue growth
+    operating_margin: Operating margin
+    operating_cash_flow: Operating cash flow
+    cash_conversion_cycle: Cash conversion cycle
+    credit_rating_action: Latest credit rating action
+  positive_if_improving_at_least: 3
+  watch_if_worsening_at_least: 3
+
+# v1 assumption, to calibrate: service providers (logistics, compliance, consulting)
+# are Trust-scored with the distributor weights.
+service_provider_trust_role: distributor
+
+disclaimer: "TrustFit Score is not a credit rating or investment advice."

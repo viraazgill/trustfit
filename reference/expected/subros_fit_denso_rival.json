@@ -1,0 +1,59 @@
+{
+  "company_id": "subros",
+  "sme_id": "denso-rival-demo",
+  "role": "supplier",
+  "score": 71,
+  "score_raw": 71.4286,
+  "confidence": 41.1765,
+  "category": "not_a_fit",
+  "factors": {
+    "FT1": {
+      "label": "Sector and product experience",
+      "importance": "important",
+      "weight": 29.4118,
+      "level": 100,
+      "verified": true
+    },
+    "FT2": {
+      "label": "Regional coverage",
+      "importance": "important",
+      "weight": 23.5294,
+      "level": null,
+      "verified": false
+    },
+    "FT3": {
+      "label": "Sales and distribution channels",
+      "importance": "irrelevant",
+      "weight": 0.0,
+      "level": null,
+      "verified": false
+    },
+    "FT4": {
+      "label": "Capacity vs requirement",
+      "importance": "must",
+      "weight": 35.2941,
+      "level": null,
+      "verified": false
+    },
+    "FT5": {
+      "label": "After-sales and service",
+      "importance": "irrelevant",
+      "weight": 0.0,
+      "level": null,
+      "verified": false
+    },
+    "FT6": {
+      "label": "Competing-brand conflict (inverse)",
+      "importance": "important",
+      "weight": 11.7647,
+      "level": 0,
+      "verified": true
+    }
+  },
+  "gaps": [
+    "FT2",
+    "FT4",
+    "FT6"
+  ],
+  "competitor_conflict": true
+}

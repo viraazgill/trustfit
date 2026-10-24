@@ -1,0 +1,113 @@
+# TrustFit Fit Score configuration, version 1.
+# Fit rates the match between ONE Indian company and ONE Japanese SME's brief.
+# Trust decides eligibility; Fit can lower a verdict but never raise it.
+
+version: v1
+scale_levels: [0, 25, 50, 75, 100]
+
+factors:
+  FT1: {label: Sector and product experience, base_weight: 25}
+  FT2: {label: Regional coverage, base_weight: 20}
+  FT3: {label: Sales and distribution channels, base_weight: 20}
+  FT4: {label: Capacity vs requirement, base_weight: 15}
+  FT5: {label: After-sales and service, base_weight: 10}
+  FT6: {label: Competing-brand conflict (inverse), base_weight: 10}
+
+# The SME marks each factor must / important / nice / irrelevant. Effective weight =
+# base_weight x multiplier, then all effective weights are rescaled to sum to 100.
+importance_multipliers: {must: 2.0, important: 1.0, nice: 0.5, irrelevant: 0.0}
+
+# Defaults when the SME brief doesn't override a factor.
+role_default_importance:
+  supplier:    {FT1: important, FT2: important, FT3: nice, FT4: must, FT5: nice, FT6: important}
+  distributor: {FT1: important, FT2: must, FT3: must, FT4: nice, FT5: important, FT6: must}
+  jv_partner:  {FT1: must, FT2: important, FT3: important, FT4: important, FT5: nice, FT6: must}
+
+# Automatic relevance: FT3 is irrelevant when the brief lists no channels;
+# FT5 is irrelevant when after_sales_need is "none".
+
+# Weighted state coverage: primary target states count 2, secondary count 1.
+state_priority_weights: {primary: 2, secondary: 1}
+
+# [threshold, level]: the first row whose threshold the ratio meets or beats.
+coverage_levels: [[0.9, 100], [0.7, 75], [0.5, 50], [0.25, 25], [0.0, 0]]
+capacity_levels: [[1.5, 100], [1.2, 75], [1.0, 50], [0.7, 25], [0.0, 0]]
+
+# FT1 levels:
+#   100 same sector AND a product in common
+#    75 a product in common, OR same sector and a product family in common
+#    50 same sector only
+#    25 a related sector
+#     0 none
+# FT6 levels: a blocking relation with a competitor brand -> 0; a partial relation -> 50; none -> 100.
+conflict:
+  blocking_relations: [owner, shareholder_10, exclusive, represents]
+  partial_relations: [supplies]
+
+categories:
+  strong_fit:
+    label: Strong fit
+    action: Shortlist
+    min_score: 70
+    min_confidence: 60
+    rule: "score >= 70, every must-have factor known and at 50 or more, fit confidence >= 60"
+  possible_fit:
+    label: Possible fit
+    action: Gaps to close
+    min_score: 50
+  not_a_fit:
+    label: Not a fit
+    action: Skip, even if trusted
+    rule: "score < 50, any must-have factor at 0, or a blocking competitor relation (FT6 = 0) unless the SME set FT6 to irrelevant"
+
+vocabularies:
+  sectors:
+    - auto_components
+    - industrial_instruments
+    - water_treatment
+    - machinery
+    - electronics
+    - medical_devices
+    - food_processing
+    - consumer_products
+    - logistics_services
+    - business_services
+  related_sectors:
+    auto_components: [machinery, electronics]
+    industrial_instruments: [water_treatment, machinery, electronics]
+    water_treatment: [industrial_instruments, machinery]
+    machinery: [auto_components, industrial_instruments]
+    electronics: [industrial_instruments, auto_components]
+    medical_devices: [electronics]
+    food_processing: [consumer_products, machinery]
+    consumer_products: [food_processing, electronics]
+  product_families:
+    process_measurement: [flow_meters, water_quality_sensors, pressure_gauges, level_sensors]
+    process_control: [process_valves, actuators, controllers]
+    car_thermal: [car_ac_systems, compressors, heat_exchangers, radiators]
+    pumps: [industrial_pumps, dosing_pumps]
+  channels:
+    - industrial_b2b
+    - epc_projects
+    - government_tenders
+    - oem_direct
+    - dealer_network
+    - modern_trade
+    - ecommerce
+    - exports
+  states:
+    - andhra_pradesh
+    - delhi
+    - goa
+    - gujarat
+    - haryana
+    - karnataka
+    - kerala
+    - madhya_pradesh
+    - maharashtra
+    - punjab
+    - rajasthan
+    - tamil_nadu
+    - telangana
+    - uttar_pradesh
+    - west_bengal

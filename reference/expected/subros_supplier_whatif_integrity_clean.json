@@ -1,0 +1,383 @@
+{
+  "company_id": "subros",
+  "role": "supplier",
+  "as_of": "2026-10-24",
+  "weight_set": "v1",
+  "what_if": true,
+  "eligible": true,
+  "status": "scored",
+  "score": 90,
+  "score_raw": 90.303,
+  "band": "Very strong",
+  "confidence": 82.5,
+  "provisional": false,
+  "verdict": "Green",
+  "outlook": "Watch",
+  "base_score": 90.303,
+  "notches": 0,
+  "notch_list": [
+    {
+      "code": "strategic_shareholder_10",
+      "points": 3
+    },
+    {
+      "code": "customer_concentration_70",
+      "points": -3
+    }
+  ],
+  "weakest_dimension": 84.7826,
+  "weakest_limit": 99.7826,
+  "cap": null,
+  "cap_list": [],
+  "binding_limit": "score",
+  "categories": {
+    "A": {
+      "label": "Legal and regulatory standing",
+      "points": 15.0,
+      "verified_points": 15.0,
+      "earned_points": 15.0,
+      "verified_pct": 100.0,
+      "score_pct": 100.0
+    },
+    "B": {
+      "label": "Financial health",
+      "points": 20.0,
+      "verified_points": 19.0,
+      "earned_points": 16.5,
+      "verified_pct": 95.0,
+      "score_pct": 86.8421
+    },
+    "C": {
+      "label": "Management and governance",
+      "points": 15.0,
+      "verified_points": 15.0,
+      "earned_points": 13.3125,
+      "verified_pct": 100.0,
+      "score_pct": 88.75
+    },
+    "D": {
+      "label": "Customer and market reputation",
+      "points": 10.0,
+      "verified_points": 3.5,
+      "earned_points": 3.25,
+      "verified_pct": 35.0,
+      "score_pct": 92.8571
+    },
+    "E": {
+      "label": "Payment and contract conduct",
+      "points": 10.0,
+      "verified_points": 4.0,
+      "earned_points": 3.0,
+      "verified_pct": 40.0,
+      "score_pct": 75.0
+    },
+    "F": {
+      "label": "Operational capability",
+      "points": 20.0,
+      "verified_points": 17.0,
+      "earned_points": 15.75,
+      "verified_pct": 85.0,
+      "score_pct": 92.6471
+    },
+    "G": {
+      "label": "Cross-border readiness",
+      "points": 5.0,
+      "verified_points": 4.0,
+      "earned_points": 3.5625,
+      "verified_pct": 80.0,
+      "score_pct": 89.0625
+    },
+    "H": {
+      "label": "ESG and sustainability",
+      "points": 5.0,
+      "verified_points": 5.0,
+      "earned_points": 4.125,
+      "verified_pct": 100.0,
+      "score_pct": 82.5
+    }
+  },
+  "dimensions": {
+    "integrity": {
+      "label": "Integrity",
+      "points": 30.0,
+      "verified_points": 30.0,
+      "earned_points": 28.3125,
+      "verified_pct": 100.0,
+      "score_pct": 94.375
+    },
+    "financial": {
+      "label": "Financial",
+      "points": 30.0,
+      "verified_points": 23.0,
+      "earned_points": 19.5,
+      "verified_pct": 76.6667,
+      "score_pct": 84.7826
+    },
+    "capability": {
+      "label": "Capability",
+      "points": 40.0,
+      "verified_points": 29.5,
+      "earned_points": 26.6875,
+      "verified_pct": 73.75,
+      "score_pct": 90.4661
+    }
+  },
+  "gates": {
+    "V1": "passed",
+    "V2": "passed",
+    "V3": "passed"
+  },
+  "reasons": [],
+  "parameters": {
+    "A1": {
+      "status": "verified",
+      "level": 100,
+      "points": 1.5
+    },
+    "A2": {
+      "status": "verified",
+      "level": 100,
+      "points": 3.0
+    },
+    "A3": {
+      "status": "verified",
+      "level": 100,
+      "points": 3.75
+    },
+    "A4": {
+      "status": "verified",
+      "level": 100,
+      "points": 5.25
+    },
+    "A5": {
+      "status": "verified",
+      "level": 100,
+      "points": 1.5
+    },
+    "B1": {
+      "status": "verified",
+      "level": 100,
+      "points": 3.0
+    },
+    "B2": {
+      "status": "verified",
+      "level": 50,
+      "points": 3.0
+    },
+    "B3": {
+      "status": "verified",
+      "level": 100,
+      "points": 3.0
+    },
+    "B4": {
+      "status": "verified",
+      "level": 100,
+      "points": 4.0
+    },
+    "B5": {
+      "status": "verified",
+      "level": 75,
+      "points": 4.0
+    },
+    "B6": {
+      "status": "verified",
+      "level": 100,
+      "points": 2.0
+    },
+    "B7": {
+      "status": "missing",
+      "level": null,
+      "points": 1.0
+    },
+    "C1": {
+      "status": "verified",
+      "level": 100,
+      "points": 5.25
+    },
+    "C2": {
+      "status": "verified",
+      "level": 100,
+      "points": 3.0
+    },
+    "C3": {
+      "status": "verified",
+      "level": 75,
+      "points": 2.25
+    },
+    "C4": {
+      "status": "verified",
+      "level": 75,
+      "points": 3.0
+    },
+    "C5": {
+      "status": "verified",
+      "level": 75,
+      "points": 1.5
+    },
+    "D1": {
+      "status": "missing",
+      "level": null,
+      "points": 2.5
+    },
+    "D2": {
+      "status": "verified",
+      "level": 100,
+      "points": 3.0
+    },
+    "D3": {
+      "status": "missing",
+      "level": null,
+      "points": 2.0
+    },
+    "D4": {
+      "status": "missing",
+      "level": null,
+      "points": 2.0
+    },
+    "D5": {
+      "status": "verified",
+      "level": 50,
+      "points": 0.5
+    },
+    "E1": {
+      "status": "verified",
+      "level": 75,
+      "points": 4.0
+    },
+    "E2": {
+      "status": "missing",
+      "level": null,
+      "points": 3.0
+    },
+    "E3": {
+      "status": "missing",
+      "level": null,
+      "points": 2.0
+    },
+    "E4": {
+      "status": "missing",
+      "level": null,
+      "points": 1.0
+    },
+    "F1": {
+      "status": "verified",
+      "level": 100,
+      "points": 3.0
+    },
+    "F2": {
+      "status": "missing",
+      "level": null,
+      "points": 3.0
+    },
+    "F3": {
+      "status": "verified",
+      "level": 100,
+      "points": 6.0
+    },
+    "F4": {
+      "status": "verified",
+      "level": 100,
+      "points": 3.0
+    },
+    "F5": {
+      "status": "verified",
+      "level": 75,
+      "points": 5.0
+    },
+    "G1": {
+      "status": "verified",
+      "level": 75,
+      "points": 1.75
+    },
+    "G2": {
+      "status": "verified",
+      "level": 100,
+      "points": 1.5
+    },
+    "G3": {
+      "status": "missing",
+      "level": null,
+      "points": 1.0
+    },
+    "G4": {
+      "status": "verified",
+      "level": 100,
+      "points": 0.75
+    },
+    "H1": {
+      "status": "verified",
+      "level": 75,
+      "points": 3.5
+    },
+    "H2": {
+      "status": "verified",
+      "level": 100,
+      "points": 1.5
+    }
+  },
+  "next_checks": [
+    {
+      "type": "parameter",
+      "id": "E2",
+      "points": 3.0,
+      "status": "missing",
+      "check": "Customer scorecards (with consent), references"
+    },
+    {
+      "type": "parameter",
+      "id": "F2",
+      "points": 3.0,
+      "status": "missing",
+      "check": "EPFO establishment search"
+    },
+    {
+      "type": "parameter",
+      "id": "D1",
+      "points": 2.5,
+      "status": "missing",
+      "check": "TrustFit peer network"
+    },
+    {
+      "type": "parameter",
+      "id": "D3",
+      "points": 2.0,
+      "status": "missing",
+      "check": "BRSR Principle 9, consumer forum records, customer feedback"
+    },
+    {
+      "type": "parameter",
+      "id": "D4",
+      "points": 2.0,
+      "status": "missing",
+      "check": "Your own calls"
+    },
+    {
+      "type": "parameter",
+      "id": "E3",
+      "points": 2.0,
+      "status": "missing",
+      "check": "eCourts, contingent liabilities note, references"
+    },
+    {
+      "type": "parameter",
+      "id": "B7",
+      "points": 1.0,
+      "status": "missing",
+      "check": "Auditor's report, CARO report"
+    },
+    {
+      "type": "parameter",
+      "id": "E4",
+      "points": 1.0,
+      "status": "missing",
+      "check": "Warranty provision note, customer scorecards"
+    },
+    {
+      "type": "parameter",
+      "id": "G3",
+      "points": 1.0,
+      "status": "missing",
+      "check": "BRSR Principle 1, policy documents"
+    }
+  ]
+}

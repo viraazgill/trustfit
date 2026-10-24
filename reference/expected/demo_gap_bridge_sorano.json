@@ -1,0 +1,531 @@
+{
+  "sme_id": "sorano",
+  "as_of": "2026-10-24",
+  "readiness": {
+    "R1": {
+      "label": "Market understanding",
+      "jetro_ask": "Understand Indian markets, target customers and regional differences across states",
+      "readiness": 41.6667,
+      "severity": 70.0,
+      "severity_label": "critical",
+      "covered_by_trustfit": false
+    },
+    "R2": {
+      "label": "Partner identification and verification",
+      "jetro_ask": "Identify, evaluate and verify reliable local distributors, JV partners and opportunities",
+      "readiness": 12.5,
+      "severity": 87.5,
+      "severity_label": "critical",
+      "covered_by_trustfit": true
+    },
+    "R3": {
+      "label": "Localisation",
+      "jetro_ask": "Localize products, packaging, pricing and go-to-market models",
+      "readiness": 66.6667,
+      "severity": 26.6667,
+      "severity_label": "minor",
+      "covered_by_trustfit": false
+    },
+    "R4": {
+      "label": "Regulatory, legal and tax",
+      "jetro_ask": "Navigate regulatory, legal, taxation and operational requirements",
+      "readiness": 25.0,
+      "severity": 90.0,
+      "severity_label": "critical",
+      "covered_by_trustfit": false
+    },
+    "R5": {
+      "label": "Communication and business culture",
+      "jetro_ask": "Bridge differences in communication, negotiation and business culture",
+      "readiness": 50.0,
+      "severity": 50.0,
+      "severity_label": "significant",
+      "covered_by_trustfit": false
+    },
+    "R6": {
+      "label": "Sustainable operations",
+      "jetro_ask": "Build sustainable long-term local operations and trustworthy partnerships",
+      "readiness": 25.0,
+      "severity": 90.0,
+      "severity_label": "critical",
+      "covered_by_trustfit": false
+    }
+  },
+  "companies": [
+    {
+      "company_id": "deccan-instrumentation",
+      "name": "Deccan Instrumentation (Demo)",
+      "type": "business_partner",
+      "trust_role": "distributor",
+      "trust_score": 85,
+      "trust_verdict": "Green",
+      "provisional": false,
+      "fit": 90,
+      "fit_category": "strong_fit",
+      "combined_verdict": "Green",
+      "eligible": true,
+      "excluded_because": [],
+      "strengths": {
+        "quality_certified": 0.75,
+        "regulatory_clean": 1.0,
+        "japanese_language": 0.75,
+        "foreign_partner_experience": 0.75,
+        "payment_reliability": 0.75,
+        "regional_reach": 0.75,
+        "sector_customer_access": 1.0,
+        "after_sales_network": 0.75,
+        "warehousing_logistics": 0.5
+      },
+      "gap_coverage": 47.3724,
+      "per_gap": {
+        "R1": 0.6,
+        "R3": 0.15,
+        "R4": 0.2,
+        "R5": 0.6,
+        "R6": 0.675
+      },
+      "match": 72.949
+    },
+    {
+      "company_id": "western-flow",
+      "name": "Western Flow Systems (Demo)",
+      "type": "business_partner",
+      "trust_role": "distributor",
+      "trust_score": 92,
+      "trust_verdict": "Green",
+      "provisional": false,
+      "fit": 54,
+      "fit_category": "not_a_fit",
+      "combined_verdict": "Red",
+      "eligible": false,
+      "excluded_because": [
+        "competitor conflict: represents Flowtek (Demo)"
+      ],
+      "strengths": {
+        "quality_certified": 0.75,
+        "regulatory_clean": 1.0,
+        "japanese_language": 0.75,
+        "foreign_partner_experience": 1.0,
+        "payment_reliability": 0.875,
+        "regional_reach": 0.5,
+        "sector_customer_access": 1.0,
+        "after_sales_network": 0.5,
+        "warehousing_logistics": 0.75
+      },
+      "gap_coverage": 47.2385,
+      "per_gap": {
+        "R1": 0.5,
+        "R3": 0.15,
+        "R4": 0.2,
+        "R5": 0.675,
+        "R6": 0.7062
+      }
+    },
+    {
+      "company_id": "sabarmati-process",
+      "name": "Sabarmati Process Controls (Demo)",
+      "type": "business_partner",
+      "trust_role": "distributor",
+      "trust_score": 59,
+      "trust_verdict": "Amber",
+      "provisional": true,
+      "fit": 51,
+      "fit_category": "possible_fit",
+      "combined_verdict": "Amber",
+      "eligible": true,
+      "excluded_because": [],
+      "strengths": {
+        "quality_certified": 0.5,
+        "japanese_language": 0.5,
+        "foreign_partner_experience": 0.25,
+        "payment_reliability": 0.5,
+        "regional_reach": 0.5,
+        "sector_customer_access": 0.75,
+        "after_sales_network": 0.25
+      },
+      "gap_coverage": 22.1301,
+      "per_gap": {
+        "R1": 0.425,
+        "R3": 0.1,
+        "R4": 0.0,
+        "R5": 0.325,
+        "R6": 0.2625
+      },
+      "match": 39.452
+    },
+    {
+      "company_id": "konkan-trade",
+      "name": "Konkan Trade Links (Demo)",
+      "type": "business_partner",
+      "trust_role": "distributor",
+      "trust_score": null,
+      "trust_verdict": "Red",
+      "provisional": null,
+      "fit": 57,
+      "fit_category": "possible_fit",
+      "combined_verdict": "Red",
+      "eligible": false,
+      "excluded_because": [
+        "knock-out"
+      ],
+      "strengths": {
+        "regional_reach": 0.25,
+        "sector_customer_access": 1.0,
+        "after_sales_network": 0.25
+      },
+      "gap_coverage": 10.9821,
+      "per_gap": {
+        "R1": 0.4,
+        "R3": 0.0,
+        "R4": 0.0,
+        "R5": 0.0,
+        "R6": 0.0875
+      }
+    },
+    {
+      "company_id": "nihon-india-bridge",
+      "name": "Nihon-India Bridge Consultants (Demo)",
+      "type": "service_provider",
+      "trust_role": "distributor",
+      "trust_score": 92,
+      "trust_verdict": "Green",
+      "provisional": false,
+      "fit": null,
+      "fit_category": null,
+      "combined_verdict": "Green",
+      "eligible": true,
+      "excluded_because": [],
+      "strengths": {
+        "japanese_language": 1.0,
+        "foreign_partner_experience": 0.75,
+        "market_research": 0.75,
+        "certification_support": 0.125,
+        "business_interpretation": 1.0
+      },
+      "gap_coverage": 20.1849,
+      "per_gap": {
+        "R1": 0.225,
+        "R3": 0.0,
+        "R4": 0.0438,
+        "R5": 0.925,
+        "R6": 0.0
+      }
+    },
+    {
+      "company_id": "certipath",
+      "name": "CertiPath Compliance (Demo)",
+      "type": "service_provider",
+      "trust_role": "distributor",
+      "trust_score": 90,
+      "trust_verdict": "Green",
+      "provisional": false,
+      "fit": null,
+      "fit_category": null,
+      "combined_verdict": "Green",
+      "eligible": true,
+      "excluded_because": [],
+      "strengths": {
+        "japanese_language": 0.5,
+        "foreign_partner_experience": 0.5,
+        "certification_support": 1.0,
+        "customs_clearance": 0.5,
+        "tax_compliance": 0.75
+      },
+      "gap_coverage": 23.3418,
+      "per_gap": {
+        "R1": 0.0,
+        "R3": 0.0,
+        "R4": 0.625,
+        "R5": 0.4,
+        "R6": 0.0
+      }
+    },
+    {
+      "company_id": "swift-cargo",
+      "name": "Swift Cargo & Customs (Demo)",
+      "type": "service_provider",
+      "trust_role": "distributor",
+      "trust_score": 66,
+      "trust_verdict": "Amber",
+      "provisional": false,
+      "fit": null,
+      "fit_category": null,
+      "combined_verdict": "Amber",
+      "eligible": true,
+      "excluded_because": [],
+      "strengths": {
+        "japanese_language": 0.5,
+        "foreign_partner_experience": 0.5,
+        "customs_clearance": 1.0,
+        "warehousing_logistics": 1.0
+      },
+      "gap_coverage": 21.2755,
+      "per_gap": {
+        "R1": 0.0,
+        "R3": 0.0,
+        "R4": 0.25,
+        "R5": 0.4,
+        "R6": 0.3
+      }
+    },
+    {
+      "company_id": "bharat-calibration",
+      "name": "Bharat Calibration Services (Demo)",
+      "type": "service_provider",
+      "trust_role": "distributor",
+      "trust_score": 92,
+      "trust_verdict": "Green",
+      "provisional": false,
+      "fit": null,
+      "fit_category": null,
+      "combined_verdict": "Green",
+      "eligible": true,
+      "excluded_because": [],
+      "strengths": {
+        "japanese_language": 0.5,
+        "foreign_partner_experience": 0.5,
+        "after_sales_network": 1.0,
+        "engineering_localisation": 0.5
+      },
+      "gap_coverage": 16.5816,
+      "per_gap": {
+        "R1": 0.0,
+        "R3": 0.1,
+        "R4": 0.0,
+        "R5": 0.4,
+        "R6": 0.35
+      }
+    },
+    {
+      "company_id": "lotus-insights",
+      "name": "Lotus Market Insights (Demo)",
+      "type": "service_provider",
+      "trust_role": "distributor",
+      "trust_score": 80,
+      "trust_verdict": "Amber",
+      "provisional": true,
+      "fit": null,
+      "fit_category": null,
+      "combined_verdict": "Amber",
+      "eligible": true,
+      "excluded_because": [],
+      "strengths": {
+        "japanese_language": 0.75,
+        "market_research": 1.0
+      },
+      "gap_coverage": 12.1684,
+      "per_gap": {
+        "R1": 0.3,
+        "R3": 0.0,
+        "R4": 0.0,
+        "R5": 0.375,
+        "R6": 0.0
+      }
+    }
+  ],
+  "primary_ranking": [
+    {
+      "company_id": "deccan-instrumentation",
+      "match": 72.949,
+      "fit": 90,
+      "gap_coverage": 47.3724
+    },
+    {
+      "company_id": "sabarmati-process",
+      "match": 39.452,
+      "fit": 51,
+      "gap_coverage": 22.1301
+    }
+  ],
+  "team": [
+    {
+      "company_id": "deccan-instrumentation",
+      "slot": "primary",
+      "gain": 47.3724,
+      "covers": [
+        {
+          "gap": "R1",
+          "capability": "regional_reach",
+          "label": "Sales presence in your target states",
+          "strength": 0.75
+        },
+        {
+          "gap": "R1",
+          "capability": "sector_customer_access",
+          "label": "Experience with your sector and products",
+          "strength": 1.0
+        },
+        {
+          "gap": "R3",
+          "capability": "quality_certified",
+          "label": "Quality certifications",
+          "strength": 0.75
+        },
+        {
+          "gap": "R4",
+          "capability": "regulatory_clean",
+          "label": "Clean regulatory record and valid licences",
+          "strength": 1.0
+        },
+        {
+          "gap": "R5",
+          "capability": "foreign_partner_experience",
+          "label": "Long-running foreign partnerships",
+          "strength": 0.75
+        },
+        {
+          "gap": "R6",
+          "capability": "after_sales_network",
+          "label": "Service network in your target states",
+          "strength": 0.75
+        },
+        {
+          "gap": "R6",
+          "capability": "payment_reliability",
+          "label": "Reliable payment and contract conduct",
+          "strength": 0.75
+        }
+      ]
+    },
+    {
+      "company_id": "certipath",
+      "slot": "support",
+      "gain": 17.2194,
+      "covers": [
+        {
+          "gap": "R4",
+          "capability": "certification_support",
+          "label": "Certification support (BIS and others)",
+          "strength": 1.0
+        },
+        {
+          "gap": "R4",
+          "capability": "tax_compliance",
+          "label": "GST and tax compliance",
+          "strength": 0.75
+        }
+      ]
+    },
+    {
+      "company_id": "nihon-india-bridge",
+      "slot": "support",
+      "gain": 9.7959,
+      "covers": [
+        {
+          "gap": "R1",
+          "capability": "market_research",
+          "label": "India market research",
+          "strength": 0.75
+        },
+        {
+          "gap": "R5",
+          "capability": "japanese_language",
+          "label": "Japanese-speaking staff or prior Japanese partners",
+          "strength": 1.0
+        },
+        {
+          "gap": "R5",
+          "capability": "business_interpretation",
+          "label": "Japanese-English business interpretation",
+          "strength": 1.0
+        }
+      ]
+    },
+    {
+      "company_id": "swift-cargo",
+      "slot": "support",
+      "gain": 7.5765,
+      "covers": [
+        {
+          "gap": "R4",
+          "capability": "customs_clearance",
+          "label": "Customs clearance",
+          "strength": 1.0
+        },
+        {
+          "gap": "R6",
+          "capability": "warehousing_logistics",
+          "label": "Warehousing and logistics",
+          "strength": 1.0
+        }
+      ]
+    }
+  ],
+  "team_coverage": 81.9643,
+  "gap_status": {
+    "R1": {
+      "team_coverage": 0.825,
+      "status": "covered"
+    },
+    "R3": {
+      "team_coverage": 0.15,
+      "status": "not covered"
+    },
+    "R4": {
+      "team_coverage": 0.95,
+      "status": "covered"
+    },
+    "R5": {
+      "team_coverage": 0.925,
+      "status": "covered"
+    },
+    "R6": {
+      "team_coverage": 0.825,
+      "status": "covered"
+    }
+  },
+  "per_gap": {
+    "R1": [
+      {
+        "company_id": "deccan-instrumentation",
+        "coverage": 0.6
+      },
+      {
+        "company_id": "sabarmati-process",
+        "coverage": 0.425
+      },
+      {
+        "company_id": "lotus-insights",
+        "coverage": 0.3
+      }
+    ],
+    "R4": [
+      {
+        "company_id": "certipath",
+        "coverage": 0.625
+      },
+      {
+        "company_id": "swift-cargo",
+        "coverage": 0.25
+      }
+    ],
+    "R5": [
+      {
+        "company_id": "nihon-india-bridge",
+        "coverage": 0.925
+      },
+      {
+        "company_id": "deccan-instrumentation",
+        "coverage": 0.6
+      },
+      {
+        "company_id": "bharat-calibration",
+        "coverage": 0.4
+      }
+    ],
+    "R6": [
+      {
+        "company_id": "deccan-instrumentation",
+        "coverage": 0.675
+      },
+      {
+        "company_id": "bharat-calibration",
+        "coverage": 0.35
+      },
+      {
+        "company_id": "swift-cargo",
+        "coverage": 0.3
+      }
+    ]
+  }
+}

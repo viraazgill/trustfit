@@ -1,0 +1,135 @@
+{
+  "supplier": {
+    "score": 87,
+    "band": "Very strong",
+    "confidence": 62.25,
+    "provisional": true,
+    "verdict": "Amber",
+    "dimensions": {
+      "integrity": {
+        "label": "Integrity",
+        "points": 30.0,
+        "verified_points": 9.75,
+        "earned_points": 8.0625,
+        "verified_pct": 32.5,
+        "score_pct": 82.6923
+      },
+      "financial": {
+        "label": "Financial",
+        "points": 30.0,
+        "verified_points": 23.0,
+        "earned_points": 19.5,
+        "verified_pct": 76.6667,
+        "score_pct": 84.7826
+      },
+      "capability": {
+        "label": "Capability",
+        "points": 40.0,
+        "verified_points": 29.5,
+        "earned_points": 26.6875,
+        "verified_pct": 73.75,
+        "score_pct": 90.4661
+      }
+    },
+    "reasons": [
+      {
+        "code": "dimension_under_verified",
+        "text": "Integrity is 32.5% verified, under the 50% minimum"
+      },
+      {
+        "code": "gates_pending",
+        "text": "Verification gates pending: V1, V2, V3"
+      }
+    ]
+  },
+  "distributor": {
+    "score": 87,
+    "band": "Very strong",
+    "confidence": 57.25,
+    "provisional": true,
+    "verdict": "Amber",
+    "dimensions": {
+      "integrity": {
+        "label": "Integrity",
+        "points": 25.0,
+        "verified_points": 7.5,
+        "earned_points": 6.375,
+        "verified_pct": 30.0,
+        "score_pct": 85.0
+      },
+      "financial": {
+        "label": "Financial",
+        "points": 40.0,
+        "verified_points": 27.0,
+        "earned_points": 22.5,
+        "verified_pct": 67.5,
+        "score_pct": 83.3333
+      },
+      "capability": {
+        "label": "Capability",
+        "points": 35.0,
+        "verified_points": 22.75,
+        "earned_points": 20.8125,
+        "verified_pct": 65.0,
+        "score_pct": 91.4835
+      }
+    },
+    "reasons": [
+      {
+        "code": "low_confidence",
+        "text": "Only 57.3 of 100 points verified, under 60"
+      },
+      {
+        "code": "dimension_under_verified",
+        "text": "Integrity is 30.0% verified, under the 50% minimum"
+      },
+      {
+        "code": "gates_pending",
+        "text": "Verification gates pending: V1, V2, V3"
+      }
+    ]
+  },
+  "jv_partner": {
+    "score": 86,
+    "band": "Very strong",
+    "confidence": 63.25,
+    "provisional": true,
+    "verdict": "Amber",
+    "dimensions": {
+      "integrity": {
+        "label": "Integrity",
+        "points": 40.0,
+        "verified_points": 14.25,
+        "earned_points": 11.4375,
+        "verified_pct": 35.625,
+        "score_pct": 80.2632
+      },
+      "financial": {
+        "label": "Financial",
+        "points": 30.0,
+        "verified_points": 25.75,
+        "earned_points": 22.125,
+        "verified_pct": 85.8333,
+        "score_pct": 85.9223
+      },
+      "capability": {
+        "label": "Capability",
+        "points": 30.0,
+        "verified_points": 23.25,
+        "earned_points": 20.75,
+        "verified_pct": 77.5,
+        "score_pct": 89.2473
+      }
+    },
+    "reasons": [
+      {
+        "code": "dimension_under_verified",
+        "text": "Integrity is 35.6% verified, under the 50% minimum"
+      },
+      {
+        "code": "gates_pending",
+        "text": "Verification gates pending: V1, V2, V3"
+      }
+    ]
+  }
+}

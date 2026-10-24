@@ -1,0 +1,30 @@
+{
+  "_note": "FICTIONAL demo SME. Any resemblance to a real company is accidental.",
+  "id": "sorano",
+  "fictional": true,
+  "name": "Sorano Instruments Co., Ltd. (Demo)",
+  "country": "Japan",
+  "city": "Osaka",
+  "employees": 85,
+  "description": "Maker of precision industrial flow meters and water-quality sensors, entering India for the first time",
+  "sector": "industrial_instruments",
+  "products": ["flow_meters", "water_quality_sensors"],
+  "role_sought": "distributor",
+  "target_states": {
+    "primary": ["maharashtra", "gujarat", "tamil_nadu"],
+    "secondary": ["karnataka", "telangana"]
+  },
+  "channels_needed": ["industrial_b2b", "epc_projects", "government_tenders"],
+  "volume_units_per_month": 400,
+  "after_sales_need": "full",
+  "competitors": ["Flowtek (Demo)", "Hydrosense (Demo)"],
+  "factor_importance": {},
+  "readiness_answers": {
+    "R1.1": 2, "R1.2": 2, "R1.3": 1,
+    "R2.1": 1, "R2.2": 0,
+    "R3.1": 3, "R3.2": 2, "R3.3": 3,
+    "R4.1": 1, "R4.2": 0, "R4.3": 2,
+    "R5.1": 3, "R5.2": 1,
+    "R6.1": 0, "R6.2": 1, "R6.3": 2
+  }
+}
