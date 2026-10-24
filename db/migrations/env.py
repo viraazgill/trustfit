@@ -3,19 +3,22 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+import app.models  # noqa: F401  (registers the tables on Base.metadata)
 from app.db import Base
 from app.settings import settings
 
 config = context.config
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
+# Callers (e.g. the API tests) may set their own URL; otherwise use DATABASE_URL.
+if not config.get_main_option("sqlalchemy.url"):
+    config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
-    context.configure(url=settings.DATABASE_URL, target_metadata=target_metadata,
+    context.configure(url=config.get_main_option("sqlalchemy.url"), target_metadata=target_metadata,
                       literal_binds=True, dialect_opts={"paramstyle": "named"})
     with context.begin_transaction():
         context.run_migrations()

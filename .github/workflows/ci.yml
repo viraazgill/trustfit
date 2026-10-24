@@ -12,6 +12,20 @@ jobs:
       fail-fast: false
       matrix:
         python: ["3.12", "3.14"]
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: trustfit
+          POSTGRES_PASSWORD: trustfit
+          POSTGRES_DB: trustfit
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U trustfit" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://trustfit:trustfit@localhost:5432/trustfit
+      TEST_DATABASE_URL: postgresql+psycopg://trustfit:trustfit@localhost:5432/trustfit_test
+      REQUIRE_DB: "1"  # API tests fail instead of skipping when Postgres is missing
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

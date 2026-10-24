@@ -10,7 +10,7 @@ endif
 PY := $(VENV_BIN)/python
 WEB := apps/web
 
-.PHONY: install dev db test test-reference test-engine test-api lint seed
+.PHONY: install dev db migrate test test-reference test-engine test-api lint seed
 
 install:
 	$(PYTHON) -m venv .venv
@@ -21,7 +21,10 @@ install:
 db:
 	docker compose up -d --wait db
 
-dev: db
+migrate:
+	cd apps/api && ../../$(PY) -m alembic upgrade head
+
+dev: db migrate
 	@echo "API on http://localhost:8000/docs, web on http://localhost:3000"
 	cd apps/api && ../../$(PY) -m uvicorn app.main:app --reload --port 8000 & \
 	cd $(WEB) && npm run dev
@@ -41,6 +44,6 @@ lint:
 	$(PY) -m ruff check packages apps/api db
 	cd $(WEB) && npm run lint
 
-# Placeholder until phase 2 adds the seed loader (python -m app.seed --reset).
-seed:
-	@echo "seed: not implemented yet (phase 2)"
+# Wipes every table and reloads Subros, the demo SME, the demo companies and the seed users.
+seed: migrate
+	cd apps/api && ../../$(PY) -m app.seed --reset
