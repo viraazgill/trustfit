@@ -20,3 +20,8 @@ export function humanize(code: string): string {
 export function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
 }
+
+/** "tamil_nadu" -> "Tamil Nadu": every word capitalised, for place names. */
+export function placeName(code: string): string {
+  return code.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}

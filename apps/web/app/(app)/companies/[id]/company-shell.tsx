@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { FictionalBadge } from "@/components/brand";
 import { RequireRole } from "@/lib/auth";
-import { humanize } from "@/lib/format";
+import { humanize, placeName } from "@/lib/format";
 import { useCompany } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 
@@ -29,7 +29,7 @@ function CompanyHeader({ id }: { id: string }) {
       {company && (
         <p className="text-sm text-ink-muted">
           {[humanize(company.type), company.cin && `CIN ${company.cin}`, company.nse_code && `NSE ${company.nse_code}`,
-            company.hq_state && humanize(company.hq_state)]
+            company.hq_state && placeName(company.hq_state)]
             .filter(Boolean)
             .join(" · ")}
         </p>

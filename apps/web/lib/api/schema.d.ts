@@ -115,6 +115,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/config/bridge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Public Bridge Config
+         * @description The 16 readiness questions by JETRO ask, the answer scale, severity labels and capability labels.
+         */
+        get: operations["public_bridge_config_api_v1_config_bridge_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/companies": {
         parameters: {
             query?: never;
@@ -368,10 +388,161 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/smes/{sme_id}/readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Readiness
+         * @description Readiness and gap severity per JETRO ask (empty until the 16 questions are answered).
+         */
+        get: operations["read_readiness_api_v1_smes__sme_id__readiness_get"];
+        /**
+         * Put Readiness
+         * @description Save all 16 answers (0-4).
+         */
+        put: operations["put_readiness_api_v1_smes__sme_id__readiness_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/smes/{sme_id}/bridge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Bridge
+         * @description Primary partner ranking, India entry team, gap status and per-gap shortlists (saved as a run).
+         */
+        post: operations["bridge_api_v1_smes__sme_id__bridge_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** BridgeCompany */
+        BridgeCompany: {
+            /** Company Id */
+            company_id: string;
+            /** Name */
+            name: string;
+            /** Fictional */
+            fictional: boolean;
+            /** Type */
+            type: string;
+            /** Trust Role */
+            trust_role: string;
+            /** Trust Score */
+            trust_score: number | null;
+            /**
+             * Trust Verdict
+             * @enum {string}
+             */
+            trust_verdict: "Green" | "Amber" | "Red";
+            /** Provisional */
+            provisional: boolean | null;
+            /** Fit */
+            fit: number | null;
+            /** Fit Category */
+            fit_category: string | null;
+            /**
+             * Combined Verdict
+             * @enum {string}
+             */
+            combined_verdict: "Green" | "Amber" | "Red";
+            /** Eligible */
+            eligible: boolean;
+            /** Excluded Because */
+            excluded_because: string[];
+            /** Strengths */
+            strengths: {
+                [key: string]: number;
+            };
+            /** Gap Coverage */
+            gap_coverage: number;
+            /** Per Gap */
+            per_gap: {
+                [key: string]: number;
+            };
+            /** Match */
+            match?: number | null;
+        };
+        /** BridgeCovers */
+        BridgeCovers: {
+            /** Gap */
+            gap: string;
+            /** Capability */
+            capability: string;
+            /** Label */
+            label: string;
+            /** Strength */
+            strength: number;
+            /** Verified */
+            verified: boolean;
+        };
+        /** BridgeGapStatus */
+        BridgeGapStatus: {
+            /** Team Coverage */
+            team_coverage: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "covered" | "partly covered" | "not covered";
+        };
+        /** BridgeRanking */
+        BridgeRanking: {
+            /** Company Id */
+            company_id: string;
+            /** Match */
+            match: number;
+            /** Fit */
+            fit: number;
+            /** Gap Coverage */
+            gap_coverage: number;
+        };
+        /** BridgeShortlistEntry */
+        BridgeShortlistEntry: {
+            /** Company Id */
+            company_id: string;
+            /** Coverage */
+            coverage: number;
+            /**
+             * Reason
+             * @description One line from the company's strongest capability for this gap
+             */
+            reason: string;
+        };
+        /** BridgeTeamMember */
+        BridgeTeamMember: {
+            /** Company Id */
+            company_id: string;
+            /**
+             * Slot
+             * @enum {string}
+             */
+            slot: "primary" | "support";
+            /** Gain */
+            gain: number;
+            /** Covers */
+            covers: components["schemas"]["BridgeCovers"][];
+        };
         /** CompanyCreate */
         CompanyCreate: {
             /** Id */
@@ -604,6 +775,43 @@ export interface components {
             /** Label */
             label: string;
         };
+        /** PublicBridgeConfig */
+        PublicBridgeConfig: {
+            /** Version */
+            version: string;
+            /** Answer Scale */
+            answer_scale: {
+                [key: string]: string;
+            };
+            /** Dimensions */
+            dimensions: {
+                [key: string]: components["schemas"]["PublicReadinessDimension"];
+            };
+            /** Severity Labels */
+            severity_labels: {
+                [key: string]: unknown;
+            }[];
+            /** Covered By Trustfit */
+            covered_by_trustfit: string[];
+            /**
+             * Capabilities
+             * @description capability -> label
+             */
+            capabilities: {
+                [key: string]: string;
+            };
+            /** Gap Needs */
+            gap_needs: {
+                [key: string]: {
+                    [key: string]: number;
+                };
+            };
+            /**
+             * Target Team Coverage
+             * @description The India entry team stops growing at this coverage %
+             */
+            target_team_coverage: number;
+        };
         /** PublicCategory */
         PublicCategory: {
             /** Label */
@@ -722,6 +930,57 @@ export interface components {
         PublicLabel: {
             /** Label */
             label: string;
+        };
+        /** PublicReadinessDimension */
+        PublicReadinessDimension: {
+            /** Label */
+            label: string;
+            /** Jetro Ask */
+            jetro_ask: string;
+            /** Questions */
+            questions: {
+                [key: string]: string;
+            };
+        };
+        /** ReadinessDimension */
+        ReadinessDimension: {
+            /** Label */
+            label: string;
+            /** Jetro Ask */
+            jetro_ask: string;
+            /** Readiness */
+            readiness: number;
+            /** Severity */
+            severity: number;
+            /** Severity Label */
+            severity_label: string;
+            /** Covered By Trustfit */
+            covered_by_trustfit: boolean;
+        };
+        /** ReadinessIn */
+        ReadinessIn: {
+            /**
+             * Answers
+             * @description Question id (R1.1 ... R6.3) -> answer on the 0-4 scale
+             */
+            answers: {
+                [key: string]: number;
+            };
+        };
+        /** ReadinessOut */
+        ReadinessOut: {
+            /** Sme Id */
+            sme_id: string;
+            /** Answered */
+            answered: boolean;
+            /** Answers */
+            answers: {
+                [key: string]: number;
+            };
+            /** Dimensions */
+            dimensions?: {
+                [key: string]: components["schemas"]["ReadinessDimension"];
+            };
         };
         /**
          * SmeIn
@@ -930,6 +1189,43 @@ export interface components {
             /** Context */
             ctx?: Record<string, never>;
         };
+        /** ViewerBridge */
+        ViewerBridge: {
+            /** Sme Id */
+            sme_id: string;
+            /**
+             * As Of
+             * Format: date
+             */
+            as_of: string;
+            /** Config Version */
+            config_version: string;
+            /** Readiness */
+            readiness: {
+                [key: string]: components["schemas"]["ReadinessDimension"];
+            };
+            /** Companies */
+            companies: components["schemas"]["BridgeCompany"][];
+            /** Primary Ranking */
+            primary_ranking: components["schemas"]["BridgeRanking"][];
+            /** Team */
+            team: components["schemas"]["BridgeTeamMember"][];
+            /** Team Coverage */
+            team_coverage: number;
+            /** Gap Status */
+            gap_status: {
+                [key: string]: components["schemas"]["BridgeGapStatus"];
+            };
+            /** Per Gap */
+            per_gap: {
+                [key: string]: components["schemas"]["BridgeShortlistEntry"][];
+            };
+            /**
+             * Disclaimer
+             * @description TrustFit Score is not a credit rating or investment advice.
+             */
+            disclaimer: string;
+        };
         /** ViewerCategory */
         ViewerCategory: {
             /** Label */
@@ -1044,7 +1340,7 @@ export interface components {
             trust: components["schemas"]["TrustSummary"];
             /**
              * Combined Verdict
-             * @description Trust verdict after Fit (Fit can lower it, never raise it)
+             * @description Trust verdict after Fit (it can lower it, never raise it)
              * @enum {string}
              */
             combined_verdict: "Green" | "Amber" | "Red";
@@ -1310,6 +1606,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicFitConfig"];
+                };
+            };
+        };
+    };
+    public_bridge_config_api_v1_config_bridge_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicBridgeConfig"];
                 };
             };
         };
@@ -1943,6 +2259,103 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ViewerFit"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_readiness_api_v1_smes__sme_id__readiness_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sme_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReadinessOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_readiness_api_v1_smes__sme_id__readiness_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sme_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReadinessIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReadinessOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    bridge_api_v1_smes__sme_id__bridge_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sme_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ViewerBridge"];
                 };
             };
             /** @description Validation Error */

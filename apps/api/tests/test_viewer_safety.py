@@ -12,7 +12,8 @@ API = "/api/v1"
 FORBIDDEN_KEYS = {"rubric", "where_to_check", "check", "note", "notes", "source_url", "evidence",
                   "knockouts", "next_checks", "parameters", "parameter_splits"}
 VIEWER_SCHEMAS = [schemas.ViewerTrustReport, schemas.ViewerCompany, schemas.ViewerCompanyListItem,
-                  schemas.PublicConfig, schemas.PublicFitConfig, schemas.SmeOut, schemas.ViewerFit]
+                  schemas.PublicConfig, schemas.PublicFitConfig, schemas.SmeOut, schemas.ViewerFit,
+                  schemas.PublicBridgeConfig, schemas.ReadinessOut, schemas.ViewerBridge]
 
 
 def keys_in_schema(model) -> set[str]:
@@ -71,6 +72,9 @@ def viewer_responses(client, headers) -> list:
     for c in out[1]:
         if c["type"] == "business_partner" and "distributor" in c["roles_offered"]:
             out.append(client.get(f"{API}/smes/sorano/fit/{c['id']}", headers=headers).json())
+    out += [client.get(f"{API}/config/bridge").json(),
+            client.get(f"{API}/smes/sorano/readiness", headers=headers).json(),
+            client.post(f"{API}/smes/sorano/bridge", headers=headers).json()]
     return out
 
 

@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { humanize } from "@/lib/format";
+import { humanize, placeName } from "@/lib/format";
 import type { FitConfig } from "@/lib/sme-queries";
 import { cn } from "@/lib/utils";
 
@@ -161,7 +161,7 @@ export function BriefFields({ cfg, brief, onChange }: { cfg: FitConfig; brief: B
         <div className="flex flex-wrap gap-2" data-testid="state-picker">
           {cfg.states.map((s) => (
             <Chip key={s} on={brief.primary.includes(s) || brief.secondary.includes(s)} tone={brief.secondary.includes(s) ? "blue" : "navy"} onClick={() => cycleState(s)}>
-              {humanize(s)}
+              {placeName(s)}
               {brief.primary.includes(s) && " · primary"}
               {brief.secondary.includes(s) && " · secondary"}
             </Chip>

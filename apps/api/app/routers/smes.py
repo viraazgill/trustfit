@@ -5,7 +5,8 @@ from sqlalchemy import select
 from app import models
 from app.auth import CurrentUser
 from app.db import DbSession
-from app.schemas import SmeIn, SmeOut, SmePatch, ViewerFit
+from app.schemas import ReadinessIn, ReadinessOut, SmeIn, SmeOut, SmePatch, ViewerBridge, ViewerFit
+from app.services.bridge import readiness_out, run_bridge, save_answers
 from app.services.fit import can_read, create_sme, get_sme, run_fit, sme_out, update_sme
 from app.services.scoring import get_company
 
@@ -37,3 +38,21 @@ def edit_sme(sme_id: str, body: SmePatch, db: DbSession, user: CurrentUser) -> S
 def fit(sme_id: str, company_id: str, db: DbSession, user: CurrentUser) -> ViewerFit:
     """Fit Score for one business partner against this SME's brief, plus the combined verdict."""
     return run_fit(db, get_sme(db, sme_id, user), get_company(db, company_id), user)
+
+
+@router.get("/{sme_id}/readiness")
+def read_readiness(sme_id: str, db: DbSession, user: CurrentUser) -> ReadinessOut:
+    """Readiness and gap severity per JETRO ask (empty until the 16 questions are answered)."""
+    return readiness_out(get_sme(db, sme_id, user))
+
+
+@router.put("/{sme_id}/readiness")
+def put_readiness(sme_id: str, body: ReadinessIn, db: DbSession, user: CurrentUser) -> ReadinessOut:
+    """Save all 16 answers (0-4)."""
+    return readiness_out(save_answers(db, get_sme(db, sme_id, user, write=True), body.answers))
+
+
+@router.post("/{sme_id}/bridge")
+def bridge(sme_id: str, db: DbSession, user: CurrentUser) -> ViewerBridge:
+    """Primary partner ranking, India entry team, gap status and per-gap shortlists (saved as a run)."""
+    return run_bridge(db, get_sme(db, sme_id, user), user)

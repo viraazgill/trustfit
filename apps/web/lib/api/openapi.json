@@ -171,6 +171,28 @@
         }
       }
     },
+    "/api/v1/config/bridge": {
+      "get": {
+        "tags": [
+          "config"
+        ],
+        "summary": "Public Bridge Config",
+        "description": "The 16 readiness questions by JETRO ask, the answer scale, severity labels and capability labels.",
+        "operationId": "public_bridge_config_api_v1_config_bridge_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicBridgeConfig"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/companies": {
       "get": {
         "tags": [
@@ -1213,10 +1235,451 @@
           }
         }
       }
+    },
+    "/api/v1/smes/{sme_id}/readiness": {
+      "get": {
+        "tags": [
+          "smes"
+        ],
+        "summary": "Read Readiness",
+        "description": "Readiness and gap severity per JETRO ask (empty until the 16 questions are answered).",
+        "operationId": "read_readiness_api_v1_smes__sme_id__readiness_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sme_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sme Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "smes"
+        ],
+        "summary": "Put Readiness",
+        "description": "Save all 16 answers (0-4).",
+        "operationId": "put_readiness_api_v1_smes__sme_id__readiness_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sme_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sme Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadinessIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/smes/{sme_id}/bridge": {
+      "post": {
+        "tags": [
+          "smes"
+        ],
+        "summary": "Bridge",
+        "description": "Primary partner ranking, India entry team, gap status and per-gap shortlists (saved as a run).",
+        "operationId": "bridge_api_v1_smes__sme_id__bridge_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sme_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sme Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ViewerBridge"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "BridgeCompany": {
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "title": "Company Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "fictional": {
+            "type": "boolean",
+            "title": "Fictional"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "trust_role": {
+            "type": "string",
+            "title": "Trust Role"
+          },
+          "trust_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trust Score"
+          },
+          "trust_verdict": {
+            "type": "string",
+            "enum": [
+              "Green",
+              "Amber",
+              "Red"
+            ],
+            "title": "Trust Verdict"
+          },
+          "provisional": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provisional"
+          },
+          "fit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fit"
+          },
+          "fit_category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fit Category"
+          },
+          "combined_verdict": {
+            "type": "string",
+            "enum": [
+              "Green",
+              "Amber",
+              "Red"
+            ],
+            "title": "Combined Verdict"
+          },
+          "eligible": {
+            "type": "boolean",
+            "title": "Eligible"
+          },
+          "excluded_because": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Excluded Because"
+          },
+          "strengths": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Strengths"
+          },
+          "gap_coverage": {
+            "type": "number",
+            "title": "Gap Coverage"
+          },
+          "per_gap": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Per Gap"
+          },
+          "match": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Match"
+          }
+        },
+        "type": "object",
+        "required": [
+          "company_id",
+          "name",
+          "fictional",
+          "type",
+          "trust_role",
+          "trust_score",
+          "trust_verdict",
+          "provisional",
+          "fit",
+          "fit_category",
+          "combined_verdict",
+          "eligible",
+          "excluded_because",
+          "strengths",
+          "gap_coverage",
+          "per_gap"
+        ],
+        "title": "BridgeCompany"
+      },
+      "BridgeCovers": {
+        "properties": {
+          "gap": {
+            "type": "string",
+            "title": "Gap"
+          },
+          "capability": {
+            "type": "string",
+            "title": "Capability"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "strength": {
+            "type": "number",
+            "title": "Strength"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          }
+        },
+        "type": "object",
+        "required": [
+          "gap",
+          "capability",
+          "label",
+          "strength",
+          "verified"
+        ],
+        "title": "BridgeCovers"
+      },
+      "BridgeGapStatus": {
+        "properties": {
+          "team_coverage": {
+            "type": "number",
+            "title": "Team Coverage"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "covered",
+              "partly covered",
+              "not covered"
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "team_coverage",
+          "status"
+        ],
+        "title": "BridgeGapStatus"
+      },
+      "BridgeRanking": {
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "title": "Company Id"
+          },
+          "match": {
+            "type": "number",
+            "title": "Match"
+          },
+          "fit": {
+            "type": "integer",
+            "title": "Fit"
+          },
+          "gap_coverage": {
+            "type": "number",
+            "title": "Gap Coverage"
+          }
+        },
+        "type": "object",
+        "required": [
+          "company_id",
+          "match",
+          "fit",
+          "gap_coverage"
+        ],
+        "title": "BridgeRanking"
+      },
+      "BridgeShortlistEntry": {
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "title": "Company Id"
+          },
+          "coverage": {
+            "type": "number",
+            "title": "Coverage"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "description": "One line from the company's strongest capability for this gap"
+          }
+        },
+        "type": "object",
+        "required": [
+          "company_id",
+          "coverage",
+          "reason"
+        ],
+        "title": "BridgeShortlistEntry"
+      },
+      "BridgeTeamMember": {
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "title": "Company Id"
+          },
+          "slot": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "support"
+            ],
+            "title": "Slot"
+          },
+          "gain": {
+            "type": "number",
+            "title": "Gain"
+          },
+          "covers": {
+            "items": {
+              "$ref": "#/components/schemas/BridgeCovers"
+            },
+            "type": "array",
+            "title": "Covers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "company_id",
+          "slot",
+          "gain",
+          "covers"
+        ],
+        "title": "BridgeTeamMember"
+      },
       "CompanyCreate": {
         "properties": {
           "id": {
@@ -2036,6 +2499,78 @@
         ],
         "title": "PublicBand"
       },
+      "PublicBridgeConfig": {
+        "properties": {
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "answer_scale": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Answer Scale"
+          },
+          "dimensions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PublicReadinessDimension"
+            },
+            "type": "object",
+            "title": "Dimensions"
+          },
+          "severity_labels": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Severity Labels"
+          },
+          "covered_by_trustfit": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Covered By Trustfit"
+          },
+          "capabilities": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Capabilities",
+            "description": "capability -> label"
+          },
+          "gap_needs": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Gap Needs"
+          },
+          "target_team_coverage": {
+            "type": "number",
+            "title": "Target Team Coverage",
+            "description": "The India entry team stops growing at this coverage %"
+          }
+        },
+        "type": "object",
+        "required": [
+          "version",
+          "answer_scale",
+          "dimensions",
+          "severity_labels",
+          "covered_by_trustfit",
+          "capabilities",
+          "gap_needs",
+          "target_team_coverage"
+        ],
+        "title": "PublicBridgeConfig"
+      },
       "PublicCategory": {
         "properties": {
           "label": {
@@ -2344,6 +2879,121 @@
           "label"
         ],
         "title": "PublicLabel"
+      },
+      "PublicReadinessDimension": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "jetro_ask": {
+            "type": "string",
+            "title": "Jetro Ask"
+          },
+          "questions": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Questions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "jetro_ask",
+          "questions"
+        ],
+        "title": "PublicReadinessDimension"
+      },
+      "ReadinessDimension": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "jetro_ask": {
+            "type": "string",
+            "title": "Jetro Ask"
+          },
+          "readiness": {
+            "type": "number",
+            "title": "Readiness"
+          },
+          "severity": {
+            "type": "number",
+            "title": "Severity"
+          },
+          "severity_label": {
+            "type": "string",
+            "title": "Severity Label"
+          },
+          "covered_by_trustfit": {
+            "type": "boolean",
+            "title": "Covered By Trustfit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "jetro_ask",
+          "readiness",
+          "severity",
+          "severity_label",
+          "covered_by_trustfit"
+        ],
+        "title": "ReadinessDimension"
+      },
+      "ReadinessIn": {
+        "properties": {
+          "answers": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Answers",
+            "description": "Question id (R1.1 ... R6.3) -> answer on the 0-4 scale"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "answers"
+        ],
+        "title": "ReadinessIn"
+      },
+      "ReadinessOut": {
+        "properties": {
+          "sme_id": {
+            "type": "string",
+            "title": "Sme Id"
+          },
+          "answered": {
+            "type": "boolean",
+            "title": "Answered"
+          },
+          "answers": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Answers"
+          },
+          "dimensions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ReadinessDimension"
+            },
+            "type": "object",
+            "title": "Dimensions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sme_id",
+          "answered",
+          "answers"
+        ],
+        "title": "ReadinessOut"
       },
       "SmeIn": {
         "properties": {
@@ -3069,6 +3719,92 @@
         ],
         "title": "ValidationError"
       },
+      "ViewerBridge": {
+        "properties": {
+          "sme_id": {
+            "type": "string",
+            "title": "Sme Id"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of"
+          },
+          "config_version": {
+            "type": "string",
+            "title": "Config Version"
+          },
+          "readiness": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ReadinessDimension"
+            },
+            "type": "object",
+            "title": "Readiness"
+          },
+          "companies": {
+            "items": {
+              "$ref": "#/components/schemas/BridgeCompany"
+            },
+            "type": "array",
+            "title": "Companies"
+          },
+          "primary_ranking": {
+            "items": {
+              "$ref": "#/components/schemas/BridgeRanking"
+            },
+            "type": "array",
+            "title": "Primary Ranking"
+          },
+          "team": {
+            "items": {
+              "$ref": "#/components/schemas/BridgeTeamMember"
+            },
+            "type": "array",
+            "title": "Team"
+          },
+          "team_coverage": {
+            "type": "number",
+            "title": "Team Coverage"
+          },
+          "gap_status": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/BridgeGapStatus"
+            },
+            "type": "object",
+            "title": "Gap Status"
+          },
+          "per_gap": {
+            "additionalProperties": {
+              "items": {
+                "$ref": "#/components/schemas/BridgeShortlistEntry"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Per Gap"
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer",
+            "description": "TrustFit Score is not a credit rating or investment advice."
+          }
+        },
+        "type": "object",
+        "required": [
+          "sme_id",
+          "as_of",
+          "config_version",
+          "readiness",
+          "companies",
+          "primary_ranking",
+          "team",
+          "team_coverage",
+          "gap_status",
+          "per_gap",
+          "disclaimer"
+        ],
+        "title": "ViewerBridge"
+      },
       "ViewerCategory": {
         "properties": {
           "label": {
@@ -3417,7 +4153,7 @@
               "Red"
             ],
             "title": "Combined Verdict",
-            "description": "Trust verdict after Fit (Fit can lower it, never raise it)"
+            "description": "Trust verdict after Fit (it can lower it, never raise it)"
           },
           "reasons": {
             "items": {

@@ -6,7 +6,7 @@ import { FictionalBadge } from "@/components/brand";
 import { FitCard } from "@/components/fit";
 import { TrustReportView } from "@/components/trust-report";
 import { defaultRole } from "@/lib/roles";
-import { humanize } from "@/lib/format";
+import { humanize, placeName } from "@/lib/format";
 import { useCompany, usePublicConfig } from "@/lib/queries";
 import { useFit, useSme, useTrustReport } from "@/lib/sme-queries";
 
@@ -36,7 +36,7 @@ export default function CompanyReport() {
         {company.fictional && <FictionalBadge />}
         <span className="text-sm text-ink-muted">
           {humanize(company.type)} · Trust scored as a {cfg?.roles[role]?.label.toLowerCase()}
-          {company.hq_state && ` · ${humanize(company.hq_state)}`}
+          {company.hq_state && ` · ${placeName(company.hq_state)}`}
         </span>
       </div>
       {company.description && <p className="text-sm text-ink-muted">{company.description}</p>}

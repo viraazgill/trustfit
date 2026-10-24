@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { Disclaimer, FictionalBadge } from "@/components/brand";
 import { RequireRole } from "@/lib/auth";
-import { humanize } from "@/lib/format";
+import { humanize, placeName } from "@/lib/format";
 import { useSme } from "@/lib/sme-queries";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +30,7 @@ function SmeHeader({ id }: { id: string }) {
       {sme && (
         <p className="text-sm text-ink-muted">
           {[sme.city, sme.country].filter(Boolean).join(", ")} · seeking a {humanize(sme.role_sought).toLowerCase()} in{" "}
-          {(sme.target_states.primary ?? []).map(humanize).join(", ")}
+          {(sme.target_states.primary ?? []).map(placeName).join(", ")}
         </p>
       )}
       <nav className="flex gap-1 border-b">

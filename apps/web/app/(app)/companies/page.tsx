@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FictionalBadge } from "@/components/brand";
 import { VerdictChip } from "@/components/trust";
 import { RequireRole } from "@/lib/auth";
-import { humanize, num } from "@/lib/format";
+import { humanize, placeName, num } from "@/lib/format";
 import { useCompanies, usePublicConfig } from "@/lib/queries";
 import type { Verdict } from "@/lib/trust-types";
 
@@ -55,7 +55,7 @@ function CompanyTable() {
                     {c.name}
                   </Link>
                   {c.fictional && <FictionalBadge className="ml-2" />}
-                  {c.hq_state && <div className="text-xs text-ink-muted">{humanize(c.hq_state)}</div>}
+                  {c.hq_state && <div className="text-xs text-ink-muted">{placeName(c.hq_state)}</div>}
                 </TableCell>
                 <TableCell className="text-sm">{humanize(c.type)}</TableCell>
                 <TableCell className="text-sm">{c.latest ? roleLabel(c.latest.role) : "—"}</TableCell>

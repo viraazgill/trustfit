@@ -3,7 +3,8 @@ from typing import Any, get_args
 from fastapi import APIRouter, Depends
 
 from app.auth import analyst
-from app.schemas import AfterSalesNeed, PublicConfig, PublicFitConfig
+from app.schemas import AfterSalesNeed, PublicBridgeConfig, PublicConfig, PublicFitConfig
+from app.services.bridge import bridge_config
 from app.services.fit import fit_config
 from app.services.scoring import trust_config
 
@@ -55,4 +56,18 @@ def public_fit_config() -> PublicFitConfig:
         categories={k: {"label": v.label, "action": v.action} for k, v in cfg.categories.items()},
         sectors=voc.sectors, product_families=voc.product_families, channels=voc.channels, states=voc.states,
         after_sales_needs=list(get_args(AfterSalesNeed)), relations=cfg.relations,
+    )
+
+
+@router.get("/bridge")
+def public_bridge_config() -> PublicBridgeConfig:
+    """The 16 readiness questions by JETRO ask, the answer scale, severity labels and capability labels."""
+    cfg = bridge_config()
+    return PublicBridgeConfig(
+        version=cfg.version, answer_scale=cfg.answer_scale,
+        dimensions={k: v.model_dump() for k, v in cfg.dimensions.items()},
+        severity_labels=[s.model_dump() for s in cfg.severity_labels],
+        covered_by_trustfit=cfg.covered_by_trustfit,
+        capabilities={k: v.label for k, v in cfg.capabilities.items()}, gap_needs=cfg.gap_needs,
+        target_team_coverage=cfg.bridge.target_team_coverage,
     )

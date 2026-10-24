@@ -351,6 +351,95 @@ class ViewerFit(BaseModel):
     disclaimer: str = DISCLAIMER_FIELD
 
 
+# ---------------------------------------------------------------- readiness and Gap Bridge (viewer-safe)
+
+class ReadinessIn(_In):
+    answers: dict[str, int] = Field(description="Question id (R1.1 ... R6.3) -> answer on the 0-4 scale")
+
+
+class ReadinessDimension(BaseModel):
+    label: str
+    jetro_ask: str
+    readiness: float
+    severity: float
+    severity_label: str
+    covered_by_trustfit: bool
+
+
+class ReadinessOut(BaseModel):
+    sme_id: str
+    answered: bool
+    answers: dict[str, int]
+    dimensions: dict[str, ReadinessDimension] = Field(default_factory=dict)
+
+
+class BridgeCompany(BaseModel):
+    company_id: str
+    name: str
+    fictional: bool
+    type: str
+    trust_role: str
+    trust_score: int | None
+    trust_verdict: Verdict
+    provisional: bool | None
+    fit: int | None
+    fit_category: str | None
+    combined_verdict: Verdict
+    eligible: bool
+    excluded_because: list[str]
+    strengths: dict[str, float]
+    gap_coverage: float
+    per_gap: dict[str, float]
+    match: float | None = None
+
+
+class BridgeRanking(BaseModel):
+    company_id: str
+    match: float
+    fit: int
+    gap_coverage: float
+
+
+class BridgeCovers(BaseModel):
+    gap: str
+    capability: str
+    label: str
+    strength: float
+    verified: bool
+
+
+class BridgeTeamMember(BaseModel):
+    company_id: str
+    slot: Literal["primary", "support"]
+    gain: float
+    covers: list[BridgeCovers]
+
+
+class BridgeGapStatus(BaseModel):
+    team_coverage: float
+    status: Literal["covered", "partly covered", "not covered"]
+
+
+class BridgeShortlistEntry(BaseModel):
+    company_id: str
+    coverage: float
+    reason: str = Field(description="One line from the company's strongest capability for this gap")
+
+
+class ViewerBridge(BaseModel):
+    sme_id: str
+    as_of: dt.date
+    config_version: str
+    readiness: dict[str, ReadinessDimension]
+    companies: list[BridgeCompany]
+    primary_ranking: list[BridgeRanking]
+    team: list[BridgeTeamMember]
+    team_coverage: float
+    gap_status: dict[str, BridgeGapStatus]
+    per_gap: dict[str, list[BridgeShortlistEntry]]
+    disclaimer: str = DISCLAIMER_FIELD
+
+
 # ---------------------------------------------------------------- config
 
 class PublicLabel(BaseModel):
@@ -416,3 +505,20 @@ class PublicFitConfig(BaseModel):
     states: list[str]
     after_sales_needs: list[str]
     relations: list[str]
+
+
+class PublicReadinessDimension(BaseModel):
+    label: str
+    jetro_ask: str
+    questions: dict[str, str]
+
+
+class PublicBridgeConfig(BaseModel):
+    version: str
+    answer_scale: dict[int, str]
+    dimensions: dict[str, PublicReadinessDimension]
+    severity_labels: list[dict[str, Any]]
+    covered_by_trustfit: list[str]
+    capabilities: dict[str, str] = Field(description="capability -> label")
+    gap_needs: dict[str, dict[str, float]]
+    target_team_coverage: float = Field(description="The India entry team stops growing at this coverage %")

@@ -3,49 +3,161 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FictionalBadge } from "@/components/brand";
-import { conflictText, FitCategoryChip } from "@/components/fit";
+import { SeverityChip } from "@/components/bridge";
+import { FitCategoryChip } from "@/components/fit";
 import { VerdictChip } from "@/components/trust";
-import { useCompanies } from "@/lib/queries";
-import { useFit, useSme } from "@/lib/sme-queries";
+import { type BridgeCompany, exclusionText, useBridge, useReadiness } from "@/lib/bridge-queries";
+import { num, rhu } from "@/lib/format";
+import { useFitConfig } from "@/lib/sme-queries";
 import type { Verdict } from "@/lib/trust-types";
 
-function PartnerRow({ smeId, companyId, name, fictional }: { smeId: string; companyId: string; name: string; fictional: boolean }) {
-  const { data: fit } = useFit(smeId, companyId);
-  const conflict = fit && conflictText(fit);
+function CompanyLink({ smeId, c }: { smeId: string; c: Pick<BridgeCompany, "company_id" | "name" | "fictional"> }) {
   return (
-    <li className="flex flex-wrap items-center gap-3 py-3" data-testid={`match-${companyId}`}>
-      <Link href={`/sme/${smeId}/company/${companyId}`} className="font-medium text-blue hover:underline">
-        {name}
+    <span className="inline-flex flex-wrap items-center gap-2">
+      <Link href={`/sme/${smeId}/company/${c.company_id}`} className="font-medium text-blue hover:underline">
+        {c.name}
       </Link>
-      {fictional && <FictionalBadge />}
-      {fit && (
-        <span className="ml-auto flex flex-wrap items-center gap-3 text-sm">
-          <span className="text-ink-muted">Trust {fit.trust.score ?? "—"}</span>
-          <span className="font-mono text-navy">Fit {fit.score ?? "—"}</span>
-          <FitCategoryChip category={fit.category} label={fit.category_label} />
-          <VerdictChip verdict={fit.combined_verdict as Verdict} size="sm" />
-        </span>
-      )}
-      {conflict && <span className="w-full text-xs text-verdict-red">Competitor conflict: {conflict}</span>}
-    </li>
+      {c.fictional && <FictionalBadge />}
+    </span>
   );
 }
 
-/** Business partners offering the role this SME needs, with Fit and the combined verdict. */
+function Trust({ c }: { c: BridgeCompany }) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span className="font-mono">{c.trust_score ?? "—"}</span>
+      <VerdictChip verdict={c.trust_verdict as Verdict} size="sm" />
+      {c.provisional && <span className="text-xs text-ink-muted">provisional</span>}
+    </span>
+  );
+}
+
+/** Primary partner ranking, per-gap shortlists and excluded companies, all from the Gap Bridge. */
 export default function Matches() {
   const { id } = useParams<{ id: string }>();
-  const { data: sme } = useSme(id);
-  const { data: companies } = useCompanies();
-  if (!sme || !companies) return <p className="text-sm text-ink-muted">Loading…</p>;
-  const partners = companies.filter((c) => c.type === "business_partner" && c.roles_offered.includes(sme.role_sought));
+  const { data: readiness } = useReadiness(id);
+  const { data: fitCfg } = useFitConfig();
+  const bridge = useBridge(id, !!readiness?.answered);
+  if (readiness && !readiness.answered)
+    return (
+      <p className="text-sm text-ink-muted">
+        Answer the{" "}
+        <Link href={`/sme/${id}`} className="text-blue hover:underline">
+          readiness check
+        </Link>{" "}
+        first: matches are ranked on your gaps.
+      </p>
+    );
+  if (bridge.error) return <p className="text-sm text-verdict-red">{bridge.error.message}</p>;
+  const b = bridge.data;
+  if (!b || !fitCfg) return <p className="text-sm text-ink-muted">Matching…</p>;
+
+  const byId = Object.fromEntries(b.companies.map((c) => [c.company_id, c]));
+  const excluded = b.companies.filter((c) => !c.eligible);
+
   return (
-    <section className="rounded-xl border bg-white px-5">
-      <ul className="divide-y">
-        {partners.map((c) => (
-          <PartnerRow key={c.id} smeId={id} companyId={c.id} name={c.name} fictional={c.fictional} />
-        ))}
-        {partners.length === 0 && <li className="py-3 text-sm text-ink-muted">No partner offers this role yet.</li>}
-      </ul>
-    </section>
+    <div className="space-y-6">
+      <section className="rounded-xl border bg-white p-5">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-ink-muted">Primary partner ranking</h2>
+        <p className="mb-3 text-xs text-ink-muted">Match = 0.6 × Fit + 0.4 × gap coverage. Only trusted companies that fit your brief are ranked.</p>
+        <table className="w-full text-sm" data-testid="primary-ranking">
+          <thead>
+            <tr className="border-b text-left text-xs text-ink-muted">
+              <th className="py-2 font-normal">#</th>
+              <th className="py-2 font-normal">Company</th>
+              <th className="py-2 font-normal">Trust</th>
+              <th className="py-2 font-normal">Fit</th>
+              <th className="py-2 text-right font-normal">Gap coverage</th>
+              <th className="py-2 text-right font-normal">Match</th>
+            </tr>
+          </thead>
+          <tbody>
+            {b.primary_ranking.map((r, i) => {
+              const c = byId[r.company_id];
+              return (
+                <tr key={r.company_id} className="border-b last:border-0" data-testid={`rank-${r.company_id}`}>
+                  <td className="py-2 font-mono text-ink-muted">{i + 1}</td>
+                  <td className="py-2">
+                    <CompanyLink smeId={id} c={c} />
+                  </td>
+                  <td className="py-2">
+                    <Trust c={c} />
+                  </td>
+                  <td className="py-2">
+                    <span className="inline-flex items-center gap-2">
+                      <span className="font-mono">{r.fit}</span>
+                      <FitCategoryChip category={c.fit_category!} label={fitCfg.categories[c.fit_category!]?.label ?? ""} />
+                    </span>
+                  </td>
+                  <td className="py-2 text-right font-mono">{rhu(r.gap_coverage, 1)}%</td>
+                  <td className="py-2 text-right font-mono font-semibold text-navy">{num(r.match, 2)}</td>
+                </tr>
+              );
+            })}
+            {b.primary_ranking.length === 0 && (
+              <tr>
+                <td colSpan={6} className="py-3 text-ink-muted">
+                  No trusted company fits this brief yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-muted">Who fills each gap</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          {Object.entries(b.per_gap).map(([gap, entries]) => {
+            const d = b.readiness[gap];
+            return (
+              <div key={gap} className="rounded-xl border bg-white p-4" data-testid={`shortlist-${gap}`}>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm font-medium text-navy">
+                    <span className="mr-2 font-mono text-xs text-blue">{gap}</span>
+                    {d.label}
+                  </span>
+                  <SeverityChip label={d.severity_label} />
+                </div>
+                <ol className="mt-3 space-y-2 text-sm">
+                  {entries.map((e) => {
+                    const c = byId[e.company_id];
+                    return (
+                      <li key={e.company_id}>
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <CompanyLink smeId={id} c={c} />
+                          <span className="flex items-center gap-2 text-xs text-ink-muted">
+                            covers {rhu(100 * e.coverage)}% <VerdictChip verdict={c.trust_verdict as Verdict} size="sm" />
+                          </span>
+                        </div>
+                        <div className="text-xs text-ink-muted">{e.reason}</div>
+                      </li>
+                    );
+                  })}
+                  {entries.length === 0 && <li className="text-xs text-ink-muted">No trusted company covers this gap yet.</li>}
+                </ol>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="rounded-xl border bg-white p-5" data-testid="excluded">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-ink-muted">Excluded</h2>
+        <p className="mb-3 text-xs text-ink-muted">TrustFit never recommends a knock-out, a Red verdict, a competitor&apos;s partner or a company without enough verified data.</p>
+        <ul className="divide-y text-sm">
+          {excluded.map((c) => (
+            <li key={c.company_id} className="flex flex-wrap items-center justify-between gap-2 py-2" data-testid={`excluded-${c.company_id}`}>
+              <CompanyLink smeId={id} c={c} />
+              <span className="flex flex-wrap items-center gap-2">
+                <span className="text-verdict-red">{c.excluded_because.map(exclusionText).join("; ")}</span>
+                <span className="text-xs text-ink-muted">Trust {c.trust_score ?? "—"}</span>
+              </span>
+            </li>
+          ))}
+          {excluded.length === 0 && <li className="py-2 text-ink-muted">Nobody was excluded.</li>}
+        </ul>
+      </section>
+    </div>
   );
 }

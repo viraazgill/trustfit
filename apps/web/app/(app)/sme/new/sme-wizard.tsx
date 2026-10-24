@@ -8,11 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Disclaimer } from "@/components/brand";
 import { type Brief, BriefFields, briefPayload, emptyBrief } from "@/components/brief-fields";
+import { ReadinessForm } from "@/components/readiness-form";
 import { RequireRole } from "@/lib/auth";
+import { api } from "@/lib/api/client";
+import { type BridgeConfig, useBridgeConfig } from "@/lib/bridge-queries";
 import { type FitConfig, useCreateSme, useFitConfig } from "@/lib/sme-queries";
 import { cn } from "@/lib/utils";
 
-const STEPS = ["Company profile", "India entry brief"];
+const STEPS = ["Company profile", "India entry brief", "Readiness check"];
 
 interface Profile {
   name: string;
@@ -21,16 +24,20 @@ interface Profile {
   description: string;
 }
 
-function Wizard({ cfg }: { cfg: FitConfig }) {
+function Wizard({ cfg, bridgeCfg }: { cfg: FitConfig; bridgeCfg: BridgeConfig }) {
   const router = useRouter();
   const create = useCreateSme();
   const [step, setStep] = useState(0);
   const [profile, setProfile] = useState<Profile>({ name: "", city: "", employees: "", description: "" });
   const [brief, setBrief] = useState<Brief>(() => emptyBrief(cfg));
+  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const questionCount = Object.values(bridgeCfg.dimensions).reduce((n, d) => n + Object.keys(d.questions).length, 0);
 
   const problems = [
     !profile.name.trim() && "Enter your company name",
     step >= 1 && !brief.primary.length && "Pick at least one primary target state",
+    step >= 2 && Object.keys(answers).length < questionCount && "Answer every readiness question",
   ].filter(Boolean) as string[];
 
   function submit() {
@@ -43,7 +50,16 @@ function Wizard({ cfg }: { cfg: FitConfig }) {
         description: profile.description || null,
         ...briefPayload(brief, cfg),
       },
-      { onSuccess: (sme) => router.push(`/sme/${sme.id}`) },
+      {
+        onSuccess: async (sme) => {
+          try {
+            await api(`/smes/${sme.id}/readiness`, "PUT", { answers });
+            router.push(`/sme/${sme.id}`);
+          } catch (err) {
+            setSaveError(err instanceof Error ? err.message : "Could not save the readiness answers");
+          }
+        },
+      },
     );
   }
 
@@ -82,6 +98,7 @@ function Wizard({ cfg }: { cfg: FitConfig }) {
           </div>
         )}
         {step === 1 && <BriefFields cfg={cfg} brief={brief} onChange={setBrief} />}
+        {step === 2 && <ReadinessForm cfg={bridgeCfg} answers={answers} onChange={setAnswers} />}
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -101,6 +118,7 @@ function Wizard({ cfg }: { cfg: FitConfig }) {
         )}
         <span className="text-sm text-verdict-amber">{problems[0]}</span>
         {create.isError && <span className="text-sm text-verdict-red">{create.error.message}</span>}
+        {saveError && <span className="text-sm text-verdict-red">{saveError}</span>}
       </div>
       <Disclaimer />
     </div>
@@ -109,5 +127,10 @@ function Wizard({ cfg }: { cfg: FitConfig }) {
 
 export default function NewSme() {
   const { data: cfg } = useFitConfig();
-  return <RequireRole role="viewer">{cfg ? <Wizard cfg={cfg} /> : <p className="text-sm text-ink-muted">Loading…</p>}</RequireRole>;
+  const { data: bridgeCfg } = useBridgeConfig();
+  return (
+    <RequireRole role="viewer">
+      {cfg && bridgeCfg ? <Wizard cfg={cfg} bridgeCfg={bridgeCfg} /> : <p className="text-sm text-ink-muted">Loading…</p>}
+    </RequireRole>
+  );
 }

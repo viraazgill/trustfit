@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { type Brief, BriefFields, briefPayload } from "@/components/brief-fields";
-import { humanize } from "@/lib/format";
+import { humanize, placeName } from "@/lib/format";
 import { type FitConfig, type Sme, useFitConfig, usePatchSme, useSme } from "@/lib/sme-queries";
 
 function toBrief(sme: Sme, cfg: FitConfig): Brief {
@@ -48,8 +48,8 @@ function Summary({ sme }: { sme: Sme }) {
     ["Sector", humanize(sme.sector)],
     ["Products", sme.products.map(humanize).join(", ") || "—"],
     ["Role sought", humanize(sme.role_sought)],
-    ["Primary states", sme.target_states.primary?.map(humanize).join(", ") || "—"],
-    ["Secondary states", sme.target_states.secondary?.map(humanize).join(", ") || "—"],
+    ["Primary states", sme.target_states.primary?.map(placeName).join(", ") || "—"],
+    ["Secondary states", sme.target_states.secondary?.map(placeName).join(", ") || "—"],
     ["Channels", sme.channels_needed.map(humanize).join(", ") || "—"],
     ["Volume", `${sme.volume_units_per_month ?? "—"} units per month`],
     ["After-sales need", humanize(sme.after_sales_need ?? "none")],

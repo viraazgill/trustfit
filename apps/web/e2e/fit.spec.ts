@@ -7,11 +7,12 @@ test("Sorano: Deccan is a Strong fit at 90; Western Flow is Not a fit (represent
   await expect(page).toHaveURL(/\/sme$/);
   await page.getByRole("link", { name: /Sorano Instruments/ }).click();
   await page.getByRole("link", { name: "Matches" }).click();
-  await expect(byTestId(page, "match-deccan-instrumentation").getByTestId("fit-category")).toHaveText("Strong fit");
-  await expect(byTestId(page, "match-western-flow")).toContainText("represents Flowtek (Demo)");
+  const deccan = byTestId(page, "rank-deccan-instrumentation");
+  await expect(deccan.getByTestId("fit-category")).toHaveText("Strong fit");
+  await expect(byTestId(page, "excluded-western-flow")).toContainText("represents Flowtek (Demo)");
   await shot(page, "04-1-sorano-matches");
 
-  await page.getByRole("link", { name: "Deccan Instrumentation (Demo)" }).click();
+  await deccan.getByRole("link", { name: "Deccan Instrumentation (Demo)" }).click();
   await expect(byTestId(page, "fit-score")).toHaveText("90");
   await expect(byTestId(page, "fit-category")).toHaveText("Strong fit");
   await expect(byTestId(page, "fit-card")).toContainText("Shortlist");
@@ -25,18 +26,4 @@ test("Sorano: Deccan is a Strong fit at 90; Western Flow is Not a fit (represent
   await shot(page, "04-3-sorano-western-flow");
 });
 
-test("the wizard saves a new SME brief", async ({ page }) => {
-  await signIn(page, "viewer");
-  await page.goto("/sme/new");
-  await page.getByLabel("Company name").fill("Kaze Pumps (Demo)");
-  await page.getByLabel("City (Japan)").fill("Nagoya");
-  await page.getByRole("button", { name: "Next", exact: true }).click();
-  await byTestId(page, "state-picker").getByRole("button", { name: "Maharashtra" }).click();
-  await page.getByRole("button", { name: "Industrial b2b" }).click();
-  await page.getByRole("button", { name: "Flow meters" }).click();
-  await shot(page, "04-4-wizard-brief");
-  await page.getByRole("button", { name: "Save brief" }).click();
-  await expect(page).toHaveURL(/\/sme\/kaze-pumps-demo-/);
-  await page.getByRole("link", { name: "Brief", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Maharashtra · primary" })).toBeVisible();
-});
+// The wizard (brief + readiness) is covered end to end in bridge.spec.ts.
