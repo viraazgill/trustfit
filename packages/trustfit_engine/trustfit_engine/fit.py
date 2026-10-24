@@ -105,7 +105,8 @@ def fit_factor_levels(sme: Sme, company: Company, cfg: FitConfig) -> dict[str, L
 def factor_importance(sme: Sme, cfg: FitConfig) -> dict[str, str]:
     """Role defaults, overridden by the brief; FT3 and FT5 become irrelevant when the brief needs neither."""
     if sme.role_sought not in cfg.role_default_importance:
-        raise ValueError(f"unknown role_sought {sme.role_sought!r}; expected one of {list(cfg.role_default_importance)}")
+        roles = list(cfg.role_default_importance)
+        raise ValueError(f"unknown role_sought {sme.role_sought!r}; expected one of {roles}")
     importance = {**cfg.role_default_importance[sme.role_sought], **sme.factor_importance}
     for f, imp in importance.items():
         if f not in cfg.factors:

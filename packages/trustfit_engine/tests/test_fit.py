@@ -3,7 +3,13 @@ import pytest
 import yaml
 from conftest import AS_OF, CONFIG_DIR, assert_matches, load_expected
 
-from trustfit_engine.fit import factor_importance, factor_weights, fit_factor_levels, level_from_ratio, score_fit
+from trustfit_engine.fit import (
+    factor_importance,
+    factor_weights,
+    fit_factor_levels,
+    level_from_ratio,
+    score_fit,
+)
 from trustfit_engine.fit_config import FitConfig
 from trustfit_engine.models import Company, Sme
 from trustfit_engine.trust import score_trust
@@ -17,7 +23,8 @@ VERDICT_ORDER = {"Green": 0, "Amber": 1, "Red": 2}
 
 
 def brief(**kw) -> Sme:
-    base = dict(id="sme", sector="industrial_instruments", products=["flow_meters"], role_sought="distributor",
+    base = dict(id="sme", sector="industrial_instruments", products=["flow_meters"],
+                role_sought="distributor",
                 target_states={"primary": ["maharashtra", "gujarat"], "secondary": ["karnataka"]},
                 channels_needed=["industrial_b2b", "epc_projects"], volume_units_per_month=100,
                 after_sales_need="full", competitors=["Rival (Demo)"])
@@ -49,11 +56,14 @@ def test_subros_against_a_denso_rival(subros, fit_cfg):
 
 def test_sorano_fit_per_company(sorano, demo_companies, fit_cfg):
     expected = {c["company_id"]: c for c in load_expected("demo_gap_bridge_sorano.json")["companies"]}
-    partners = [c for c in demo_companies if c.type == "business_partner" and sorano.role_sought in c.roles_offered]
-    assert {c.id for c in partners} == {"deccan-instrumentation", "western-flow", "sabarmati-process", "konkan-trade"}
+    partners = [c for c in demo_companies
+                if c.type == "business_partner" and sorano.role_sought in c.roles_offered]
+    assert {c.id for c in partners} == {"deccan-instrumentation", "western-flow", "sabarmati-process",
+                                        "konkan-trade"}
     for c in partners:
         result = score_fit(sorano, c, fit_cfg)
-        assert (result["score"], result["category"]) == (expected[c.id]["fit"], expected[c.id]["fit_category"]), c.id
+        want = (expected[c.id]["fit"], expected[c.id]["fit_category"])
+        assert (result["score"], result["category"]) == want, c.id
 
 
 def test_sorano_headline_results(sorano, demo_companies, fit_cfg):
@@ -88,7 +98,8 @@ def test_distributor_effective_weights(sorano, fit_cfg):
 # ---- threshold edges
 
 @pytest.mark.parametrize(("ratio", "level"), [
-    (1.0, 100), (0.9, 100), (0.8999, 75), (0.7, 75), (0.5, 50), (0.4999, 25), (0.25, 25), (0.2499, 0), (0.0, 0)])
+    (1.0, 100), (0.9, 100), (0.8999, 75), (0.7, 75), (0.5, 50), (0.4999, 25), (0.25, 25), (0.2499, 0),
+    (0.0, 0)])
 def test_coverage_levels_at_their_edges(fit_cfg, ratio, level):
     assert level_from_ratio(ratio, fit_cfg.coverage_levels) == level
 
@@ -96,14 +107,17 @@ def test_coverage_levels_at_their_edges(fit_cfg, ratio, level):
 @pytest.mark.parametrize(("capacity", "level"),
                          [(150, 100), (149, 75), (120, 75), (100, 50), (99, 25), (70, 25), (69, 0)])
 def test_capacity_levels_at_their_edges(fit_cfg, capacity, level):
-    levels = fit_factor_levels(brief(volume_units_per_month=100), company(capacity_units_per_month=capacity), fit_cfg)
+    c = company(capacity_units_per_month=capacity)
+    levels = fit_factor_levels(brief(volume_units_per_month=100), c, fit_cfg)
     assert levels["FT4"] == (level, True)
 
 
 def test_weighted_state_coverage_counts_primary_twice(fit_cfg):
     # primary maharashtra + gujarat (2 x 2) + secondary karnataka (1) = 5
-    assert fit_factor_levels(brief(), company(states=["maharashtra", "gujarat"]), fit_cfg)["FT2"] == (75, True)  # 0.8
-    assert fit_factor_levels(brief(), company(states=["karnataka"]), fit_cfg)["FT2"] == (0, True)  # 0.2
+    both_primaries = company(states=["maharashtra", "gujarat"])  # 4 / 5 = 0.8
+    assert fit_factor_levels(brief(), both_primaries, fit_cfg)["FT2"] == (75, True)
+    secondary_only = company(states=["karnataka"])  # 1 / 5 = 0.2
+    assert fit_factor_levels(brief(), secondary_only, fit_cfg)["FT2"] == (0, True)
 
 
 @pytest.mark.parametrize(("attrs", "level"), [
@@ -188,7 +202,8 @@ def test_strong_fit_never_raises_a_trust_verdict(subros, cfg):
     assert combined["verdict"] == trust["verdict"] == "Amber"
 
 
-@pytest.mark.parametrize("bad", [{"factor_importance": {"FT9": "must"}}, {"factor_importance": {"FT1": "maybe"}},
+@pytest.mark.parametrize("bad", [{"factor_importance": {"FT9": "must"}},
+                                 {"factor_importance": {"FT1": "maybe"}},
                                  {"role_sought": "landlord"}])
 def test_invalid_brief_is_rejected(fit_cfg, bad):
     with pytest.raises(ValueError):

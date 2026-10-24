@@ -14,7 +14,7 @@ from app import models
 from app.auth import ROLE_RANK
 from app.errors import ApiError
 from app.schemas import SmeIn, SmeOut, SmePatch, TrustSummary, ViewerFit
-from app.services.scoring import viewer_reasons, to_engine, trust_config
+from app.services.scoring import to_engine, trust_config, viewer_reasons
 from app.settings import scoring_date, settings
 from trustfit_engine import models as engine
 from trustfit_engine.fit import blocking_conflict, score_fit
@@ -58,8 +58,9 @@ def get_sme(db: Session, sme_id: str, user: models.User, write: bool = False) ->
 def sme_out(sme: models.Sme, user: models.User) -> SmeOut:
     return SmeOut(
         id=sme.id, name=sme.name, fictional=sme.fictional, country=sme.country, city=sme.city,
-        employees=sme.employees, description=sme.description, sector=sme.sector, products=list(sme.products),
-        role_sought=sme.role_sought, target_states=sme.target_states, channels_needed=list(sme.channels_needed),
+        employees=sme.employees, description=sme.description, sector=sme.sector,
+        products=list(sme.products), role_sought=sme.role_sought, target_states=sme.target_states,
+        channels_needed=list(sme.channels_needed),
         volume_units_per_month=sme.volume_units_per_month, after_sales_need=sme.after_sales_need,
         competitors=list(sme.competitors), factor_importance=sme.factor_importance,
         readiness_answers=sme.readiness_answers, mine=can_write(sme, user),

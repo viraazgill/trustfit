@@ -346,7 +346,7 @@ class ViewerFit(BaseModel):
     competitor_conflict: bool
     conflict: FitConflict | None = Field(description="The blocking competitor relation, when there is one")
     trust: TrustSummary
-    combined_verdict: Verdict = Field(description="Trust verdict after Fit (Fit can lower it, never raise it)")
+    combined_verdict: Verdict = Field(description="Trust verdict after Fit (it can lower it, never raise it)")
     reasons: list[ViewerReason]
     disclaimer: str = DISCLAIMER_FIELD
 

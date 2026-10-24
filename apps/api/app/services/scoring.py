@@ -169,19 +169,20 @@ def viewer_pending(result: dict[str, Any], cfg: TrustConfig) -> list[ViewerPendi
     """The engine's next checks rolled up to categories (order kept: under-verified dimensions first,
     then by points), followed by pending gates. No parameter names, rubric or check instructions."""
     lines: dict[str, ViewerPending] = {}
+    minimum = cfg.confidence.dimension_provisional_below
     under = {d for d, v in result.get("dimensions", {}).items()
-             if v["verified_pct"] is not None and v["verified_pct"] < cfg.confidence.dimension_provisional_below}
+             if v["verified_pct"] is not None and v["verified_pct"] < minimum}
     gates = []
     for check in result.get("next_checks", []):
         if check["type"] == "gate":
-            gates.append(ViewerPending(type="gate", id=check["id"], label=cfg.gates[check["id"]].label, count=1,
-                                       points=None, priority=False))
+            gates.append(ViewerPending(type="gate", id=check["id"], label=cfg.gates[check["id"]].label,
+                                       count=1, points=None, priority=False))
             continue
         cat = cfg.parameters[check["id"]].category
         line = lines.get(cat)
         if line is None:
-            line = lines[cat] = ViewerPending(type="category", id=cat, label=cfg.categories[cat].label, count=0,
-                                              points=0.0, priority=cfg.dimension_of(cat) in under)
+            line = lines[cat] = ViewerPending(type="category", id=cat, label=cfg.categories[cat].label,
+                                              count=0, points=0.0, priority=cfg.dimension_of(cat) in under)
         line.count += 1
         line.points = r4(line.points + check["points"])
     return [*lines.values(), *gates]

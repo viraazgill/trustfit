@@ -67,7 +67,8 @@ class FitConfig(_Model):
             errors.append("importance_multipliers must define must, important, nice and irrelevant")
         for role, imp in self.role_default_importance.items():
             if set(imp) != set(self.factors):
-                errors.append(f"role_default_importance.{role}: factors {sorted(imp)} != {sorted(self.factors)}")
+                errors.append(f"role_default_importance.{role}: factors {sorted(imp)} "
+                              f"!= {sorted(self.factors)}")
         for name in ("coverage_levels", "capacity_levels"):
             table = getattr(self, name)
             thresholds = [t for t, _ in table]
@@ -79,7 +80,8 @@ class FitConfig(_Model):
         if set(self.categories) != set(FIT_CATEGORIES):
             errors.append(f"categories must be {list(FIT_CATEGORIES)}")
         else:
-            if self.categories["strong_fit"].min_score is None or self.categories["strong_fit"].min_confidence is None:
+            strong = self.categories["strong_fit"]
+            if strong.min_score is None or strong.min_confidence is None:
                 errors.append("categories.strong_fit needs min_score and min_confidence")
             if self.categories["possible_fit"].min_score is None:
                 errors.append("categories.possible_fit needs min_score")

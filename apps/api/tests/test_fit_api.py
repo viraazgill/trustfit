@@ -32,8 +32,10 @@ def other_viewer(session_factory) -> dict[str, str]:
 def test_sorano_vs_deccan_is_a_strong_fit_and_green(client, as_viewer):
     body = fit(client, as_viewer, "deccan-instrumentation")
     assert (body["score"], body["category"], body["action"]) == (90, "strong_fit", "Shortlist")
-    assert (body["trust"]["score"], body["trust"]["verdict"], body["combined_verdict"]) == (85, "Green", "Green")
-    assert [body["factors"][f]["level"] for f in ("FT1", "FT2", "FT3", "FT4", "FT5", "FT6")] == [100, 75, 100, 75, 75, 100]
+    assert (body["trust"]["score"], body["trust"]["verdict"]) == (85, "Green")
+    assert body["combined_verdict"] == "Green"
+    levels = [body["factors"][f]["level"] for f in ("FT1", "FT2", "FT3", "FT4", "FT5", "FT6")]
+    assert levels == [100, 75, 100, 75, 75, 100]
     assert body["disclaimer"] == "TrustFit Score is not a credit rating or investment advice."
 
 
